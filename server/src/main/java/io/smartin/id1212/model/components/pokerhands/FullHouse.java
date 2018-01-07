@@ -12,7 +12,7 @@ public class FullHouse extends PokerHand {
         this.highest = highest;
     }
 
-    public PlayingCard.Value getHighest() {
+    private PlayingCard.Value getHighest() {
         return highest;
     }
 

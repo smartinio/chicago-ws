@@ -17,7 +17,7 @@ public class Flush extends PokerHand {
         this.hand = hand;
     }
 
-    public Hand getHand() {
+    private Hand getHand() {
         return hand;
     }
 

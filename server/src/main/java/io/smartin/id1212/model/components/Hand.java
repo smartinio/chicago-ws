@@ -21,7 +21,7 @@ public class Hand {
         return cards;
     }
 
-    public Set<PlayingCard> getAllFive() {
+    private Set<PlayingCard> getAllFive() {
         if (played.size() == 5)
             return new HashSet<>(played);
         return cards;

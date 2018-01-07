@@ -12,11 +12,11 @@ public abstract class NOfAKind extends PokerHand {
         return type;
     }
 
-    public NOfAKind(PlayingCard.Value of) {
+    protected NOfAKind(PlayingCard.Value of) {
         this.of = of;
     }
 
-    PlayingCard.Value of() {
+    private PlayingCard.Value of() {
         return of;
     }
 

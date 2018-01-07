@@ -1,7 +1,6 @@
 package io.smartin.id1212.model.managers;
 
 import io.smartin.id1212.exceptions.game.OutOfCardsException;
-import io.smartin.id1212.config.Strings;
 import io.smartin.id1212.model.components.*;
 
 import java.util.ArrayList;

@@ -59,11 +59,11 @@ public class PlayerController {
         GamesRepository.getInstance().joinGame(player, request.getKey());
     }
 
-    private void startGame() throws TooFewPlayersException, UnauthorizedStartException, InappropriateActionException {
+    private void startGame() throws TooFewPlayersException, UnauthorizedStartException {
         player.startGame();
     }
 
-    private void handleThrowAction(Action action) throws NotInGameException, TradeBannedException, OutOfCardsException, WaitYourTurnException, InappropriateActionException {
+    private void handleThrowAction(Action action) throws TradeBannedException, OutOfCardsException, WaitYourTurnException, InappropriateActionException {
         List<PlayingCard> cards = Converter.toCards(action.getValue());
         player.throwCards(cards);
     }

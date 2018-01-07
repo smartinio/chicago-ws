@@ -56,7 +56,7 @@ public class Trick {
         return getStartingMove();
     }
 
-    public Move getStartingMove() {
+    private Move getStartingMove() {
         return moves.get(0);
     }
 }

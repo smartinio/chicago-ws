@@ -1,10 +1,10 @@
 package io.smartin.id1212.exceptions;
 
 public class KeyException extends Throwable {
-    public KeyException() {
+    protected KeyException() {
     }
 
-    public KeyException(String message) {
+    protected KeyException(String message) {
         super(message);
     }
 }

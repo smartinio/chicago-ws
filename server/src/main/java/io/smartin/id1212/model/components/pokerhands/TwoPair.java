@@ -27,15 +27,15 @@ public class TwoPair extends PokerHand {
         }
     }
 
-    public PlayingCard.Value getHighest() {
+    private PlayingCard.Value getHighest() {
         return highest;
     }
 
-    public PlayingCard.Value getSecond() {
+    private PlayingCard.Value getSecond() {
         return second;
     }
 
-    public PlayingCard.Value getKicker() {
+    private PlayingCard.Value getKicker() {
         return kicker;
     }
 

@@ -16,7 +16,7 @@ public class Nothing extends PokerHand {
         this.hand = hand;
     }
 
-    public Hand getHand() {
+    private Hand getHand() {
         return hand;
     }
 

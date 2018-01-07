@@ -1,10 +1,10 @@
 package io.smartin.id1212.exceptions;
 
 public class GameException extends Throwable {
-    public GameException() {
+    protected GameException() {
     }
 
-    public GameException(String message) {
+    protected GameException(String message) {
         super(message);
     }
 }

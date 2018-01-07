@@ -204,7 +204,7 @@ public class ChicagoGame {
         setHost(player);
     }
 
-    public List<Player> getWinners() {
+    private List<Player> getWinners() {
         List<Player> winners = new ArrayList<>();
         for (Player player : players) {
             if (player.hasWon()) {
