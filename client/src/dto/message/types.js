@@ -1,0 +1,5 @@
+export const KEY_ERROR = 'KEY_ERROR'
+export const NICKNAME_ERROR = 'NICKNAME_ERROR'
+export const JSON_ERROR = 'JSON_ERROR'
+export const GAME_ERROR = 'GAME_ERROR'
+export const SNAPSHOT = 'SNAPSHOT'

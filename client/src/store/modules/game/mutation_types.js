@@ -1,0 +1,1 @@
+export const MIRROR_GAME_STATE = 'MIRROR_GAME_STATE'
