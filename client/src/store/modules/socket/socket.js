@@ -1,4 +1,3 @@
-import { WS_URL } from '@/config/environment'
 import { SET_SOCKET, SET_CONNECTED_TRUE, SET_CONNECTED_FALSE } from './mutation_types'
 import { CONNECT, HANDLE_MESSAGE, SEND_ACTION } from './action_types'
 import { KEY_ERROR, NICKNAME_ERROR, GAME_ERROR, JSON_ERROR, SNAPSHOT } from '@/dto/message/types'
@@ -26,7 +25,7 @@ const mutations = {
 
 const actions = {
   [CONNECT] ({commit, dispatch}) {
-    const socket = new WebSocket(WS_URL)
+    const socket = new WebSocket(process.env.WS_URL)
     socket.onopen = () => commit(SET_CONNECTED_TRUE)
     socket.onclose = () => commit(SET_CONNECTED_FALSE)
     socket.onmessage = (event) => dispatch(HANDLE_MESSAGE, event)
