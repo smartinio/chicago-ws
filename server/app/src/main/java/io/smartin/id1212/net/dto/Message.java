@@ -39,6 +39,7 @@ public class Message {
         KEY_ERROR,
         GAME_ERROR,
         GAME_WINNER,
-        SNAPSHOT
+        SNAPSHOT,
+        KEEP_ALIVE,
     }
 }

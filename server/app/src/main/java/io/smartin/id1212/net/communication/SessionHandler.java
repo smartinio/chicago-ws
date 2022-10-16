@@ -4,6 +4,7 @@ import io.smartin.id1212.net.services.Converter;
 import io.smartin.id1212.model.components.ChicagoGame;
 import io.smartin.id1212.model.components.Player;
 import io.smartin.id1212.net.dto.Message;
+import io.smartin.id1212.net.dto.Message.MessageType;
 
 import javax.websocket.Session;
 
@@ -11,12 +12,15 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
-import static io.smartin.id1212.net.dto.Message.MessageType.SNAPSHOT;
+import static io.smartin.id1212.net.dto.Message.MessageType.*;
 
 class SessionHandler {
     private final Map<String,Session> sessions = new HashMap<>();
     private static SessionHandler ourInstance = new SessionHandler();
+    private final Map<String, Timer> keepAlives = new HashMap<>();
 
     static SessionHandler getInstance() {
         return ourInstance;
@@ -59,11 +63,27 @@ class SessionHandler {
 
     void register(Session session) {
         sessions.put(session.getId(), session);
+
+        Timer keepAlive = new Timer();
+
+        keepAlive.scheduleAtFixedRate(new TimerTask(){
+            @Override
+            public void run(){
+                long logId = Math.round(Math.random() * 1000);
+                sendMsg(session, new Message(KEEP_ALIVE, "ping"), logId);
+            }
+        },0,10000);
+
+        keepAlives.put(session.getId(), keepAlive);
+
         System.out.println(sessions.size() + " clients connected");
     }
 
     void unregister(Session session) {
         sessions.remove(session.getId());
+        Timer keepAlive = keepAlives.get(session.getId());
+        keepAlive.cancel();
+        keepAlives.remove(session.getId());
         System.out.println(sessions.size() + " clients connected");
     }
 
