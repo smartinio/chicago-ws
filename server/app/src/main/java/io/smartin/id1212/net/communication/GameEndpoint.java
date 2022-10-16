@@ -37,25 +37,31 @@ public class GameEndpoint {
 
     @OnError
     public void onError(Session session, Throwable thr) {
-        System.out.println("onError called: ");
+        System.out.println("!!!!!!! onError called: ");
+        System.out.println(thr);
         System.out.println(thr.getMessage());
+        System.out.println(thr.getStackTrace());
     }
 
     @OnMessage
     public void onMessage(Session session, String message) {
+        long logId = Math.round(Math.random() * 1000);
         try {
             Action action = Converter.toAction(message);
             playerController.handleAction(action);
             ChicagoGame game = playerController.getPlayer().getGame();
             sessionHandler.broadcastSnapshots(game);
         } catch (JsonSyntaxException e) {
-            SessionHandler.sendMsg(session, new Message(JSON_ERROR, e.getMessage()));
+            SessionHandler.sendMsg(session, new Message(JSON_ERROR, e.getMessage()), logId);
         } catch (GameException e) {
-            SessionHandler.sendMsg(session, new Message(GAME_ERROR, e.getMessage()));
+            SessionHandler.sendMsg(session, new Message(GAME_ERROR, e.getMessage()), logId);
         } catch (NicknameException e) {
-            SessionHandler.sendMsg(session, new Message(NICKNAME_ERROR, e.getMessage()));
+            SessionHandler.sendMsg(session, new Message(NICKNAME_ERROR, e.getMessage()), logId);
         } catch (KeyException e) {
-            SessionHandler.sendMsg(session, new Message(KEY_ERROR, e.getMessage()));
+            SessionHandler.sendMsg(session, new Message(KEY_ERROR, e.getMessage()), logId);
+        } catch (Exception e) {
+            System.out.println("Unexpected error:");
+            System.out.println(e.getMessage());
         }
     }
 }
