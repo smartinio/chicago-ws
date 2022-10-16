@@ -33,7 +33,6 @@ public class ChicagoGame {
 
     public ChicagoGame(UUID invitationKey) {
         this.invitationKey = invitationKey;
-        this.host = host;
     }
 
     public void addParticipant(Player player) throws AlreadyStartedException {

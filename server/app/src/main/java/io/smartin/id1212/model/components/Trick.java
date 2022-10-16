@@ -48,12 +48,15 @@ public class Trick {
     }
 
     public Move getWinningMove() {
+        Move bestMove = getStartingMove();
+
         for (Move move : moves) {
-            if (move.beats(getStartingMove())) {
-                return move;
+            if (move.beats(bestMove)) {
+                bestMove = move;
             }
         }
-        return getStartingMove();
+
+        return bestMove;
     }
 
     private Move getStartingMove() {

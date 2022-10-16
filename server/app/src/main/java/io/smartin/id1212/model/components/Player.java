@@ -25,7 +25,6 @@ public class Player {
     private boolean winner = false;
 
     public Player(String id) {
-        this.game = game;
         this.id = id;
     }
 
