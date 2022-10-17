@@ -2,8 +2,8 @@
   <section class="section pb-0 pt-0" style="position: relative">
     <div class="container">
       <div
-        class="content is-flex is-justify-content-flex-start is-flex-direction-column"
-        style="overflow: scroll; height: 70px; padding-top: 70px"
+        class="disable-scrollbars content is-flex is-justify-content-flex-start is-flex-direction-column"
+        style="overflow: scroll; height: 300px; width: 400px; padding-top: 40px"
         >
         <div
           v-for="event, index in events"
@@ -29,6 +29,11 @@ const suits = {
   SPADES: '♠️'
 }
 
+const capitalize = (word) => {
+  const [first, ...rest] = word.split('')
+  return first.toUpperCase() + rest.join('').toLowerCase()
+}
+
 export default {
   props: ['game'],
   name: 'EventLog',
@@ -40,7 +45,8 @@ export default {
   watch: {
     events() {
       requestAnimationFrame(() => {
-        const [lastRow] = this.$refs.rows.slice(-1)
+        const rows = this.$refs.rows || []
+        const [lastRow] = rows.slice(-1)
         if (lastRow) {
           lastRow.scrollIntoView({ behavior: 'smooth' });
         }
@@ -56,7 +62,8 @@ export default {
           const icon = event.numCards === 0 ? '🤔' : '🫳'
           return `traded ${event.numCards} ${cards} ${icon}`
         case 'PLAYED':
-          return `played ${event.card.value} ${suits[event.card.suit]}`
+          const Card = capitalize(event.card.value)
+          return `played ${Card} ${suits[event.card.suit]}`
         case 'WON_TRICK':
           return `won the trick!`
         case 'CALLED_CHICAGO':
@@ -68,9 +75,9 @@ export default {
         case 'WON_ROUND':
           return `won the round! 🙌`
         case 'WON_BEST_HAND':
-          const handType = event.handType.toLowerCase().replace('_', ' ')
+          const Hand = capitalize(event.handType.replaceAll('_', ' '))
           const points = event.points === 1 ? 'point' : 'points'
-          return `got ${event.points} ${points} for a ${handType}`
+          return `got ${event.points} ${points} for a ${Hand}`
         case 'WON_GAME':
           return `won the game! 👑 👑 👑`
         default:
@@ -82,6 +89,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.disable-scrollbars::-webkit-scrollbar {
+  background: transparent; /* Chrome/Safari/Webkit */
+  width: 0px;
+}
+
+.disable-scrollbars {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE 10+ */
+}
+
 .fade-overlay {
   position: absolute;
   width: 100%;

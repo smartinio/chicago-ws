@@ -41,7 +41,6 @@ export default {
   }),
   methods: {
     dispatchAction (actionDTO) {
-      console.log('hej')
       this.$store.dispatch(SEND_ACTION, actionDTO)
     },
     clearKeyError () {

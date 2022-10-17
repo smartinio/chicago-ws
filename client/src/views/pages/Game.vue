@@ -3,20 +3,23 @@
     <Controls
       :game="game"
       :me="me"
+      :controlPlayer="controlPlayer"
       :currentPlayer="currentPlayer"
       :baseMove="baseMove"
       :markedCards="markedCards"
       @action="unmarkAll"
     />
-    <MyHand
-      v-if="game.started"
-      :me="me"
-      :markedCards="markedCards"
-      @toggleMark="toggleMark"
-    />
-    <EventLog
-      :game="game"
-    />
+    <section class="section pb-0 pt-0 is-flex is-flex-direction-row">
+      <EventLog
+        :game="game"
+      />
+      <MyHand
+        v-if="game.started"
+        :me="me"
+        :markedCards="markedCards"
+        @toggleMark="toggleMark"
+      />
+    </section>
     <Players
       v-if="otherPlayers"
       :players="otherPlayers"
@@ -106,6 +109,9 @@ export default {
     currentPlayer () {
       return this.game.round && this.game.round.currentPlayer
     },
+    controlPlayer () {
+      return this.game.players.find(p => p.id === this.me.id)
+    },
     otherPlayers () {
       return this.game.players.filter(p => p.id !== this.me.id)
     }
@@ -127,12 +133,24 @@ export default {
     max-height: 30vh;
   }
   .baseCard {
-    border: 2px solid crimson;
+    border: 2px solid;
+    box-sizing: border-box;
+    border-radius: 5px;
+    animation: pulse 1s infinite ease-in-out alternate;
   }
   .avatar {
     border-radius: 25%;
   }
   .myTurn {
     opacity: 1;
+  }
+
+  @keyframes pulse {
+    from {
+      border-color: rgba(255, 0, 0, 0);
+    }
+    to {
+      border-color: rgba(255, 0, 0, 255);
+    }
   }
 </style>

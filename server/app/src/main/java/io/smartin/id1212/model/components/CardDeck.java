@@ -36,25 +36,27 @@ public class CardDeck {
     }
 
     public Set<PlayingCard> draw(int amount) throws OutOfCardsException {
-        if (cards.size() == 0)
+        synchronized (cards) {
+            if (cards.size() == 0)
             throw new OutOfCardsException(EMPTY_DECK);
-        Set<PlayingCard> playingCards = new HashSet<>();
-        Random random = new Random();
-        for (int i = 0; i < amount; i++) {
-            int n = random.nextInt(cards.size());
-            PlayingCard toRemove = null;
-            int j = 0;
-            for (PlayingCard card : cards) {
-                if (j == n) {
-                    playingCards.add(card);
-                    toRemove = card;
-                    break;
+            Set<PlayingCard> playingCards = new HashSet<>();
+            Random random = new Random();
+            for (int i = 0; i < amount; i++) {
+                int n = random.nextInt(cards.size());
+                PlayingCard toRemove = null;
+                int j = 0;
+                for (PlayingCard card : cards) {
+                    if (j == n) {
+                        playingCards.add(card);
+                        toRemove = card;
+                        break;
+                    }
+                    j++;
                 }
-                j++;
+                cards.remove(toRemove);
             }
-            cards.remove(toRemove);
+            return playingCards;
         }
-        return playingCards;
     }
 
     public int size() {

@@ -5,6 +5,8 @@ import { SET_KEY_ERROR, SET_NICKNAME_ERROR } from './../errors/mutation_types'
 import { HANDLE_GAME_ERROR, HANDLE_JSON_ERROR } from './../errors/action_types'
 import { HANDLE_SNAPSHOT } from './../game/action_types'
 import Message from '@/dto/message/Message'
+import Action from '@/dto/action/Action'
+import { PING } from '@/dto/action/types'
 
 const state = {
   connected: false,
@@ -26,9 +28,24 @@ const mutations = {
 const actions = {
   [CONNECT] ({commit, dispatch}) {
     const socket = new WebSocket(process.env.WS_URL)
-    socket.onopen = () => commit(SET_CONNECTED_TRUE)
-    socket.onclose = () => commit(SET_CONNECTED_FALSE)
-    socket.onmessage = (event) => dispatch(HANDLE_MESSAGE, event)
+
+    let keepalive
+
+    socket.onopen = () => {
+      const ping = JSON.stringify(new Action(PING, 'pong'))
+      keepalive = setInterval(() => socket.send(ping), 10000)
+      commit(SET_CONNECTED_TRUE)
+    }
+
+    socket.onclose = () => {
+      clearInterval(keepalive)
+      commit(SET_CONNECTED_FALSE)
+    }
+
+    socket.onmessage = (event) => {
+      dispatch(HANDLE_MESSAGE, event)
+    }
+
     commit(SET_SOCKET, socket)
   },
   [HANDLE_MESSAGE] ({commit, dispatch}, event) {
@@ -50,7 +67,6 @@ const actions = {
         dispatch(HANDLE_SNAPSHOT, message.body)
         break
       default:
-        console.log('unknown message type:', message.body)
         break
     }
   },

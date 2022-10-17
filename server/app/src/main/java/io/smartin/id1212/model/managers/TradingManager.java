@@ -22,23 +22,25 @@ public class TradingManager {
         int maxThrows = round.getGame().getPlayers().size();
         List<BestHandResult> result = new ArrayList<>();
 
-        if (cards.size() > 0) {
-            player.removeCards(cards);
-            currentCycle().addPlayerThrow(player, cards);
-            try {
-                player.giveCards(round.getDeck().draw(cards.size()));
-            } catch (OutOfCardsException e) {
-                round.getDeck().addCards(thrownCards().draw(cards.size() - round.getDeck().size()));
-            }
-        } else {
-            currentCycle().addPlayerThrow(player, new ArrayList<>());
-        }
-        if (currentCycle().isFinished(maxThrows)) {
-            if (maxTradingCyclesReached()) {
-                round.endTradingPhase();
+        synchronized (round) {
+            if (cards.size() > 0) {
+                player.removeCards(cards);
+                currentCycle().addPlayerThrow(player, cards);
+                try {
+                    player.giveCards(round.getDeck().draw(cards.size()));
+                } catch (OutOfCardsException e) {
+                    round.getDeck().addCards(thrownCards().draw(cards.size() - round.getDeck().size()));
+                }
             } else {
-                result = round.getGame().getScoreManager().givePointsForBestHand();
-                tradingCycles.add(new TradingCycle());
+                currentCycle().addPlayerThrow(player, new ArrayList<>());
+            }
+            if (currentCycle().isFinished(maxThrows)) {
+                if (maxTradingCyclesReached()) {
+                    round.endTradingPhase();
+                } else {
+                    result = round.getGame().getScoreManager().givePointsForBestHand();
+                    tradingCycles.add(new TradingCycle());
+                }
             }
         }
 

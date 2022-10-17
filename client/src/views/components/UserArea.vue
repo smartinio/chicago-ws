@@ -3,7 +3,7 @@
     :isMe="true"
     variant="large"
     fallbackName="You"
-    :player="user"
+    :player="controlPlayer"
     :baseMove="baseMove"
     :currentPlayer="currentPlayer"
   />
@@ -12,7 +12,7 @@
 import Player from '@/views/components/Player'
 export default {
   name: 'UserArea',
-  props: ['user', 'baseMove', 'currentPlayer'],
+  props: ['controlPlayer', 'baseMove', 'currentPlayer'],
   components: {
     Player
   }

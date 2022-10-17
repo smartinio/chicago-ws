@@ -4,7 +4,7 @@
       <div class="columns">
         <div class="column is-narrow">
           <UserArea
-            :user="me"
+            :controlPlayer="controlPlayer"
             :baseMove="baseMove"
             :currentPlayer="currentPlayer"
           />
@@ -50,14 +50,14 @@
   </section>
 </template>
 <script>
-import { START_GAME, THROW, CHICAGO, MOVE, RESTART_GAME } from '@/dto/action/types'
+import { START_GAME, THROW, CHICAGO, MOVE, RESTART_GAME, PING } from '@/dto/action/types'
 import UserArea from './UserArea'
 import Action from '@/dto/action/Action'
 import { SEND_ACTION } from '@/store/modules/socket/action_types'
 import * as phaseTypes from '@/store/modules/game/phase_types'
 
 export default {
-  props: ['game', 'me', 'markedCards', 'currentPlayer', 'baseMove'],
+  props: ['game', 'me', 'controlPlayer', 'markedCards', 'currentPlayer', 'baseMove'],
   name: 'Controls',
   components: {
     UserArea

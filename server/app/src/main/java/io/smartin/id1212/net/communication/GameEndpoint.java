@@ -7,6 +7,7 @@ import io.smartin.id1212.exceptions.NicknameException;
 import io.smartin.id1212.model.components.ChicagoGame;
 import io.smartin.id1212.net.dto.Action;
 import io.smartin.id1212.net.dto.Message;
+import io.smartin.id1212.net.dto.Action.ActionType;
 import io.smartin.id1212.controller.PlayerController;
 import io.smartin.id1212.net.services.Converter;
 
@@ -48,6 +49,11 @@ public class GameEndpoint {
         long logId = Math.round(Math.random() * 1000);
         try {
             Action action = Converter.toAction(message);
+
+            if (action.getType() == ActionType.PING) {
+                return;
+            }
+
             playerController.handleAction(action);
             ChicagoGame game = playerController.getPlayer().getGame();
             sessionHandler.broadcastSnapshots(game);
@@ -63,6 +69,7 @@ public class GameEndpoint {
             System.out.println("Unexpected error:");
             System.out.println(e);
             System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 }

@@ -4,7 +4,6 @@ import io.smartin.id1212.net.services.Converter;
 import io.smartin.id1212.model.components.ChicagoGame;
 import io.smartin.id1212.model.components.Player;
 import io.smartin.id1212.net.dto.Message;
-import io.smartin.id1212.net.dto.Message.MessageType;
 
 import javax.websocket.Session;
 
@@ -34,31 +33,20 @@ class SessionHandler {
     }
 
     void broadcastSnapshots(ChicagoGame game) {
-        List<Player> players = game.getPlayers();
+        if (game == null) {
+            return;
+        }
+
         long logId = Math.round(Math.random() * 1000);
+        List<Player> players = game.getPlayers();
 
-        log(logId, "REQUESTED synchronized");
         synchronized (players) {
-            log(logId, "BEGAN synchronized");
-
-            if (players.size() > 0) {
-                log(logId, "Broadcasting to:");
-            } else {
-                log(logId, "No players to broadcast to");
-            }
-
             for (Player player : players) {
-                System.out.print(player.getName() + ". ");
                 Message msg = new Message(SNAPSHOT, Converter.toJson(game.snapshot(player)));
                 Session session = sessions.get(player.getId());
                 sendMsg(session, msg, logId);
             }
-
-            System.out.println("");
-
-            log(logId, "ENDED synchronized");
         }
-        log(logId, "EXITED synchronized");
     }
 
     void register(Session session) {

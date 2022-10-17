@@ -55,6 +55,7 @@ public class Action {
         THROW,
         START_GAME,
         LEAVE_GAME,
-        RESTART_GAME
+        RESTART_GAME,
+        PING,
     }
 }

@@ -9,7 +9,7 @@
         >
       </figure>
     </div>
-    <div class="media-content">
+    <div class="media-content" style="overflow: hidden">
       <div class="columns">
         <div class="column is-narrow">
           <p class="title is-4">
@@ -20,11 +20,11 @@
           </p>
         </div>
         <div class="column is-expanded">
-          <div v-if="player.hand">
+          <div v-if="player.hand" style="padding-right: 40px">
             <figure
               v-for="card in player.hand.played"
               class="image is-inline-flex"
-              style="width: 33px; height: 48px"
+              style="width: 66px; height: 96px; margin-right: -40px"
             >
               <img
                 :src="getCardUrl(card)"

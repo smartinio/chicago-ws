@@ -2,7 +2,7 @@ package io.smartin.id1212.config;
 
 public class Strings {
     public static final String INVALID_PLAYER = "You are not currently in a game";
-    public static final String UNKNOWN_ACTION = "Unkown action";
+    public static final String UNKNOWN_ACTION = "Unknown action";
     public static final String UNKNOWN_KEY = "The provided key does not exist";
     public static final String EMPTY_DECK = "Deck is empty!";
     public static final String ILLEGAL_CARD_PLAY = "You are not allowed to play that card";
