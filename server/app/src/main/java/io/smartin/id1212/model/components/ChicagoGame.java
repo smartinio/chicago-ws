@@ -3,7 +3,9 @@ package io.smartin.id1212.model.components;
 import com.google.gson.annotations.Expose;
 import io.smartin.id1212.exceptions.game.*;
 import io.smartin.id1212.exceptions.key.AlreadyStartedException;
+import io.smartin.id1212.model.components.Round.RoundMoveResult;
 import io.smartin.id1212.model.managers.ScoreManager;
+import io.smartin.id1212.model.managers.ScoreManager.BestHandResult;
 import io.smartin.id1212.model.store.GamesRepository;
 import io.smartin.id1212.net.dto.Snapshot;
 
@@ -29,6 +31,9 @@ public class ChicagoGame {
     private Round currentRound;
     @Expose
     private final List<Player> players = new ArrayList<>();
+    @Expose
+    private final List<GameEvent> events = new ArrayList<>();
+
     private ScoreManager scoreManager = new ScoreManager(players);
 
     public ChicagoGame(UUID invitationKey) {
@@ -49,6 +54,10 @@ public class ChicagoGame {
     private void newRound() {
         currentRound = new Round(this, dealer);
         currentRound.start();
+    }
+
+    private void logEvent(GameEvent event) {
+        events.add(event);
     }
 
     void restart (Player player) throws TooFewPlayersException, UnauthorizedStartException {
@@ -77,37 +86,78 @@ public class ChicagoGame {
         if (!player.canTrade() && cards.size() > 0) {
             throw new TradeBannedException(TRADE_BANNED);
         }
-        currentRound.throwCards(player, cards);
+
+        List<BestHandResult> playersWithBestHand = currentRound.throwCards(player, cards);
+        logEvent(GameEvent.tradedCards(player, cards.size()));
+
+        for (BestHandResult result : playersWithBestHand) {
+            logEvent(GameEvent.bestHand(result.player, result.points));
+        }
     }
 
     public synchronized void playCard(Player player, PlayingCard card) throws IllegalCardException, WaitYourTurnException, InappropriateActionException, IllegalMoveException {
         if (!player.hasCard(card)) {
             throw new IllegalCardException(ILLEGAL_CARD_PLAY);
         }
-        currentRound.addMove(new Move(player, card));
+
+        RoundMoveResult moveResult = currentRound.addMove(new Move(player, card));
+        logEvent(GameEvent.playedCard(player, card));
+
+        Player chicagoTaker = moveResult.chicagoTaker;
+        Move winningMove = moveResult.winningMove;
+        boolean isTrickDone = moveResult.isTrickDone;
+
+        if (isTrickDone) {
+            logEvent(GameEvent.wonTrick(winningMove));
+        }
+
+        if (moveResult.isRoundOver) {
+            if (chicagoTaker != null) {
+                boolean success = chicagoTaker.equals(winningMove.getPlayer());
+                finishChicagoCalledRound(success, chicagoTaker);
+            } else {
+                finishNormalRound(winningMove);
+            }
+        }
     }
 
-    public void callChicago(Player player, boolean answer) throws ChicagoAlreadyCalledException, WaitYourTurnException, InappropriateActionException {
+    public void callChicago(Player player, boolean isCallingChicago) throws ChicagoAlreadyCalledException, WaitYourTurnException, InappropriateActionException {
         if (currentRound.hasChicagoCalled()) {
             throw new ChicagoAlreadyCalledException(CHICAGO_ALREADY_CALLED);
         }
-        currentRound.setChicagoTaker(player, answer);
+        currentRound.setChicagoTaker(player, isCallingChicago);
+        if (isCallingChicago) {
+            logEvent(GameEvent.calledChicago(player));
+        }
     }
 
-    public void finishNormalRound() {
-        Move winningMove = currentRound.getFinalTrick().getWinningMove();
+    public void finishNormalRound(Move winningMove) {
+        System.out.println("Finishing normal round");
+
         Player winner = winningMove.getPlayer();
         if (winningMove.getCard().getValue().equals(PlayingCard.Value.TWO)) {
             winner.addPoints(WIN_WITH_TWO_SCORE);
+            logEvent(GameEvent.wonRound(winningMove, WIN_WITH_TWO_SCORE));
         } else {
             winner.addPoints(ROUND_WIN_SCORE);
+            logEvent(GameEvent.wonRound(winningMove, ROUND_WIN_SCORE));
         }
-        scoreManager.givePointsForBestHand();
+
+        System.out.println("Giving points for best hand");
+        List<BestHandResult> playersWithBestHand = scoreManager.givePointsForBestHand();
+
+        System.out.println("Logging best hand events");
+        for (BestHandResult result : playersWithBestHand) {
+            logEvent(GameEvent.bestHand(result.player, result.points));
+        }
+
+        System.out.println("Playing again if possible");
         playAgainIfPossible();
     }
 
     public void finishChicagoCalledRound(boolean success, Player player) {
         scoreManager.handleChicagoResult(success, player);
+        logEvent(success ? GameEvent.wonChicago(player) : GameEvent.lostChicago(player));
         playAgainIfPossible();
     }
 
@@ -115,6 +165,9 @@ public class ChicagoGame {
         List<Player> winners = getWinners();
         if (winners.size() > 0) {
             hasWinners = true;
+            for (Player winner : winners) {
+                logEvent(GameEvent.wonGame(winner));
+            }
             stopGame();
             return;
         }
@@ -134,7 +187,6 @@ public class ChicagoGame {
     public Snapshot snapshot(Player player) {
         return new Snapshot(player, this);
     }
-
 
     public String getInvitationKey() {
         return invitationKey.toString();

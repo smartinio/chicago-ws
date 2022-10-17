@@ -13,7 +13,17 @@ public class ScoreManager {
         this.players = players;
     }
 
-    public void givePointsForBestHand() {
+    public class BestHandResult {
+        public Player player;
+        public int points;
+
+        public BestHandResult(Player player, int points) {
+            this.player = player;
+            this.points = points;
+        }
+    }
+
+    public List<BestHandResult> givePointsForBestHand() {
         Map<Hand.HandType,List<Player>> countMap = new HashMap<>();
         Hand.HandType bestType = null;
         for (Player player : players) {
@@ -28,12 +38,12 @@ public class ScoreManager {
             }
         }
         if (bestType != null && bestType.equals(Hand.HandType.NOTHING))
-            return;
+            return new ArrayList<BestHandResult>();
         List<Player> finalCandidates = countMap.get(bestType);
-        finalizeWinners(finalCandidates);
+        return finalizeWinners(finalCandidates);
     }
 
-    private void finalizeWinners(List<Player> finalCandidates) {
+    private List<BestHandResult> finalizeWinners(List<Player> finalCandidates) {
         List<Player> winners = new ArrayList<>();
         for (Player candidate : finalCandidates) {
             try {
@@ -47,11 +57,17 @@ public class ScoreManager {
                 winners.add(candidate);
             }
         }
+
+        List<BestHandResult> results = new ArrayList<>();
+
         for (Player winner : winners) {
             int points = winner.getHand().getPokerHand().getType().ordinal();
             winner.addPoints(points);
             System.out.println("Added " + points + " points to player " + winner.getName());
+            results.add(new BestHandResult(winner, points));
         }
+
+        return results;
     }
 
     public void handleChicagoResult(boolean success, Player player) {

@@ -14,6 +14,18 @@ import java.util.List;
 import static io.smartin.id1212.config.Rules.MAX_CARDS_PER_PLAYER;
 
 public class TrickingManager {
+    public class MoveResult {
+        public final Move winningMove;
+        public final boolean hasMoreTricks;
+        public final boolean isTrickDone;
+
+        public MoveResult(Move winningMove, boolean hasMoreTricks, boolean isTrickDone) {
+            this.winningMove = winningMove;
+            this.hasMoreTricks = hasMoreTricks;
+            this.isTrickDone = isTrickDone;
+        }
+    }
+
     private Round round;
     @Expose
     private List<Trick> tricks = new ArrayList<>();
@@ -23,39 +35,23 @@ public class TrickingManager {
         this.tricks.add(new Trick(round));
     }
 
-    public Player handle(Move move) throws IllegalMoveException, TrickNotDoneException {
+    public MoveResult handle(Move move) throws IllegalMoveException {
         currentTrick().addMove(move);
         move.getPlayer().getHand().moveToPlayed(move.getCard());
-        if (round.hasChicagoCalled()) {
-            if (!chicagoCallerIsWinningTrick()) {
-                round.setPhase(Round.GamePhase.AFTER);
-                round.getGame().finishChicagoCalledRound(false, round.getChicagoTaker());
-                return currentTrick().getWinningMove().getPlayer();
-            }
-        }
-        if (thisWasLastTrick()) {
-            round.setPhase(Round.GamePhase.AFTER);
-            if (round.hasChicagoCalled()) {
-                round.getGame().finishChicagoCalledRound(true, round.getChicagoTaker());
-                return round.getChicagoTaker();
-            }
-            round.getGame().finishNormalRound();
-            return currentTrick().getWinningMove().getPlayer();
-        }
-        if (currentTrick().isDone()) {
-            Trick lastTrick = currentTrick();
+        Move winningMove = currentTrick().getWinningMove();
+        boolean hasMoreTricks = !thisWasLastTrick();
+        boolean isTrickDone = currentTrick().isDone();
+        MoveResult result = new MoveResult(winningMove, hasMoreTricks, isTrickDone);
+
+        if (isTrickDone) {
             this.tricks.add(new Trick(round));
-            return lastTrick.getWinningMove().getPlayer();
         }
-        throw new TrickNotDoneException();
+
+        return result;
     }
 
     private boolean thisWasLastTrick() {
         return tricks.size() == MAX_CARDS_PER_PLAYER && currentTrick().isDone();
-    }
-
-    private boolean chicagoCallerIsWinningTrick() {
-        return currentTrick().getWinningMove().getPlayer().equals(round.getChicagoTaker());
     }
 
     public Trick currentTrick() {

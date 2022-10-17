@@ -2,6 +2,7 @@ package io.smartin.id1212.model.managers;
 
 import io.smartin.id1212.exceptions.game.OutOfCardsException;
 import io.smartin.id1212.model.components.*;
+import io.smartin.id1212.model.managers.ScoreManager.BestHandResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +18,9 @@ public class TradingManager {
         this.tradingCycles.add(new TradingCycle());
     }
 
-    public void handle(Player player, List<PlayingCard> cards) throws OutOfCardsException {
+    public List<BestHandResult> handle(Player player, List<PlayingCard> cards) throws OutOfCardsException {
         int maxThrows = round.getGame().getPlayers().size();
+        List<BestHandResult> result = new ArrayList<>();
 
         if (cards.size() > 0) {
             player.removeCards(cards);
@@ -35,10 +37,12 @@ public class TradingManager {
             if (maxTradingCyclesReached()) {
                 round.endTradingPhase();
             } else {
-                round.getGame().getScoreManager().givePointsForBestHand();
+                result = round.getGame().getScoreManager().givePointsForBestHand();
                 tradingCycles.add(new TradingCycle());
             }
         }
+
+        return result;
     }
 
     private boolean maxTradingCyclesReached() {

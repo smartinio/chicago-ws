@@ -2,9 +2,14 @@
   <section class="section">
     <div class="container">
       <div class="columns">
-        <div class="column">
-          <UserArea :user="me" />
+        <div class="column is-narrow">
+          <UserArea
+            :user="me"
+            :baseMove="baseMove"
+            :currentPlayer="currentPlayer"
+          />
         </div>
+        <div class="column"></div>
         <div class="column is-narrow">
           <span
             v-if="!game.started"
@@ -52,7 +57,7 @@ import { SEND_ACTION } from '@/store/modules/socket/action_types'
 import * as phaseTypes from '@/store/modules/game/phase_types'
 
 export default {
-  props: ['game', 'me', 'markedCards'],
+  props: ['game', 'me', 'markedCards', 'currentPlayer', 'baseMove'],
   name: 'Controls',
   components: {
     UserArea

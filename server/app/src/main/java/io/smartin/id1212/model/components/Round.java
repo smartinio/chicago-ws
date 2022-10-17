@@ -4,6 +4,8 @@ import com.google.gson.annotations.Expose;
 import io.smartin.id1212.exceptions.game.*;
 import io.smartin.id1212.model.managers.TradingManager;
 import io.smartin.id1212.model.managers.TrickingManager;
+import io.smartin.id1212.model.managers.ScoreManager.BestHandResult;
+import io.smartin.id1212.model.managers.TrickingManager.MoveResult;
 
 import java.util.List;
 import java.util.Set;
@@ -47,15 +49,40 @@ public class Round {
         nextTurn();
     }
 
-    void addMove(Move move) throws WaitYourTurnException, InappropriateActionException, IllegalMoveException {
+    public class RoundMoveResult {
+        public final Move winningMove;
+        public final Player chicagoTaker;
+        public final boolean isRoundOver;
+        public final boolean isTrickDone;
+
+        public RoundMoveResult(Move winningMove, Player chicagoTaker, boolean isRoundOver, boolean isTrickDone) {
+            this.winningMove = winningMove;
+            this.chicagoTaker = chicagoTaker;
+            this.isRoundOver = isRoundOver;
+            this.isTrickDone = isTrickDone;
+        }
+    }
+
+    RoundMoveResult addMove(Move move) throws WaitYourTurnException, InappropriateActionException, IllegalMoveException {
         checkPhase(GamePhase.PLAYING);
         checkTurn(move.getPlayer());
-        try {
-            Player winner = trickingManager.handle(move);
-            nextTurn(winner);
-        } catch (TrickNotDoneException e) {
+        MoveResult moveResult = trickingManager.handle(move);
+        Move winningMove = moveResult.winningMove;
+        boolean hasMoreTricks = moveResult.hasMoreTricks;
+        boolean isTrickDone = moveResult.isTrickDone;
+        boolean chicagoWasLost = hasChicagoCalled() && !winningMove.getPlayer().equals(chicagoTaker);
+
+        if (!hasMoreTricks || chicagoWasLost) {
+            setPhase(Round.GamePhase.AFTER);
+        }
+
+        if (isTrickDone) {
+            nextTurn(winningMove.getPlayer());
+        } else {
             nextTurn();
         }
+
+        return new RoundMoveResult(winningMove, chicagoTaker, phase == GamePhase.AFTER, isTrickDone);
     }
 
     void setChicagoTaker(Player player, boolean yolo) throws WaitYourTurnException, InappropriateActionException {
@@ -73,11 +100,12 @@ public class Round {
         nextTurn();
     }
 
-    void throwCards(Player player, List<PlayingCard> cards) throws OutOfCardsException, WaitYourTurnException, InappropriateActionException {
+    List<BestHandResult> throwCards(Player player, List<PlayingCard> cards) throws OutOfCardsException, WaitYourTurnException, InappropriateActionException {
         checkPhase(GamePhase.TRADING);
         checkTurn(player);
-        tradingManager.handle(player, cards);
+        List<BestHandResult> result = tradingManager.handle(player, cards);
         nextTurn();
+        return result;
     }
 
     private void checkPhase(GamePhase gamePhase) throws InappropriateActionException {

@@ -3,6 +3,8 @@
     <Controls
       :game="game"
       :me="me"
+      :currentPlayer="currentPlayer"
+      :baseMove="baseMove"
       :markedCards="markedCards"
       @action="unmarkAll"
     />
@@ -11,6 +13,9 @@
       :me="me"
       :markedCards="markedCards"
       @toggleMark="toggleMark"
+    />
+    <EventLog
+      :game="game"
     />
     <Players
       v-if="otherPlayers"
@@ -25,6 +30,7 @@ import { PLAYING, CHICAGO } from '@/store/modules/game/phase_types'
 import Controls from '@/views/components/Controls'
 import Players from '@/views/components/Players'
 import MyHand from '@/views/components/MyHand'
+import EventLog from '@/views/components/EventLog'
 
 export default {
   name: 'Game',
@@ -41,7 +47,8 @@ export default {
   components: {
     Controls,
     Players,
-    MyHand
+    MyHand,
+    EventLog,
   },
   data () {
     return {

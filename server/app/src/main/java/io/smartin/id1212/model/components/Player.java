@@ -153,7 +153,7 @@ public class Player {
     }
 
     public boolean hasWon() {
-        return score >= MAX_GAME_SCORE;
+        return score >= MAX_GAME_SCORE && hasTakenChicago;
     }
 
     public void setWinner(boolean winner) {

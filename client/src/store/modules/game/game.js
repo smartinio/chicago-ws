@@ -8,6 +8,7 @@ const state = {
     id: ''
   },
   invKey: '',
+  events: [],
   players: [],
   started: false,
   round: {
@@ -22,6 +23,7 @@ const mutations = {
     state.host.id = game.host.id
     state.invKey = game.invitationKey
     state.players = game.players
+    state.events = game.events
     state.started = game.started
     state.hasWinners = game.hasWinners
     if (!game.currentRound) {

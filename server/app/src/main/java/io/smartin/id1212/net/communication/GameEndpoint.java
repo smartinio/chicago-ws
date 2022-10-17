@@ -61,6 +61,7 @@ public class GameEndpoint {
             SessionHandler.sendMsg(session, new Message(KEY_ERROR, e.getMessage()), logId);
         } catch (Exception e) {
             System.out.println("Unexpected error:");
+            System.out.println(e);
             System.out.println(e.getMessage());
         }
     }
