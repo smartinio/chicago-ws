@@ -132,8 +132,6 @@ public class ChicagoGame {
     }
 
     public void finishNormalRound(Move winningMove) {
-        System.out.println("Finishing normal round");
-
         Player winner = winningMove.getPlayer();
         if (winningMove.getCard().getValue().equals(PlayingCard.Value.TWO)) {
             winner.addPoints(WIN_WITH_TWO_SCORE);
@@ -143,15 +141,12 @@ public class ChicagoGame {
             logEvent(GameEvent.wonRound(winningMove, ROUND_WIN_SCORE));
         }
 
-        System.out.println("Giving points for best hand");
         List<BestHandResult> playersWithBestHand = scoreManager.givePointsForBestHand();
 
-        System.out.println("Logging best hand events");
         for (BestHandResult result : playersWithBestHand) {
             logEvent(GameEvent.bestHand(result.player, result.points));
         }
 
-        System.out.println("Playing again if possible");
         playAgainIfPossible();
     }
 

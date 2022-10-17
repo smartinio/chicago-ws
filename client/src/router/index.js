@@ -11,7 +11,7 @@ const routes = [
 const router = new Router({
   base: '/',
   routes,
-  mode: 'history'
+  mode: 'hash'
 })
 
 export default router
