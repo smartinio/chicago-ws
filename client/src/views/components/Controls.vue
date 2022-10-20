@@ -14,12 +14,12 @@
           <span
             v-if="!game.started"
             class="tag is-medium is-primary"
-            @click="copyKeyToClipboard"
-            @mouseover="inviteText = ''"
-            @mouseleave="inviteText = 'Invite friends'"
+            @click="copyLink"
+            @mouseleave="inviteText = 'Invite friends'; copiedKey = false"
+            style="cursor: pointer"
           >
             <span class="icon"><i :class="checkOrKey"></i></span>
-            <span ref="keySpan">{{ inviteText || game.invKey }}</span>
+            <span>{{ inviteText }}</span>
           </span>
           <a class="tag is-medium" v-if="canStart && !canRestart" @click="startGame">Start game</a>
           <a class="tag is-medium is-warning" v-if="canRestart" @click="restartGame">
@@ -101,27 +101,12 @@ export default {
     isCurrentPlayer (player) {
       return player.id === this.game.round.currentPlayer.id
     },
-    copyKeyToClipboard () {
-      this.selectElementText(this.$refs.keySpan)
-      document.execCommand('copy')
+    async copyLink () {
+      this.tmpKey = this.game.invKey
+      await navigator.clipboard.writeText(window.location.href)
       this.copiedKey = true
-      // TODO: deselect text after copy
+      this.inviteText = 'Link copied to clipboard!'
     },
-    selectElementText (el) {
-      const win = window
-      let doc = win.document, sel, range
-      if (win.getSelection && doc.createRange) {
-        sel = win.getSelection()
-        range = doc.createRange()
-        range.selectNodeContents(el)
-        sel.removeAllRanges()
-        sel.addRange(range)
-      } else if (doc.body.createTextRange) {
-        range = doc.body.createTextRange()
-        range.moveToElementText(el)
-        range.select()
-      }
-    }
   },
   computed: {
     checkOrKey () {

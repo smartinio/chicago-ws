@@ -41,7 +41,7 @@ public class GameEndpoint {
         System.out.println("!!!!!!! onError called: ");
         System.out.println(thr);
         System.out.println(thr.getMessage());
-        System.out.println(thr.getStackTrace());
+        thr.printStackTrace();
     }
 
     @OnMessage

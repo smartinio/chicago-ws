@@ -29,16 +29,11 @@ const actions = {
   [CONNECT] ({commit, dispatch}) {
     const socket = new WebSocket(process.env.WS_URL)
 
-    let keepalive
-
     socket.onopen = () => {
-      const ping = JSON.stringify(new Action(PING, 'pong'))
-      keepalive = setInterval(() => socket.send(ping), 10000)
       commit(SET_CONNECTED_TRUE)
     }
 
     socket.onclose = () => {
-      clearInterval(keepalive)
       commit(SET_CONNECTED_FALSE)
     }
 

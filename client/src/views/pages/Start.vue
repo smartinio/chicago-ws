@@ -9,6 +9,7 @@
               :class="dangerIfExists(errors.nickname)"
               class="input is-large"
               v-model="nickname"
+              ref="nickname"
               placeholder="Choose a nickname...">
               <p
               class="help is-danger"
@@ -81,16 +82,23 @@ export default {
     }
   },
   methods: {
+    rememberNickname () {
+      if (this.nickname) {
+        localStorage.setItem('nickname', this.nickname)
+      }
+    },
     createGame () {
       if (!this.hasNicknameSet) return
       const actionDTO = new Action(NEW_GAME, this.nickname)
       this.$emit('action', actionDTO)
+      this.rememberNickname()
     },
     joinGame () {
       if (!this.fieldsAreValid) return
       const request = new JoinRequest(this.nickname, this.invKey)
       const actionDTO = new Action(JOIN_GAME, request)
       this.$emit('action', actionDTO)
+      this.rememberNickname()
     },
     dangerIfExists (value) {
       return this[value] ? 'is-danger' : ''
@@ -127,6 +135,14 @@ export default {
   },
   created () {
     this.invKey = this.urlKey || ''
+
+    const nickname = localStorage.getItem('nickname')
+    if (nickname) {
+      this.nickname = nickname
+    }
+  },
+  mounted() {
+    this.$refs.nickname.focus()
   },
   watch: {
     invKey () {
