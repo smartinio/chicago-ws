@@ -59,7 +59,7 @@ public class Trick {
         return bestMove;
     }
 
-    private Move getStartingMove() {
+    public Move getStartingMove() {
         return moves.get(0);
     }
 }

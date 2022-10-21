@@ -20,6 +20,10 @@ public class CardDeck {
         }
     }
 
+    public Set<PlayingCard> getCards() {
+        return cards;
+    }
+
     public void addCards(Collection<PlayingCard> thrown) {
         cards.addAll(thrown);
     }

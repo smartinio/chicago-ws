@@ -5,13 +5,23 @@
         class="disable-scrollbars content is-flex is-justify-content-flex-start is-flex-direction-column"
         style="overflow: scroll; height: 300px; width: 400px; padding-top: 40px"
         >
-        <div
-          v-for="event, index in events"
-          v-if="formatEvent(event, index)"
+        <div v-for="event in events">
+          <div
+            v-if="event.actor.id === 'server' && formatServerEvent(event)"
+            style="border-bottom: 1px solid #ccc; height: 15px; text-align: center; margin-bottom: 15px"
           >
-          <strong>{{ event.actor.name }}</strong>
-          <span> {{ formatEvent(event) }}</span>
-          <span class="has-text-grey-light is-size-7">{{ timeago(event.timestamp) }}</span>
+            <span
+              class="has-text-grey is-size-7"
+              style="height: 40px; background-color: #fff; padding: 5px"
+            >
+              {{ formatServerEvent(event) }}
+            </span>
+          </div>
+          <div v-else-if="formatPlayerEvent(event)">
+            <strong>{{ event.actor.name }}</strong>
+            <span> {{ formatPlayerEvent(event) }}</span>
+            <span class="has-text-grey-light is-size-7" style="line-height: 30px">{{ timeago(event.timestamp) }}</span>
+          </div>
           <span ref="rows"></span>
         </div>
       </div>
@@ -32,6 +42,11 @@ const suits = {
 const capitalize = (word) => {
   const [first, ...rest] = word.split('')
   return first.toUpperCase() + rest.join('').toLowerCase()
+}
+
+const niceCard = (card) => {
+  const Card = capitalize(card.value)
+  return `${suits[card.suit]} ${Card}`
 }
 
 export default {
@@ -55,15 +70,23 @@ export default {
   },
   methods: {
     timeago,
-    formatEvent(event) {
+    formatServerEvent(event) {
       switch (event.action) {
-        case 'TRADED':
+        case 'NEW_ROUND':
+          return '✨ A new round begins ✨'
+        case 'TRICK_DONE':
+          return '👀'
+      }
+    },
+    formatPlayerEvent(event) {
+      switch (event.action) {
+        case 'TRADED': {
           const cards = event.numCards === 1 ? 'card' : 'cards'
           const icon = event.numCards === 0 ? '🤔' : '🫳'
           return `traded ${event.numCards} ${cards} ${icon}`
+        }
         case 'PLAYED':
-          const Card = capitalize(event.card.value)
-          return `played ${Card} ${suits[event.card.suit]}`
+          return `played ${niceCard(event.card)}`
         case 'WON_TRICK':
           return `won the trick!`
         case 'CALLED_CHICAGO':
@@ -77,11 +100,13 @@ export default {
         case 'WON_BEST_HAND':
           const Hand = capitalize(event.handType.replaceAll('_', ' '))
           const points = event.points === 1 ? 'point' : 'points'
-          return `got ${event.points} ${points} for a ${Hand}`
+          return `got ${event.points} ${points} for a ${Hand} 💰`
         case 'WON_GAME':
           return `won the game! 👑 👑 👑`
-        default:
-          return JSON.stringify(event)
+        case 'WON_ROUND_GUARANTEED': {
+          const cards = event.cards.map(niceCard).join(', ')
+          return `made it rain 💦 with ${cards}`
+        }
       }
     }
   }

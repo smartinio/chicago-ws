@@ -1,10 +1,13 @@
 package io.smartin.id1212.model.components;
 
+import java.util.List;
+
 import com.google.gson.annotations.Expose;
 
-import io.smartin.id1212.model.components.pokerhands.abstracts.PokerHand;
 
 public class GameEvent {
+  private static final Player server = new Player("server");
+
   private GameEvent() {
     this.timestamp = System.currentTimeMillis();;
   }
@@ -97,6 +100,34 @@ public class GameEvent {
     return event;
   }
 
+  public static GameEvent wonRoundGuaranteed(Player winner, List<PlayingCard> finalCards) {
+    GameEvent event = new GameEvent();
+
+    event.actor = winner;
+    event.action = EventAction.WON_ROUND_GUARANTEED;
+    event.cards = finalCards;
+
+    return event;
+  }
+
+  public static GameEvent serverNewRound() {
+    GameEvent event = new GameEvent();
+
+    event.actor = server;
+    event.action = EventAction.NEW_ROUND;
+
+    return event;
+  }
+
+  public static GameEvent serverTrickDone() {
+    GameEvent event = new GameEvent();
+
+    event.actor = server;
+    event.action = EventAction.TRICK_DONE;
+
+    return event;
+  }
+
   @Expose
   public long timestamp;
 
@@ -116,6 +147,9 @@ public class GameEvent {
   public PlayingCard card;
 
   @Expose
+  public List<PlayingCard> cards;
+
+  @Expose
   public int numCards;
 
   @Expose
@@ -131,5 +165,9 @@ public class GameEvent {
     WON_GAME,
     WON_ROUND,
     WON_TRICK,
+    WON_ROUND_GUARANTEED,
+    // server events
+    NEW_ROUND,
+    TRICK_DONE,
   }
 }

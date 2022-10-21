@@ -101,17 +101,27 @@ public class ChicagoGame {
         }
 
         RoundMoveResult moveResult = currentRound.addMove(new Move(player, card));
-        logEvent(GameEvent.playedCard(player, card));
 
         Player chicagoTaker = moveResult.chicagoTaker;
         Move winningMove = moveResult.winningMove;
+        List<PlayingCard> finalCards = moveResult.finalCards;
         boolean isTrickDone = moveResult.isTrickDone;
+        boolean isGuaranteedWin = moveResult.isGuaranteedWin;
+        boolean isRoundOver = moveResult.isRoundOver;
 
-        if (isTrickDone) {
-            logEvent(GameEvent.wonTrick(winningMove));
+        if (isGuaranteedWin) {
+            logEvent(GameEvent.wonRoundGuaranteed(player, finalCards));
+        } else {
+            logEvent(GameEvent.playedCard(player, card));
+            if (isTrickDone) {
+                logEvent(GameEvent.wonTrick(winningMove));
+                if (!isRoundOver) {
+                    logEvent(GameEvent.serverTrickDone());
+                }
+            }
         }
 
-        if (moveResult.isRoundOver) {
+        if (isRoundOver) {
             if (chicagoTaker != null) {
                 boolean success = chicagoTaker.equals(winningMove.getPlayer());
                 finishChicagoCalledRound(success, chicagoTaker);
@@ -168,6 +178,7 @@ public class ChicagoGame {
         }
         newDealer();
         newRound();
+        logEvent(GameEvent.serverNewRound());
     }
 
     private void newDealer() {

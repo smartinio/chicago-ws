@@ -2,14 +2,18 @@ package io.smartin.id1212.model.managers;
 
 import com.google.gson.annotations.Expose;
 import io.smartin.id1212.exceptions.game.IllegalMoveException;
-import io.smartin.id1212.exceptions.game.TrickNotDoneException;
 import io.smartin.id1212.model.components.Move;
 import io.smartin.id1212.model.components.Player;
 import io.smartin.id1212.model.components.Round;
 import io.smartin.id1212.model.components.Trick;
+import io.smartin.id1212.model.components.PlayingCard.Suit;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static io.smartin.id1212.config.Rules.MAX_CARDS_PER_PLAYER;
 
@@ -29,14 +33,32 @@ public class TrickingManager {
     private Round round;
     @Expose
     private List<Trick> tricks = new ArrayList<>();
+    private Map<Suit, Set<Player>> playersWithSuit = new HashMap<>();
 
     public TrickingManager(Round round) {
         this.round = round;
         this.tricks.add(new Trick(round));
+
+        // Assume everyone can follow suit until proven otherwise
+        for (Suit suit : Suit.values()) {
+            Set<Player> players = new HashSet<>();
+            players.addAll(round.getGame().getPlayers());
+            playersWithSuit.put(suit, players);
+        }
+    }
+
+    public Set<Player> playersWithPotentialSuit(Suit suit) {
+        return playersWithSuit.get(suit);
     }
 
     public MoveResult handle(Move move) throws IllegalMoveException {
         currentTrick().addMove(move);
+        Suit startingSuit = currentTrick().getStartingMove().getCard().getSuit();
+
+        if (move.getCard().getSuit() != startingSuit) {
+            playersWithSuit.get(startingSuit).remove(move.getPlayer());
+        }
+
         move.getPlayer().getHand().moveToPlayed(move.getCard());
         Move winningMove = currentTrick().getWinningMove();
         boolean hasMoreTricks = !thisWasLastTrick();

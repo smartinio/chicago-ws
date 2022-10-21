@@ -81,6 +81,7 @@ public class PlayerController {
         if (action.getType().equals(JOIN_GAME)) return;
         if (action.getType().equals(NEW_GAME)) return;
         if (player == null) throw new NotInGameException(INVALID_PLAYER);
+        if (player.getGame() == null) throw new NotInGameException(INVALID_PLAYER);
     }
 
     public Player getPlayer() {

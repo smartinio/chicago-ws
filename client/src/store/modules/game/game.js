@@ -42,7 +42,7 @@ const actions = {
     commit(SET_MY_TURN, snapshot.myTurn)
     commit(SET_MY_HAND, snapshot.myHand)
     commit(SET_MY_PLAYER, snapshot.me)
-    console.log(snapshot)
+    // console.log(JSON.stringify(snapshot, null, 2))
     commit(MIRROR_GAME_STATE, snapshot.game)
   }
 }

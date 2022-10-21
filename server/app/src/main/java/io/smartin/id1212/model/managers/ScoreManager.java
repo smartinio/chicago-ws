@@ -27,7 +27,15 @@ public class ScoreManager {
         Map<Hand.HandType,List<Player>> countMap = new HashMap<>();
         Hand.HandType bestType = null;
         for (Player player : players) {
-            PokerHand currentPokerHand = player.getHand().getPokerHand();
+            Hand hand = player.getHand();
+            PokerHand currentPokerHand = hand.getPokerHand();
+
+            System.out.println(player.getName() + " had " + currentPokerHand.getType());
+            System.out.println(player.getName() + "'s remaining cards:");
+            hand.getCards().forEach(System.out::println);
+            System.out.println(player.getName() + "'s played cards:");
+            hand.getPlayed().forEach(System.out::println);
+
             Hand.HandType type = currentPokerHand.getType();
             if (!countMap.containsKey(type)) countMap.put(type, new ArrayList<>());
             countMap.get(type).add(player);

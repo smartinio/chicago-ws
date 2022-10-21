@@ -22,9 +22,10 @@ public class Hand {
     }
 
     private Set<PlayingCard> getAllFive() {
-        if (played.size() == 5)
-            return new HashSet<>(played);
-        return cards;
+        Set<PlayingCard> allFive = new HashSet<>();
+        allFive.addAll(played);
+        allFive.addAll(cards);
+        return allFive;
     }
 
     public void moveToPlayed(PlayingCard card) {

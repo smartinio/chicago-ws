@@ -131,6 +131,12 @@ public class Player {
         return id.hashCode();
     }
 
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
+
     public boolean hasCardOfSuit(PlayingCard.Suit suit) {
         for (PlayingCard playingCard : hand.getCards()) {
             if (playingCard.getSuit().equals(suit)) {

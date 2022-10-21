@@ -29,14 +29,22 @@ public class PlayingCard {
         this.value = Value.valueOf(value);
     }
 
+    public boolean beats(PlayingCard otherCard) {
+        return otherCard.getSuit() == this.getSuit() &&
+                otherCard.getValue().ordinal() > this.getValue().ordinal();
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         PlayingCard that = (PlayingCard) o;
 
-        if (suit != that.suit) return false;
+        if (suit != that.suit)
+            return false;
         return value == that.value;
     }
 
@@ -45,6 +53,11 @@ public class PlayingCard {
         int result = suit.hashCode();
         result = 31 * result + value.hashCode();
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return this.suit + ":" + this.value;
     }
 
     public enum Suit {
