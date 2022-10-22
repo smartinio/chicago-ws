@@ -14,11 +14,11 @@ import java.util.Map;
 
 import static io.smartin.id1212.net.dto.Message.MessageType.*;
 
-class SessionHandler {
+public class SessionHandler {
     private final Map<String,Session> sessions = new HashMap<>();
     private static SessionHandler ourInstance = new SessionHandler();
 
-    static SessionHandler getInstance() {
+    public static SessionHandler getInstance() {
         return ourInstance;
     }
 
@@ -29,7 +29,7 @@ class SessionHandler {
         System.out.println(id + ": " + message);
     }
 
-    void broadcastSnapshots(ChicagoGame game) {
+    public void broadcastSnapshots(ChicagoGame game) {
         if (game == null) {
             return;
         }

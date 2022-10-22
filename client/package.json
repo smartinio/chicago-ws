@@ -2,7 +2,7 @@
   "name": "project",
   "version": "1.0.0",
   "description": "Chicago frontend",
-  "author": "Samuel <smartin@kth.se>",
+  "author": "Sam Martin <hello@smartin.io>",
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "bulma": "^0.6.1",
+    "emoji-js": "^3.7.0",
     "node-sass": "^4.7.2",
     "sass-loader": "^6.0.6",
     "standard": "^10.0.3",

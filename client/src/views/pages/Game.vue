@@ -119,6 +119,16 @@ export default {
 }
 </script>
 <style lang="scss">
+  .is-size-7 img.emoji {
+    width: 0.75rem;
+    height: 0.75rem;
+    margin-bottom: -1px;
+  }
+  img.emoji {
+    margin-bottom: -3px;
+    width: 1rem;
+    height: 1rem;
+  }
   .playingCard {
     opacity: 0.5;
     transform: translateY(0px);

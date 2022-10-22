@@ -181,4 +181,11 @@ public class Hand {
             this.of = of;
         }
     }
+
+    public void moveAllToPlayed() {
+        for (PlayingCard card : cards) {
+            played.add(card);
+        }
+        cards.clear();
+    }
 }

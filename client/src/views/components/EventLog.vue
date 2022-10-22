@@ -1,6 +1,8 @@
 <template>
   <section class="section pb-0 pt-0" style="position: relative">
     <div class="container">
+      <!-- preload emojis -->
+      <div v-show="false" v-html="f('✨👀🤔🔁🚀🥲🥳🙌💰👑')" />
       <div
         class="disable-scrollbars content is-flex is-justify-content-flex-start is-flex-direction-column"
         style="overflow: scroll; height: 300px; width: 400px; padding-top: 40px"
@@ -13,13 +15,12 @@
             <span
               class="has-text-grey is-size-7"
               style="height: 40px; background-color: #fff; padding: 5px"
-            >
-              {{ formatServerEvent(event) }}
-            </span>
+              v-html="f(formatServerEvent(event))"
+            />
           </div>
           <div v-else-if="formatPlayerEvent(event)">
             <strong>{{ event.actor.name }}</strong>
-            <span> {{ formatPlayerEvent(event) }}</span>
+            <span v-html="f(formatPlayerEvent(event))" />
             <span class="has-text-grey-light is-size-7" style="line-height: 30px">{{ timeago(event.timestamp) }}</span>
           </div>
           <span ref="rows"></span>
@@ -31,6 +32,12 @@
 </template>
 <script>
 import { format as timeago } from 'timeago.js'
+import EmojiConvertor from 'emoji-js'
+
+const emoji = new EmojiConvertor();
+emoji.replace_mode = 'img'
+emoji.img_set = 'apple'
+emoji.img_sets.apple.path = 'static/emoji-data/'
 
 const suits = {
   CLUBS: '♣️',
@@ -57,19 +64,19 @@ export default {
       return this.game.events
     }
   },
+  mounted() {
+    window.onfocus = () => {
+      this.scrollToBottom()
+    }
+  },
   watch: {
     events() {
-      requestAnimationFrame(() => {
-        const rows = this.$refs.rows || []
-        const [lastRow] = rows.slice(-1)
-        if (lastRow) {
-          lastRow.scrollIntoView({ behavior: 'smooth' });
-        }
-      })
+      this.scrollToBottom()
     }
   },
   methods: {
     timeago,
+    f: emoji.replace_unified.bind(emoji),
     formatServerEvent(event) {
       switch (event.action) {
         case 'NEW_ROUND':
@@ -82,7 +89,7 @@ export default {
       switch (event.action) {
         case 'TRADED': {
           const cards = event.numCards === 1 ? 'card' : 'cards'
-          const icon = event.numCards === 0 ? '🤔' : '🫳'
+          const icon = event.numCards === 0 ? '🤔' : '🔁'
           return `traded ${event.numCards} ${cards} ${icon}`
         }
         case 'PLAYED':
@@ -108,6 +115,15 @@ export default {
           return `made it rain 💦 with ${cards}`
         }
       }
+    },
+    scrollToBottom() {
+      requestAnimationFrame(() => {
+        const rows = this.$refs.rows || []
+        const [lastRow] = rows.slice(-1)
+        if (lastRow) {
+          lastRow.scrollIntoView({ behavior: 'smooth' });
+        }
+      })
     }
   }
 }
