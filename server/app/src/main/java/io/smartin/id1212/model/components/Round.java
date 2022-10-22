@@ -171,9 +171,16 @@ public class Round {
         Set<PlayingCard> ownCards = currentPlayer.getHand().getCards();
         Set<PlayingCard> betterCards = getBetterCards(card);
         Set<Player> potentialContenders = trickingManager.playersWithPotentialSuit(card.getSuit());
+
+        methodLogger.info("Eligible players for {}", card);
+        eligiblePlayers.forEach(methodLogger::info);
+        methodLogger.info("Potential contenders for {}", card);
+        potentialContenders.forEach(methodLogger::info);
+
         potentialContenders.removeIf(p -> !eligiblePlayers.contains(p));
 
         if (potentialContenders.isEmpty()) {
+            methodLogger.info("Potential contenders empty for {}", card);
             return false;
         }
 
