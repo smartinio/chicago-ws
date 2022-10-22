@@ -22,15 +22,16 @@ jobs:
           node-version-file: client/.nvmrc
           cache: npm
           cache-dependency-path: client/package-lock.json
-   
+
       - name: Install and build 🔧
         run: |
           cd client
           npm ci
           npm run build
- 
+          touch dist/.nojekyll
+
       - name: 🚀 Deploy client
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: client/dist
-          
+
