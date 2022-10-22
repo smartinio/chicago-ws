@@ -52,6 +52,7 @@ public class ChicagoGame {
     }
 
     private void newRound() {
+        logEvent(GameEvent.serverNewRound());
         currentRound = new Round(this, dealer);
         currentRound.start();
     }
@@ -131,13 +132,20 @@ public class ChicagoGame {
         }
     }
 
-    public void callChicago(Player player, boolean isCallingChicago) throws ChicagoAlreadyCalledException, WaitYourTurnException, InappropriateActionException {
+    public void respondToChicago(Player player, boolean isCallingChicago) throws ChicagoAlreadyCalledException, WaitYourTurnException, InappropriateActionException {
         if (currentRound.hasChicagoCalled()) {
             throw new ChicagoAlreadyCalledException(CHICAGO_ALREADY_CALLED);
         }
-        currentRound.setChicagoTaker(player, isCallingChicago);
+
+        boolean isDoneAsking = currentRound.respondToChicago(player, isCallingChicago);
+
         if (isCallingChicago) {
             logEvent(GameEvent.calledChicago(player));
+        }
+
+        if (isDoneAsking) {
+            // lazy reuse to get a divider in the client. can make separate event later if necessary
+            logEvent(GameEvent.serverTrickDone());
         }
     }
 
@@ -178,7 +186,6 @@ public class ChicagoGame {
         }
         newDealer();
         newRound();
-        logEvent(GameEvent.serverNewRound());
     }
 
     private void newDealer() {

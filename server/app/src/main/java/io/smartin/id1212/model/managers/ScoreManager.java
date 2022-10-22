@@ -1,5 +1,8 @@
 package io.smartin.id1212.model.managers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import io.smartin.id1212.exceptions.game.HandsAreEqualException;
 import io.smartin.id1212.model.components.*;
 import io.smartin.id1212.model.components.pokerhands.abstracts.PokerHand;
@@ -27,16 +30,19 @@ public class ScoreManager {
         Map<Hand.HandType,List<Player>> countMap = new HashMap<>();
         Hand.HandType bestType = null;
         for (Player player : players) {
+            Logger playerLogger = LogManager.getLogger(player.getName());
             Hand hand = player.getHand();
             PokerHand currentPokerHand = hand.getPokerHand();
-
-            System.out.println(player.getName() + " had " + currentPokerHand.getType());
-            System.out.println(player.getName() + "'s remaining cards:");
-            hand.getCards().forEach(System.out::println);
-            System.out.println(player.getName() + "'s played cards:");
-            hand.getPlayed().forEach(System.out::println);
-
             Hand.HandType type = currentPokerHand.getType();
+
+            playerLogger.info("hand: {}", type);
+
+            playerLogger.info("remaining cards:");
+            hand.getCards().forEach(playerLogger::info);
+
+            playerLogger.info("played cards:");
+            hand.getPlayed().forEach(playerLogger::info);
+
             if (!countMap.containsKey(type)) countMap.put(type, new ArrayList<>());
             countMap.get(type).add(player);
         }

@@ -1,9 +1,14 @@
 package io.smartin.id1212.model.managers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.google.gson.annotations.Expose;
+
 import io.smartin.id1212.exceptions.game.IllegalMoveException;
 import io.smartin.id1212.model.components.Move;
 import io.smartin.id1212.model.components.Player;
+import io.smartin.id1212.model.components.PlayingCard;
 import io.smartin.id1212.model.components.Round;
 import io.smartin.id1212.model.components.Trick;
 import io.smartin.id1212.model.components.PlayingCard.Suit;
@@ -18,6 +23,8 @@ import java.util.Set;
 import static io.smartin.id1212.config.Rules.MAX_CARDS_PER_PLAYER;
 
 public class TrickingManager {
+    private static final Logger logger = LogManager.getLogger(TrickingManager.class);
+
     public class MoveResult {
         public final Move winningMove;
         public final boolean hasMoreTricks;
@@ -52,17 +59,23 @@ public class TrickingManager {
     }
 
     public MoveResult handle(Move move) throws IllegalMoveException {
-        currentTrick().addMove(move);
-        Suit startingSuit = currentTrick().getStartingMove().getCard().getSuit();
+        Trick trick = currentTrick();
+        trick.addMove(move);
 
-        if (move.getCard().getSuit() != startingSuit) {
-            playersWithSuit.get(startingSuit).remove(move.getPlayer());
+        Suit startingSuit = trick.getStartingMove().getCard().getSuit();
+        Player player = move.getPlayer();
+        PlayingCard playedCard = move.getCard();
+        Suit playedSuit = playedCard.getSuit();
+
+        if (playedSuit != startingSuit) {
+            logger.info("Player '{}' can not follow {} (played {} instead)", player, startingSuit, playedSuit);
+            playersWithSuit.get(startingSuit).remove(player);
         }
 
-        move.getPlayer().getHand().moveToPlayed(move.getCard());
-        Move winningMove = currentTrick().getWinningMove();
+        player.getHand().moveToPlayed(playedCard);
+        Move winningMove = trick.getWinningMove();
         boolean hasMoreTricks = !thisWasLastTrick();
-        boolean isTrickDone = currentTrick().isDone();
+        boolean isTrickDone = trick.isDone();
         MoveResult result = new MoveResult(winningMove, hasMoreTricks, isTrickDone);
 
         if (isTrickDone) {

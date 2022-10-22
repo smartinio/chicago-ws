@@ -30,8 +30,8 @@ public class PlayingCard {
     }
 
     public boolean beats(PlayingCard otherCard) {
-        return otherCard.getSuit() == this.getSuit() &&
-                otherCard.getValue().ordinal() > this.getValue().ordinal();
+        return this.getSuit() == otherCard.getSuit() &&
+                this.getValue().ordinal() > otherCard.getValue().ordinal();
     }
 
     @Override

@@ -44,8 +44,8 @@ public class Player {
         game.throwCards(this, cards);
     }
 
-    public void callChicago(boolean answer) throws ChicagoAlreadyCalledException, WaitYourTurnException, InappropriateActionException {
-        game.callChicago(this, answer);
+    public void respondToChicago(boolean answer) throws ChicagoAlreadyCalledException, WaitYourTurnException, InappropriateActionException {
+        game.respondToChicago(this, answer);
     }
 
     public void playCard(PlayingCard card) throws IllegalCardException, WaitYourTurnException, InappropriateActionException, IllegalMoveException {

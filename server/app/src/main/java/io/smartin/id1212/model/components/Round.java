@@ -1,5 +1,8 @@
 package io.smartin.id1212.model.components;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.google.gson.annotations.Expose;
 import io.smartin.id1212.exceptions.game.*;
 import io.smartin.id1212.model.managers.TradingManager;
@@ -94,7 +97,7 @@ public class Round {
         boolean isTrickDone = moveResult.isTrickDone;
         boolean isPlayerWinning = winningMove.getPlayer().equals(player);
         boolean chicagoWasLost = hasChicagoCalled() && !winningMove.getPlayer().equals(chicagoTaker);
-        boolean playerGuaranteedToWin = isPlayerWinning && playerIsGuaranteedToWinRound(player);
+        boolean playerGuaranteedToWin = isPlayerWinning && playerIsGuaranteedToWinRound(player, winningMove);
         List<PlayingCard> finalCards = new ArrayList<>();
 
         if (hasMoreTricks && playerGuaranteedToWin) {
@@ -125,57 +128,76 @@ public class Round {
                 finalCards);
     }
 
-    private boolean playerIsGuaranteedToWinRound(Player player) {
+    private boolean playerIsGuaranteedToWinRound(Player currentPlayer, Move currentMove) {
+        Logger playerLogger = LogManager.getLogger("gtw:" + currentPlayer.getName());
+        Logger gtwLogger = LogManager.getLogger("gtw");
+
         Set<PlayingCard> playedCards = getPlayedCards();
-        Set<PlayingCard> ownCards = player.getHand().getCards();
+        List<PlayingCard> playerPlayedCards = currentPlayer.getHand().getPlayed();
+        Set<PlayingCard> ownCards = currentPlayer.getHand().getCards();
+        PlayingCard currentCard = currentMove.getCard();
+        Set<Player> remainingPlayers = trickingManager.currentTrick().getRemainingPlayers();
+        Set<Player> allPlayers = new HashSet<>(game.getPlayers());
 
-        System.out.println("PLAYED CARDS:");
-        playedCards.forEach(System.out::println);
-
-        System.out.println("OWN CARDS FOR " + player);
-        ownCards.forEach(System.out::println);
+        if (someoneElseCouldBeatCard(currentCard, currentPlayer, playedCards, remainingPlayers)) {
+            return false;
+        }
 
         for (PlayingCard card : ownCards) {
-            Set<PlayingCard> betterCards = getBetterCards(card);
-
-            System.out.println("BETTER CARDS THAN " + card);
-            betterCards.forEach(System.out::println);
-
-            Set<Player> potentialContenders = trickingManager.playersWithPotentialSuit(card.getSuit());
-            potentialContenders.remove(player);
-
-            System.out.println("CONTENDERS FOR " + card);
-            potentialContenders.forEach(System.out::println);
-
-            if (potentialContenders.isEmpty()) {
-                continue;
-            }
-
-            for (PlayingCard betterCard : betterCards) {
-                if (!ownCards.contains(betterCard) && !playedCards.contains(betterCard)) {
-                    return false;
-                }
+            if (someoneElseCouldBeatCard(card, currentPlayer, playedCards, allPlayers)) {
+                return false;
             }
         }
 
-        System.out.println("GUARANTEED PLAYED CARDS BY ALL");
-        playedCards.forEach(System.out::println);
+        gtwLogger.info("PLAYED CARDS (ALL):");
+        playedCards.forEach(gtwLogger::info);
 
-        System.out.println("GUARANTEED WIN PLAYED CARDS BY " + player);
-        player.getHand().getPlayed().forEach(System.out::println);
+        playerLogger.info("PLAYED CARDS:");
+        playerPlayedCards.forEach(playerLogger::info);
 
-        System.out.println("GUARANTEED WIN OWN CARDS FOR " + player);
-        ownCards.forEach(System.out::println);
+        playerLogger.info("REMAINING CARDS ON HAND:");
+        ownCards.forEach(playerLogger::info);
 
         return true;
     }
 
+    private boolean someoneElseCouldBeatCard(PlayingCard card, Player currentPlayer, Set<PlayingCard> playedCards, Set<Player> eligiblePlayers) {
+        Logger methodLogger = LogManager.getLogger("someoneElseCouldBeatCard:" + card);
+
+        Set<PlayingCard> ownCards = currentPlayer.getHand().getCards();
+        Set<PlayingCard> betterCards = getBetterCards(card);
+        Set<Player> potentialContenders = trickingManager.playersWithPotentialSuit(card.getSuit());
+        potentialContenders.removeIf(p -> !eligiblePlayers.contains(p));
+
+        if (potentialContenders.isEmpty()) {
+            return false;
+        }
+
+        for (PlayingCard betterCard : betterCards) {
+            boolean nobodyCanBeatCard = ownCards.contains(betterCard) || playedCards.contains(betterCard);
+            boolean someoneElseMightHaveThisBetterCard = !nobodyCanBeatCard;
+
+            if (someoneElseMightHaveThisBetterCard) {
+                return true;
+            }
+        }
+
+        methodLogger.info("Nobody else could possibly beat this card");
+        methodLogger.info("All better cards are self-owned/already played:");
+        betterCards.forEach(methodLogger::info);
+
+        return false;
+    }
+
     private Set<PlayingCard> getBetterCards(PlayingCard card) {
+        Logger betterLogger = LogManager.getLogger("getBetterCards");
         Set<PlayingCard> betterCards = new HashSet<>();
 
         for (PlayingCard otherCard : allCards) {
-            if (otherCard.beats(card))
+            if (otherCard.beats(card)) {
+                betterLogger.info("{} beats {}", otherCard, card);
                 betterCards.add(otherCard);
+            }
         }
 
         return betterCards;
@@ -191,19 +213,21 @@ public class Round {
         return playedCards;
     }
 
-    void setChicagoTaker(Player player, boolean yolo) throws WaitYourTurnException, InappropriateActionException {
+    boolean respondToChicago(Player player, boolean yolo) throws WaitYourTurnException, InappropriateActionException {
         checkPhase(GamePhase.CHICAGO);
         checkTurn(player);
         numAskedAboutChicago++;
         if (yolo) {
             chicagoTaker = player;
             phase = GamePhase.PLAYING;
-            return;
+            return true;
         }
         if (numAskedAboutChicago == game.getPlayers().size()) {
             phase = GamePhase.PLAYING;
         }
+
         nextTurn();
+        return phase == GamePhase.PLAYING;
     }
 
     List<BestHandResult> throwCards(Player player, List<PlayingCard> cards)

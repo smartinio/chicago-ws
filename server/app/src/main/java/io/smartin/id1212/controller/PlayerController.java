@@ -69,7 +69,7 @@ public class PlayerController {
     }
 
     private void handleChicagoAction(Action action) throws ChicagoAlreadyCalledException, WaitYourTurnException, InappropriateActionException {
-        player.callChicago(Boolean.valueOf(action.getValue()));
+        player.respondToChicago(Boolean.valueOf(action.getValue()));
     }
 
     private void handleMoveAction(Action action) throws IllegalCardException, WaitYourTurnException, InappropriateActionException, IllegalMoveException {

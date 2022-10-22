@@ -4,7 +4,9 @@ import com.google.gson.annotations.Expose;
 import io.smartin.id1212.exceptions.game.IllegalMoveException;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static io.smartin.id1212.config.Strings.MUST_FOLLOW_SUIT;
 
@@ -61,5 +63,26 @@ public class Trick {
 
     public Move getStartingMove() {
         return moves.get(0);
+    }
+
+    public Set<Player> getRemainingPlayers() {
+        List<Player> allPlayers = round.getGame().getPlayers();
+        Set<Player> remainingPlayers = new HashSet<>(allPlayers);
+
+        for (Move move : moves) {
+            remainingPlayers.remove(move.getPlayer());
+        }
+
+        return remainingPlayers;
+    }
+
+    public Set<Player> getAlreadyPlayedPlayers() {
+        Set<Player> alreadyPlayed = new HashSet<>();
+
+        for (Move move : moves) {
+            alreadyPlayed.add(move.getPlayer());
+        }
+
+        return alreadyPlayed;
     }
 }

@@ -18,8 +18,8 @@ export default {
   mounted() {
     if (process.env.NODE_ENV === 'production') {
       keepalive = setInterval(() => {
-      fetch(process.env.HTTP_URL, { method: 'HEAD' })
-    }, 10000)
+        fetch(process.env.HTTP_URL, { method: 'HEAD' })
+      }, 10000)
     }
   },
   unmounted() {
