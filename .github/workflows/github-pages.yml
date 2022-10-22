@@ -18,7 +18,7 @@ jobs:
         with:
           node-version-file: client/.nvmrc
           cache: npm
-          cache-dependency-path: package-lock.json
+          cache-dependency-path: client/package-lock.json
    
       - name: 🔧 Install and Build 
         run: |
