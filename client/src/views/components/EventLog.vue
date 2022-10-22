@@ -1,8 +1,7 @@
 <template>
   <section class="section pb-0 pt-0" style="position: relative">
     <div class="container">
-      <!-- preload emojis -->
-      <div v-show="false" v-html="f('✨💰👀🤔🔁🚀🥲🥳🙌👑')" />
+      <div v-show="false" v-html="f('✨💰👀🤔🔁🚀🥲🥳🙌👑♣️❤️♦️♠️')" />
       <div
         class="disable-scrollbars content is-flex is-justify-content-flex-start is-flex-direction-column"
         style="overflow: scroll; height: 300px; width: 400px; padding-top: 40px"
