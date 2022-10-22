@@ -171,4 +171,8 @@ public class Player {
         hasTakenChicago = false;
         winner = false;
     }
+
+    public void dealCards() throws GameOverException, RoundNotFinishedException, UnauthorizedDealerException {
+        game.dealCards(this);
+    }
 }

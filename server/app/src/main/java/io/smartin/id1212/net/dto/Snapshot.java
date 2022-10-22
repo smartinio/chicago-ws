@@ -16,6 +16,8 @@ public class Snapshot {
     @Expose
     private boolean myTurn = false;
     @Expose
+    private boolean imDealing = false;
+    @Expose
     private List<PlayingCard> myHand = new ArrayList<>();
     @Expose
     private List<PlayingCard> myPlayed = new ArrayList<>();
@@ -29,5 +31,6 @@ public class Snapshot {
         this.myHand = sortedHand;
         this.myPlayed = me.getHand().getPlayed();
         this.myTurn = me.equals(game.getCurrentRound().getCurrentPlayer());
+        this.imDealing = me.equals(game.getDealer());
     }
 }

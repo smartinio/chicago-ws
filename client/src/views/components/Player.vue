@@ -50,6 +50,13 @@
             PLAYING
           </span>
           <span
+            class="tag is-dark"
+            v-if="isDealer(player)"
+            style="margin-left: 10px"
+          >
+            DEALER
+          </span>
+          <span
             class="tag is-success"
             v-if="player.winner"
             style="margin-left: 10px"
@@ -65,7 +72,7 @@
 <script>
 export default {
   name: 'Player',
-  props: ['player', 'baseMove', 'currentPlayer', 'fallbackName', 'variant', 'isMe'],
+  props: ['player', 'baseMove', 'currentPlayer', 'dealer', 'fallbackName', 'variant', 'isMe'],
   computed: {
     figureClass() {
       const size = this.variant === 'large' ? 96 : 48
@@ -79,6 +86,9 @@ export default {
     },
     isCurrentPlayer (player) {
       return this.currentPlayer && (this.currentPlayer.id === player.id)
+    },
+    isDealer (player) {
+      return this.dealer && (this.dealer.id === player.id)
     }
   }
 }

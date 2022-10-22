@@ -7,6 +7,7 @@
             :controlPlayer="controlPlayer"
             :baseMove="baseMove"
             :currentPlayer="currentPlayer"
+            :dealer="dealer"
           />
         </div>
         <div class="column"></div>
@@ -26,7 +27,7 @@
             <span class="icon is-small"><i class="fa fa-refresh"></i></span>
             <span>Restart</span>
           </a>
-          <span v-if="me.isMyTurn">
+          <span v-if="me.isMyTurn && !isPhase(phase.AFTER)">
             <span v-if="isPhase(phase.TRADING)">
               <a class="tag is-info is-medium" v-if="!markedCards.length" @click="passTrade">YOUR TURN (PASS)</a>
               <a class="tag is-success is-medium" v-else @click="trade">TRADE ({{ markedCards.length }})</a>
@@ -41,6 +42,9 @@
               <span class="tag is-black is-medium" v-else>YOUR TURN</span>
             </span>
           </span>
+          <span v-else-if="me.imDealing && isPhase(phase.AFTER)">
+            <a class="tag is-danger is-medium" @click="deal">DEAL CARDS</a>
+          </span>
           <span v-else>
             <span class="tag is-warning is-medium">WAITING</span>
           </span>
@@ -50,14 +54,14 @@
   </section>
 </template>
 <script>
-import { START_GAME, THROW, CHICAGO, MOVE, RESTART_GAME } from '@/dto/action/types'
+import { START_GAME, THROW, CHICAGO, MOVE, DEAL_CARDS, RESTART_GAME } from '@/dto/action/types'
 import UserArea from './UserArea'
 import Action from '@/dto/action/Action'
 import { SEND_ACTION } from '@/store/modules/socket/action_types'
 import * as phaseTypes from '@/store/modules/game/phase_types'
 
 export default {
-  props: ['game', 'me', 'controlPlayer', 'markedCards', 'currentPlayer', 'baseMove'],
+  props: ['game', 'me', 'dealer', 'controlPlayer', 'markedCards', 'currentPlayer', 'baseMove'],
   name: 'Controls',
   components: {
     UserArea
@@ -88,6 +92,9 @@ export default {
     play () {
       this.doAction(new Action(MOVE, this.markedCard))
     },
+    deal () {
+      this.doAction(new Action(DEAL_CARDS))
+    },
     restartGame () {
       this.doAction(new Action(RESTART_GAME))
     },
@@ -97,9 +104,6 @@ export default {
     },
     isPhase (phase) {
       return this.game.round.phase === phase
-    },
-    isCurrentPlayer (player) {
-      return player.id === this.game.round.currentPlayer.id
     },
     async copyLink () {
       this.tmpKey = this.game.invKey

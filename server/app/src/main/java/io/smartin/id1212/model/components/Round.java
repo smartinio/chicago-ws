@@ -49,6 +49,10 @@ public class Round {
         this.tricks = this.trickingManager.getTricks();
     }
 
+    boolean isOver() {
+        return phase == GamePhase.AFTER;
+    }
+
     void start() {
         for (Player player : game.getPlayers()) {
             Set<PlayingCard> cards = deck.drawInitial();

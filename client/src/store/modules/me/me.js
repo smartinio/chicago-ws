@@ -1,7 +1,8 @@
-import { SET_MY_HAND, SET_MY_TURN, SET_MY_PLAYER } from './mutation_types'
+import { SET_MY_HAND, SET_MY_TURN, SET_MY_PLAYER, SET_IM_DEALING } from './mutation_types'
 
 const state = {
   isMyTurn: false,
+  imDealing: false,
   hand: [],
   id: '',
   name: '',
@@ -16,6 +17,9 @@ const mutations = {
   },
   [SET_MY_TURN] (state, value) {
     state.isMyTurn = value
+  },
+  [SET_IM_DEALING] (state, value) {
+    state.imDealing = value
   },
   [SET_MY_PLAYER] (state, my) {
     state.id = my.id

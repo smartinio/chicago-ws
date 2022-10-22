@@ -1,6 +1,7 @@
 package io.smartin.id1212.model.components;
 
 import com.google.gson.annotations.Expose;
+
 import io.smartin.id1212.exceptions.game.*;
 import io.smartin.id1212.exceptions.key.AlreadyStartedException;
 import io.smartin.id1212.model.components.Round.RoundMoveResult;
@@ -67,7 +68,6 @@ public class ChicagoGame {
     private void newRound() {
         logEvent(GameEvent.serverNewRound());
         currentRound = new Round(this, dealer);
-        currentRound.start();
     }
 
     private void logEvent(GameEvent event) {
@@ -93,6 +93,7 @@ public class ChicagoGame {
         }
         dealer = players.get(1);
         newRound();
+        currentRound.start();
         started = true;
     }
 
@@ -140,13 +141,7 @@ public class ChicagoGame {
 
         if (isRoundOver) {
             finishRound(chicagoTaker, winningMove);
-
-            int lingerTime = isGuaranteedWin ? GUARANTEED_WIN_LINGER_TIME_MS : LINGER_TIME_MS;
-
-            setTimeout(() -> {
-                playAgainIfPossible();
-                broadcastSnapshotsAsync();
-            }, lingerTime);
+            newDealer();
         }
     }
 
@@ -222,12 +217,6 @@ public class ChicagoGame {
     public void finishChicagoCalledRound(boolean success, Player player) {
         scoreManager.handleChicagoResult(success, player);
         logEvent(success ? GameEvent.wonChicago(player) : GameEvent.lostChicago(player));
-    }
-
-    private void playAgainIfPossible() {
-        if (hasWinners) return;
-        newDealer();
-        newRound();
     }
 
     private void newDealer() {
@@ -320,5 +309,19 @@ public class ChicagoGame {
             }
         }
         return winners;
+    }
+
+    public void dealCards(Player player) throws GameOverException, RoundNotFinishedException, UnauthorizedDealerException {
+        if (!player.equals(dealer)) {
+            throw new UnauthorizedDealerException(UNAUTHORIZED_DEALER);
+        }
+        if (currentRound != null && !currentRound.isOver()) {
+            throw new RoundNotFinishedException(ROUND_NOT_FINISHED);
+        }
+        if (hasWinners) {
+            throw new GameOverException(GAME_OVER);
+        }
+        newRound();
+        currentRound.start();
     }
 }

@@ -1,6 +1,7 @@
 export const NEW_GAME = 'NEW_GAME'
 export const JOIN_GAME = 'JOIN_GAME'
 export const MOVE = 'MOVE'
+export const DEAL_CARDS = 'DEAL_CARDS'
 export const CHICAGO = 'CHICAGO'
 export const THROW = 'THROW'
 export const START_GAME = 'START_GAME'

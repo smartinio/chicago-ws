@@ -57,5 +57,6 @@ public class Action {
         LEAVE_GAME,
         RESTART_GAME,
         PING,
+        DEAL_CARDS,
     }
 }

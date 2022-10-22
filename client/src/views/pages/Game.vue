@@ -5,6 +5,7 @@
       :me="me"
       :controlPlayer="controlPlayer"
       :currentPlayer="currentPlayer"
+      :dealer="dealer"
       :baseMove="baseMove"
       :markedCards="markedCards"
       @action="unmarkAll"
@@ -25,6 +26,7 @@
       :players="otherPlayers"
       :baseMove="baseMove"
       :currentPlayer="currentPlayer"
+      :dealer="dealer"
     />
   </div>
 </template>
@@ -108,6 +110,9 @@ export default {
     },
     currentPlayer () {
       return this.game.round && this.game.round.currentPlayer
+    },
+    dealer () {
+      return this.game.dealer
     },
     controlPlayer () {
       return this.game.players.find(p => p.id === this.me.id)

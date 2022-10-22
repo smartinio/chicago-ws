@@ -1,7 +1,7 @@
 <template>
   <section class="section pb-0 pt-0" style="position: relative">
     <div class="container">
-      <div v-show="false" v-html="f('✨💰👀🤔🔁🚀🥲🥳🙌👑♣️❤️♦️♠️')" />
+      <div v-show="true" v-html="f('✨💰👀🤔🔁🚀🥲🥳🙌👑💦♣️❤️♦️♠️')" />
       <div
         class="disable-scrollbars content is-flex is-justify-content-flex-start is-flex-direction-column"
         style="overflow: scroll; height: 300px; width: 400px; padding-top: 40px"
@@ -36,7 +36,7 @@ import EmojiConvertor from 'emoji-js'
 const emoji = new EmojiConvertor();
 emoji.replace_mode = 'img'
 emoji.img_set = 'apple'
-emoji.img_sets.apple.path = 'static/emoji-data/'
+emoji.img_sets.apple.path = 'https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/'
 
 const suits = {
   CLUBS: '♣️',
