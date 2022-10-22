@@ -30,7 +30,5 @@ jobs:
           npm run build
  
       - name: Push to gh-pages 🚀
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          folder: client/dist
+        run: git push origin `git subtree split --prefix client main`:gh-pages --force
           
