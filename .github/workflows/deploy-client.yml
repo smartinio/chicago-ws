@@ -29,9 +29,8 @@ jobs:
           npm ci
           npm run build
  
-      - name: Push to gh-pages 🚀
-        run: |
-          git add client/dist
-          git commit -m "Deploy bundle to gh-pages"
-          git push origin `git subtree split --prefix client/dist main`:gh-pages --force
+      - name: 🚀 Deploy client
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: client/dist
           
