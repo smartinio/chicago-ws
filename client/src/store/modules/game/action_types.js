@@ -1,1 +1,0 @@
-export const HANDLE_SNAPSHOT = 'HANDLE_SNAPSHOT'

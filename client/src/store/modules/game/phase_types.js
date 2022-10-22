@@ -1,5 +1,0 @@
-export const BEFORE = 'BEFORE'
-export const TRADING = 'TRADING'
-export const CHICAGO = 'CHICAGO'
-export const PLAYING = 'PLAYING'
-export const AFTER = 'AFTER'
