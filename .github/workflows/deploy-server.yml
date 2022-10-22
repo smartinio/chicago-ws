@@ -1,0 +1,18 @@
+name: Deploy server
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - server
+permissions:
+  contents: write
+jobs:
+  deploy-server:
+    concurrency: ci-${{ github.ref }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+      - name: Push server subtree to main-server 💾
+        run: git push origin `git subtree split --prefix server main`:main-server --force
