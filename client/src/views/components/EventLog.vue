@@ -94,7 +94,7 @@ export default {
         case 'CALLED_CHICAGO':
           return 'called Chicago! 🚀'
         case 'LOST_CHICAGO':
-            return 'lost their Chicago... 🥲'
+            return 'lost 15 points for failing their Chicago... 🥲'
         case 'WON_CHICAGO':
           return 'got 15 points for their Chicago! 🥳'
         case 'WON_ROUND': {
@@ -108,6 +108,9 @@ export default {
           return `won the game! 👑 👑 👑`
         case 'WON_ROUND_GUARANTEED': {
           const cards = event.cards.map(niceCard).join(', ')
+          if (event.cards.length === 1) {
+            return `won the round with an unbeatable ${cards}! 💪`
+          }
           return `made it rain 💦 with ${cards}`
         }
       }
