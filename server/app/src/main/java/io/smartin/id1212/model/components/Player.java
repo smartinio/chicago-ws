@@ -40,7 +40,7 @@ public class Player {
         game.restart(this);
     }
 
-    public void throwCards(List<PlayingCard> cards) throws TradeBannedException, WaitYourTurnException, OutOfCardsException, InappropriateActionException {
+    public void throwCards(List<PlayingCard> cards) throws TradeBannedException, WaitYourTurnException, OutOfCardsException, InappropriateActionException, TooManyCardsException {
         game.throwCards(this, cards);
     }
 

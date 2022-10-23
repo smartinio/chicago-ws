@@ -2,6 +2,7 @@ package io.smartin.id1212.model.components;
 
 import com.google.gson.annotations.Expose;
 
+import io.smartin.id1212.config.Rules;
 import io.smartin.id1212.exceptions.game.*;
 import io.smartin.id1212.exceptions.key.AlreadyStartedException;
 import io.smartin.id1212.model.components.Round.RoundMoveResult;
@@ -100,9 +101,13 @@ public class ChicagoGame {
     }
 
     public void throwCards(Player player, List<PlayingCard> cards)
-            throws TradeBannedException, WaitYourTurnException, OutOfCardsException, InappropriateActionException {
+            throws TradeBannedException, WaitYourTurnException, OutOfCardsException, InappropriateActionException, TooManyCardsException {
         if (!player.canTrade() && cards.size() > 0) {
             throw new TradeBannedException(TRADE_BANNED);
+        }
+
+        if (cards.size() > Rules.MAX_CARDS_PER_PLAYER) {
+            throw new TooManyCardsException(TOO_MANY_CARDS);
         }
 
         List<BestHandResult> playersWithBestHand = currentRound.throwCards(player, cards);

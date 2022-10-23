@@ -14,6 +14,7 @@ public class Strings {
     public static final String TOO_FEW_PLAYERS = "You need to be at least two players to start playing";
     public static final String TRADE_BANNED = "Your score is too high to trade cards";
     public static final String WAIT_YOUR_TURN = "It is not your turn yet";
+    public static final String TOO_MANY_CARDS = "You cannot trade more than 5 cards";
     public static final String INAPPROPRIATE_ACTION = "That action is inappropriate at this time";
     public static final String MUST_FOLLOW_SUIT = "The played card must follow the starting suit of the trick";
 }

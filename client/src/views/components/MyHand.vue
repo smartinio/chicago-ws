@@ -14,6 +14,8 @@
   </section>
 </template>
 <script>
+const isCard = (a) => (b) => a.suit === b.suit && a.value === b.value
+
 export default {
   props: ['me', 'phase', 'markedCards'],
   name: 'MyHand',
@@ -22,7 +24,7 @@ export default {
       this.$emit('toggleMark', card)
     },
     isMarked (card) {
-      return this.markedCards.includes(card)
+      return this.markedCards.some(isCard(card))
     },
     getCardClasses (card) {
       return !this.me.isMyTurn ? '' : this.isMarked(card) ? 'markedCard myTurn' : 'myTurn'

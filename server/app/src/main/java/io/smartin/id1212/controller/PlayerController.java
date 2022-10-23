@@ -30,7 +30,7 @@ public class PlayerController {
         }
     }
 
-    public void handleAction(Action action) throws UnknownActionException, NotInGameException, UnknownInvitationKeyException, ChicagoAlreadyCalledException, IllegalCardException, TooFewPlayersException, UnauthorizedStartException, TradeBannedException, OutOfCardsException, WaitYourTurnException, InappropriateActionException, IllegalMoveException, NicknameException, AlreadyStartedException, GameOverException, RoundNotFinishedException, UnauthorizedDealerException {
+    public void handleAction(Action action) throws UnknownActionException, NotInGameException, UnknownInvitationKeyException, ChicagoAlreadyCalledException, IllegalCardException, TooFewPlayersException, UnauthorizedStartException, TradeBannedException, OutOfCardsException, WaitYourTurnException, InappropriateActionException, IllegalMoveException, NicknameException, AlreadyStartedException, GameOverException, RoundNotFinishedException, UnauthorizedDealerException, TooManyCardsException {
         validateAuthority(action);
         switch (action.getType()) {
             case NEW_GAME:          createNewGame(action);          break;
@@ -74,7 +74,7 @@ public class PlayerController {
         player.startGame();
     }
 
-    private void handleThrowAction(Action action) throws TradeBannedException, OutOfCardsException, WaitYourTurnException, InappropriateActionException {
+    private void handleThrowAction(Action action) throws TradeBannedException, OutOfCardsException, WaitYourTurnException, InappropriateActionException, TooManyCardsException {
         List<PlayingCard> cards = Converter.toCards(action.getValue());
         player.throwCards(cards);
     }

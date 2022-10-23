@@ -37,6 +37,9 @@ import Players from '@/views/components/Players'
 import MyHand from '@/views/components/MyHand'
 import EventLog from '@/views/components/EventLog'
 
+const isCard = (a) => (b) => a.suit === b.suit && a.value === b.value
+const isNotCard = (a) => (b) => !isCard(a)(b)
+
 export default {
   name: 'Game',
   props: {
@@ -77,7 +80,7 @@ export default {
       }
     },
     unmark (card) {
-      this.markedCards = this.markedCards.filter(c => c !== card)
+      this.markedCards = this.markedCards.filter(isNotCard(card))
     },
     unmarkAll () {
       this.markedCards = []
@@ -89,7 +92,7 @@ export default {
       this.markedCards = [card]
     },
     isMarked (card) {
-      return this.markedCards.includes(card)
+      return this.markedCards.some(isCard(card))
     },
     isPhase (phase) {
       return this.game.round.phase === phase
