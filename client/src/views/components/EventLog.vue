@@ -5,6 +5,7 @@
       <div
         class="disable-scrollbars content is-flex is-justify-content-flex-start is-flex-direction-column"
         style="overflow: scroll; height: 300px; width: 400px; padding-top: 40px"
+        v-chat-scroll="{ always: false, smooth: true }"
         >
         <div v-for="event in events">
           <div
@@ -55,22 +56,17 @@ const niceCard = (card) => {
   return `${suits[card.suit]} ${Card}`
 }
 
+const points = (event) => {
+  const numerus = event.points === 1 ? 'point' : 'points'
+  return `${event.points} ${numerus}`
+}
+
 export default {
   props: ['game'],
   name: 'EventLog',
   computed: {
     events() {
       return this.game.events
-    }
-  },
-  mounted() {
-    window.onfocus = () => {
-      this.scrollToBottom()
-    }
-  },
-  watch: {
-    events() {
-      this.scrollToBottom()
     }
   },
   methods: {
@@ -94,19 +90,20 @@ export default {
         case 'PLAYED':
           return `played ${niceCard(event.card)}`
         case 'WON_TRICK':
-          return `won the trick!`
+          return `took the trick!`
         case 'CALLED_CHICAGO':
           return 'called Chicago! 🚀'
         case 'LOST_CHICAGO':
             return 'lost their Chicago... 🥲'
         case 'WON_CHICAGO':
-          return 'won their Chicago! 🥳'
-        case 'WON_ROUND':
-          return `won the round! 🙌`
+          return 'got 15 points for their Chicago! 🥳'
+        case 'WON_ROUND': {
+          const winning = event.points === 5 ? `closing with a Two!` : 'winning!'
+          return `got ${points(event)} for ${winning} 🙌`
+        }
         case 'WON_BEST_HAND':
           const Hand = capitalize(event.handType.replaceAll('_', ' '))
-          const points = event.points === 1 ? 'point' : 'points'
-          return `got ${event.points} ${points} for a ${Hand} 💰`
+          return `got ${points(event)} for a ${Hand} 💰`
         case 'WON_GAME':
           return `won the game! 👑 👑 👑`
         case 'WON_ROUND_GUARANTEED': {
@@ -115,15 +112,6 @@ export default {
         }
       }
     },
-    scrollToBottom() {
-      requestAnimationFrame(() => {
-        const rows = this.$refs.rows || []
-        const [lastRow] = rows.slice(-1)
-        if (lastRow) {
-          lastRow.scrollIntoView({ behavior: 'smooth' });
-        }
-      })
-    }
   }
 }
 </script>
