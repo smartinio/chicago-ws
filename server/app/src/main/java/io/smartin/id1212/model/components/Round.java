@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.gson.annotations.Expose;
 import io.smartin.id1212.exceptions.game.*;
+import io.smartin.id1212.model.components.PlayingCard.Value;
 import io.smartin.id1212.model.managers.TradingManager;
 import io.smartin.id1212.model.managers.TrickingManager;
 import io.smartin.id1212.model.managers.ScoreManager.BestHandResult;
@@ -155,58 +156,74 @@ public class Round {
 
         gtwLogger.info("PLAYED CARDS (ALL):");
         playedCards.forEach(gtwLogger::info);
+        gtwLogger.info("-------------------------------");
 
         playerLogger.info("PLAYED CARDS:");
         playerPlayedCards.forEach(playerLogger::info);
+        playerLogger.info("-------------------------------");
 
         playerLogger.info("REMAINING CARDS ON HAND:");
         ownCards.forEach(playerLogger::info);
+        playerLogger.info("-------------------------------");
 
         return true;
+    }
+
+    private <T> void logSet(String title, Set<T> set) {
+        Logger logSetLogger = LogManager.getLogger("logSet");
+        logSetLogger.info(title);
+        set.forEach(logSetLogger::info);
+        logSetLogger.info("-------------------------------");
     }
 
     private boolean someoneElseCouldBeatCard(PlayingCard card, Player currentPlayer, Set<PlayingCard> playedCards, Set<Player> eligiblePlayers) {
         Logger methodLogger = LogManager.getLogger("someoneElseCouldBeatCard:" + card);
 
-        Set<PlayingCard> ownCards = currentPlayer.getHand().getCards();
-        Set<PlayingCard> betterCards = getBetterCards(card);
+        if (card.getValue() == Value.ACE) {
+            return false;
+        }
+
         Set<Player> potentialContenders = trickingManager.playersWithPotentialSuit(card.getSuit());
 
-        methodLogger.info("Eligible players for {}", card);
-        eligiblePlayers.forEach(methodLogger::info);
-        methodLogger.info("Potential contenders for {}", card);
-        potentialContenders.forEach(methodLogger::info);
+        logSet("These can still play this trick: " + card, eligiblePlayers);
+        logSet("These players might still have suit: " + card.getSuit(), potentialContenders);
 
         potentialContenders.removeIf(p -> !eligiblePlayers.contains(p));
+        potentialContenders.remove(currentPlayer);
+
+        logSet("These players might still win this trick: " + card, potentialContenders);
 
         if (potentialContenders.isEmpty()) {
             methodLogger.info("Potential contenders empty for {}", card);
             return false;
         }
 
+        Set<PlayingCard> betterCards = getBetterCards(card);
+        Set<PlayingCard> ownCards = currentPlayer.getHand().getCards();
+
+        logSet("These cards are better than " + card, betterCards);
+
         for (PlayingCard betterCard : betterCards) {
             boolean nobodyCanBeatCard = ownCards.contains(betterCard) || playedCards.contains(betterCard);
             boolean someoneElseMightHaveThisBetterCard = !nobodyCanBeatCard;
 
             if (someoneElseMightHaveThisBetterCard) {
+                methodLogger.info("No guaranteed win. Someone could have {}", betterCard);
+                methodLogger.info("Why? Player does not have {} and it has not been played", betterCard);
                 return true;
             }
         }
 
-        methodLogger.info("Nobody else could possibly beat this card");
-        methodLogger.info("All better cards are self-owned/already played:");
-        betterCards.forEach(methodLogger::info);
+        methodLogger.info("Nobody else could possibly beat {}", card);
 
         return false;
     }
 
     private Set<PlayingCard> getBetterCards(PlayingCard card) {
-        Logger betterLogger = LogManager.getLogger("getBetterCards");
         Set<PlayingCard> betterCards = new HashSet<>();
 
         for (PlayingCard otherCard : allCards) {
             if (otherCard.beats(card)) {
-                betterLogger.info("{} beats {}", otherCard, card);
                 betterCards.add(otherCard);
             }
         }

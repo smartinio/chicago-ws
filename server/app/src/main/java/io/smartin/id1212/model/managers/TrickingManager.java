@@ -55,7 +55,7 @@ public class TrickingManager {
     }
 
     public Set<Player> playersWithPotentialSuit(Suit suit) {
-        return playersWithSuit.get(suit);
+        return new HashSet<>(playersWithSuit.get(suit));
     }
 
     public MoveResult handle(Move move) throws IllegalMoveException {

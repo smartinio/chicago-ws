@@ -27,7 +27,10 @@
             <span class="icon is-small"><i class="fa fa-refresh"></i></span>
             <span>Restart</span>
           </a>
-          <span v-if="me.isMyTurn && !isPhase(phase.AFTER)">
+          <span v-if="me.imDealing && isPhase(phase.AFTER)">
+            <a class="tag is-danger is-medium" @click="deal">DEAL CARDS</a>
+          </span>
+          <span v-else-if="me.isMyTurn">
             <span v-if="isPhase(phase.TRADING)">
               <a class="tag is-info is-medium" v-if="!markedCards.length" @click="passTrade">YOUR TURN (PASS)</a>
               <a class="tag is-success is-medium" v-else @click="trade">TRADE ({{ markedCards.length }})</a>
@@ -41,9 +44,6 @@
               <a class="tag is-success is-medium" v-if="markedCard" @click="play">PLAY CARD</a>
               <span class="tag is-black is-medium" v-else>YOUR TURN</span>
             </span>
-          </span>
-          <span v-else-if="me.imDealing && isPhase(phase.AFTER)">
-            <a class="tag is-danger is-medium" @click="deal">DEAL CARDS</a>
           </span>
           <span v-else>
             <span class="tag is-warning is-medium">WAITING</span>
