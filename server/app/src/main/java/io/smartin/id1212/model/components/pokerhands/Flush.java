@@ -32,9 +32,9 @@ public class Flush extends PokerHand {
             Flush other = (Flush) pokerHand;
             List<PlayingCard> myCards = new ArrayList<>(hand.getCards());
             List<PlayingCard> otherCards = new ArrayList<>(other.getHand().getCards());
-            Collections.sort(myCards, new SortByValue());
-            Collections.sort(otherCards, new SortByValue());
-            for (int i = myCards.size() -1; i >= 0; i--) {
+            Collections.sort(myCards, new SortByValue(false));
+            Collections.sort(otherCards, new SortByValue(false));
+            for (int i = 0; i < myCards.size(); i++) {
                 if (!myCards.get(i).getValue().equals(otherCards.get(i).getValue())) {
                     return myCards.get(i).getValue().ordinal() > otherCards.get(i).getValue().ordinal();
                 }

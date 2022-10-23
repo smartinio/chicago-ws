@@ -182,10 +182,17 @@ public class Hand {
         }
     }
 
-    public void moveAllToPlayed() {
-        for (PlayingCard card : cards) {
-            played.add(card);
-        }
+    public void moveAllToPlayed(boolean highestFirst) {
+        List<PlayingCard> remaining = new ArrayList<>(cards);
+        remaining.sort(new SortByValue(!highestFirst));
+        played.addAll(remaining);
         cards.clear();
+    }
+
+    public PlayingCard getLastPlayedCard() {
+        if (played.size() == 0) {
+            return null;
+        }
+        return played.get(played.size() - 1);
     }
 }

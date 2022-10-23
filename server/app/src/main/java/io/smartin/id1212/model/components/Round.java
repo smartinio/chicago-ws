@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import com.google.gson.annotations.Expose;
 import io.smartin.id1212.exceptions.game.*;
 import io.smartin.id1212.model.components.PlayingCard.Value;
+import io.smartin.id1212.model.components.comparators.SortByValue;
 import io.smartin.id1212.model.managers.TradingManager;
 import io.smartin.id1212.model.managers.TrickingManager;
 import io.smartin.id1212.model.managers.ScoreManager.BestHandResult;
@@ -98,19 +99,27 @@ public class Round {
         MoveResult moveResult = trickingManager.handle(move);
 
         Move winningMove = moveResult.winningMove;
+        List<PlayingCard> finalCards = new ArrayList<>(player.getHand().getCards());
         boolean hasMoreTricks = moveResult.hasMoreTricks;
         boolean isTrickDone = moveResult.isTrickDone;
         boolean isPlayerWinning = winningMove.getPlayer().equals(player);
         boolean chicagoWasLost = hasChicagoCalled() && !winningMove.getPlayer().equals(chicagoTaker);
         boolean playerGuaranteedToWin = isPlayerWinning && playerIsGuaranteedToWinRound(player, winningMove);
-        List<PlayingCard> finalCards = new ArrayList<>();
 
         if (hasMoreTricks && playerGuaranteedToWin) {
-            finalCards.addAll(player.getHand().getCards());
-            finalCards.sort((a, b) -> b.getValue().ordinal() - a.getValue().ordinal());
-            finalCards.add(0, move.getCard());
-            PlayingCard finalCard = finalCards.get(finalCards.size() - 1);
+            // sort final cards descending (as one would play irl)
+            finalCards.sort(new SortByValue(false));
+
+            // add the winning move to the start so client reads: "..made it rain with X, Y, Z" where X is winning move and Y, Z are the finalCards sorted descending
+            finalCards.add(0, winningMove.getCard());
+
+            // move remaining cards to played so hand is shown in client (same sorting as above)
+            player.getHand().moveAllToPlayed(true);
+
+            // use the final card to get correct score (card will be a 2 if present due to sort order)
+            PlayingCard finalCard = player.getHand().getLastPlayedCard();
             winningMove = new Move(player, finalCard);
+
             setPhase(Round.GamePhase.AFTER);
         }
 
@@ -176,7 +185,8 @@ public class Round {
         logSetLogger.info("-------------------------------");
     }
 
-    private boolean someoneElseCouldBeatCard(PlayingCard card, Player currentPlayer, Set<PlayingCard> playedCards, Set<Player> eligiblePlayers) {
+    private boolean someoneElseCouldBeatCard(PlayingCard card, Player currentPlayer, Set<PlayingCard> playedCards,
+            Set<Player> eligiblePlayers) {
         Logger methodLogger = LogManager.getLogger("someoneElseCouldBeatCard:" + card);
 
         if (card.getValue() == Value.ACE) {

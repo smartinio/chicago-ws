@@ -174,7 +174,7 @@ public class ChicagoGame {
 
     private void showEveryonesCards() {
         for (Player player : players) {
-            player.getHand().moveAllToPlayed();
+            player.getHand().moveAllToPlayed(false);
         }
     }
 
