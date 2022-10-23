@@ -175,4 +175,8 @@ public class Player {
     public void dealCards() throws GameOverException, RoundNotFinishedException, UnauthorizedDealerException {
         game.dealCards(this);
     }
+
+    public void sendChatMessage(String message) throws NotInGameException {
+        game.sendChatMessage(this, message);
+    }
 }

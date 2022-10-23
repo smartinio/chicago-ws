@@ -58,5 +58,6 @@ public class Action {
         RESTART_GAME,
         PING,
         DEAL_CARDS,
+        SEND_CHAT_MESSAGE,
     }
 }

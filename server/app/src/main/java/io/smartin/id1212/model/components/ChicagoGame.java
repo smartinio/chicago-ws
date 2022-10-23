@@ -71,7 +71,9 @@ public class ChicagoGame {
     }
 
     private void logEvent(GameEvent event) {
-        events.add(event);
+        synchronized (events) {
+            events.add(event);
+        }
     }
 
     void restart(Player player) throws TooFewPlayersException, UnauthorizedStartException {
@@ -311,7 +313,8 @@ public class ChicagoGame {
         return winners;
     }
 
-    public void dealCards(Player player) throws GameOverException, RoundNotFinishedException, UnauthorizedDealerException {
+    public void dealCards(Player player)
+            throws GameOverException, RoundNotFinishedException, UnauthorizedDealerException {
         if (!player.equals(dealer)) {
             throw new UnauthorizedDealerException(UNAUTHORIZED_DEALER);
         }
@@ -323,5 +326,12 @@ public class ChicagoGame {
         }
         newRound();
         currentRound.start();
+    }
+
+    public void sendChatMessage(Player player, String message) throws NotInGameException {
+        if (!players.contains(player)) {
+            throw new NotInGameException(INVALID_PLAYER);
+        }
+        logEvent(GameEvent.chatMessage(player, message));
     }
 }

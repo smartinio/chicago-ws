@@ -128,6 +128,16 @@ public class GameEvent {
     return event;
   }
 
+  public static GameEvent chatMessage(Player player, String message) {
+    GameEvent event = new GameEvent();
+
+    event.actor = player;
+    event.action = EventAction.CHAT_MESSAGE;
+    event.message = message;
+
+    return event;
+  }
+
   @Expose
   public long timestamp;
 
@@ -155,6 +165,9 @@ public class GameEvent {
   @Expose
   public int points;
 
+  @Expose
+  public String message;
+
   public enum EventAction {
     CALLED_CHICAGO,
     LOST_CHICAGO,
@@ -169,5 +182,7 @@ public class GameEvent {
     // server events
     NEW_ROUND,
     TRICK_DONE,
+    // chat
+    CHAT_MESSAGE,
   }
 }

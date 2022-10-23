@@ -33,16 +33,22 @@ public class PlayerController {
     public void handleAction(Action action) throws UnknownActionException, NotInGameException, UnknownInvitationKeyException, ChicagoAlreadyCalledException, IllegalCardException, TooFewPlayersException, UnauthorizedStartException, TradeBannedException, OutOfCardsException, WaitYourTurnException, InappropriateActionException, IllegalMoveException, NicknameException, AlreadyStartedException, GameOverException, RoundNotFinishedException, UnauthorizedDealerException {
         validateAuthority(action);
         switch (action.getType()) {
-            case NEW_GAME:      createNewGame(action);          break;
-            case JOIN_GAME:     joinGame(action);               break;
-            case START_GAME:    startGame();                    break;
-            case DEAL_CARDS:    dealCards();                    break;
-            case THROW:         handleThrowAction(action);      break;
-            case CHICAGO:       handleChicagoAction(action);    break;
-            case MOVE:          handleMoveAction(action);       break;
-            case RESTART_GAME:  restartGame();                  break;
-            default: throw new UnknownActionException(UNKNOWN_ACTION);
+            case NEW_GAME:          createNewGame(action);          break;
+            case JOIN_GAME:         joinGame(action);               break;
+            case START_GAME:        startGame();                    break;
+            case DEAL_CARDS:        dealCards();                    break;
+            case THROW:             handleThrowAction(action);      break;
+            case CHICAGO:           handleChicagoAction(action);    break;
+            case MOVE:              handleMoveAction(action);       break;
+            case RESTART_GAME:      restartGame();                  break;
+            case SEND_CHAT_MESSAGE: sendChatMessage(action);        break;
+            default: throw new      UnknownActionException(UNKNOWN_ACTION);
         }
+    }
+
+    private void sendChatMessage(Action action) throws NotInGameException {
+        String message = action.getValue();
+        player.sendChatMessage(message);
     }
 
     private void restartGame() throws TooFewPlayersException, UnauthorizedStartException {
