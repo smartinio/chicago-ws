@@ -1,8 +1,8 @@
 <template>
-  <div class="field has-addons">
-    <p class="control has-icons-left has-icons-right">
+  <div class="field has-addons" style="width: 100%">
+    <p class="control has-icons-left has-icons-right" style="width: 100%">
       <input
-        :placeholder="'Message'"
+        placeholder="Message"
         class="input is-rounded"
         type="text"
         v-model.trim="message"

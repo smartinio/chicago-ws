@@ -1,7 +1,11 @@
 <template>
   <section class="section">
         <div class="container">
-          <div class="field">
+          <ConnectionStatus
+            :connected="connected"
+            @reconnect="$emit('reconnect')"
+          />
+          <div class="field" style="padding-top: 30px">
             <div class="control">
               <label class="label is-large">Nickname</label>
               <input
@@ -62,10 +66,18 @@
 import { JOIN_GAME, NEW_GAME } from '@/dto/action/types'
 import JoinRequest from '@/dto/joinrequest/JoinRequest'
 import Action from '@/dto/action/Action'
+import ConnectionStatus from '@/views/components/ConnectionStatus'
 
 export default {
   name: 'Start',
+  components: {
+    ConnectionStatus,
+  },
   props: {
+    connected: {
+      type: Boolean,
+      required: true,
+    },
     urlKey: {
       type: String,
       default: ''

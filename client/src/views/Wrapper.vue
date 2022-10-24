@@ -1,21 +1,23 @@
 <template>
   <div>
-    <ConnectionStatus
-    :connected="socket.connected"
-    @reconnect="connect" />
-
     <Start
-    @action="dispatchAction"
-    @changeKey="clearKeyError"
-    @changeNick="clearNickError"
-    :errors="errors"
-    :urlKey="$route.params.key"
-    v-if="!game.invKey" />
+      v-if="!game.invKey"
+      @action="dispatchAction"
+      @changeKey="clearKeyError"
+      @changeNick="clearNickError"
+      @reconnect="connect"
+      :connected="socket.connected"
+      :errors="errors"
+      :urlKey="$route.params.key"
+    />
 
     <Game
-    :me="me"
-    :game="game"
-    v-else />
+      v-else
+      @reconnect="connect"
+      :connected="socket.connected"
+      :me="me"
+      :game="game"
+    />
   </div>
 </template>
 <script>

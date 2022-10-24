@@ -1,41 +1,62 @@
 <template>
-  <div>
-    <Controls
-      :game="game"
-      :me="me"
-      :controlPlayer="controlPlayer"
-      :currentPlayer="currentPlayer"
-      :dealer="dealer"
-      :baseMove="baseMove"
-      :markedCards="markedCards"
-      @action="unmarkAll"
-    />
-    <section class="section pb-0 pt-0 is-flex is-flex-direction-row">
-      <EventLog
-        :game="game"
-      />
-      <MyHand
-        v-if="game.started"
-        :me="me"
-        :markedCards="markedCards"
-        @toggleMark="toggleMark"
-      />
-    </section>
-    <Players
-      v-if="otherPlayers"
-      :players="otherPlayers"
-      :baseMove="baseMove"
-      :currentPlayer="currentPlayer"
-      :dealer="dealer"
-    />
-  </div>
+  <section class="section pb-0 pt-0 is-flex is-flex-direction-column">
+    <div class="is-flex is-flex-direction-row" style="flex: 1">
+      <div class="is-flex is-flex-direction-column is-justify-content-space-between" style="height: 100vh">
+        <div class="is-flex" style="flex: 1; overflow: hidden; padding-top: 30px; padding-bottom: 30px">
+            <Chat :game="game" :connected="connected" @reconnect="$emit('reconnect')" />
+        </div>
+      </div>
+      <div style="width: 30px" />
+      <div class="container is-flex is-flex-direction-column">
+        <div style="padding-top: 30px">
+          <div class="is-flex is-flex-direction-row is-justify-content-space-between">
+            <Player
+              :isMe="true"
+              variant="large"
+              fallbackName="You"
+              :player="controlPlayer"
+              :baseMove="baseMove"
+              :currentPlayer="currentPlayer"
+              :dealer="dealer"
+            />
+            <Controls
+              :game="game"
+              :me="me"
+              :controlPlayer="controlPlayer"
+              :currentPlayer="currentPlayer"
+              :dealer="dealer"
+              :baseMove="baseMove"
+              :markedCards="markedCards"
+              @action="unmarkAll"
+            />
+          </div>
+          <Players
+            v-if="otherPlayers"
+            :players="otherPlayers"
+            :baseMove="baseMove"
+            :currentPlayer="currentPlayer"
+            :dealer="dealer"
+          />
+        </div>
+        <div class="is-flex is-justify-content-flex-end" style="flex: 1">
+          <MyHand
+            v-if="game.started"
+            :me="me"
+            :markedCards="markedCards"
+            @toggleMark="toggleMark"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
 </template>
 <script>
 import { PLAYING, CHICAGO } from '@/store/modules/game/phase_types'
 import Controls from '@/views/components/Controls'
 import Players from '@/views/components/Players'
 import MyHand from '@/views/components/MyHand'
-import EventLog from '@/views/components/EventLog'
+import Chat from '@/views/components/Chat'
+import Player from '@/views/components/Player'
 
 const isCard = (a) => (b) => a.suit === b.suit && a.value === b.value
 const isNotCard = (a) => (b) => !isCard(a)(b)
@@ -43,6 +64,10 @@ const isNotCard = (a) => (b) => !isCard(a)(b)
 export default {
   name: 'Game',
   props: {
+    connected: {
+      type: Boolean,
+      required: true,
+    },
     game: {
       type: Object,
       required: true
@@ -56,7 +81,8 @@ export default {
     Controls,
     Players,
     MyHand,
-    EventLog,
+    Chat,
+    Player,
   },
   data () {
     return {
@@ -121,7 +147,12 @@ export default {
       return this.game.players.find(p => p.id === this.me.id)
     },
     otherPlayers () {
-      return this.game.players.filter(p => p.id !== this.me.id)
+      const everyone = [...this.game.players]
+      const myIndex = everyone.findIndex(p => p.id === this.me.id)
+      for (let i=0; i < myIndex; i++) {
+        everyone.push(everyone.shift())
+      }
+      return everyone.slice(1)
     }
   }
 }
@@ -137,19 +168,6 @@ export default {
     width: 1rem;
     height: 1rem;
   }
-  .playingCard {
-    opacity: 0.5;
-    transform: translateY(0px);
-    box-shadow: 0 0 5px rgba(0,0,0,0.1);
-    transition: all 0.2s ease;
-    max-height: 30vh;
-  }
-  .markedCard {
-    transform: translateY(-20px);
-    box-shadow: 0px 8px 20px rgba(0,0,0,0.4);
-    transition: all 0.3s ease;
-    max-height: 30vh;
-  }
   .baseCard {
     border: 2px solid;
     box-sizing: border-box;
@@ -158,9 +176,6 @@ export default {
   }
   .avatar {
     border-radius: 25%;
-  }
-  .myTurn {
-    opacity: 1;
   }
 
   @keyframes pulse {

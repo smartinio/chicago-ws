@@ -34,35 +34,12 @@
             </figure>
           </div>
         </div>
-        <div class="column is-narrow">
-          <span
-            class="tag is-light"
-            v-if="player.hasTakenChicago"
-            style="margin-left: 10px"
-          >
-            🚀
-          </span>
-          <span
-            class="tag is-info"
-            v-if="!isMe && isCurrentPlayer(player)"
-            style="margin-left: 10px"
-          >
-            PLAYING
-          </span>
-          <span
-            class="tag is-dark"
-            v-if="isDealer(player)"
-            style="margin-left: 10px"
-          >
-            DEALER
-          </span>
-          <span
-            class="tag is-success"
-            v-if="player.winner"
-            style="margin-left: 10px"
-          >
-            WINNER
-          </span>
+        <div class="column is-narrow" v-if="!isMe">
+          <PlayerStatus
+            :currentPlayer="currentPlayer"
+            :dealer="dealer"
+            :player="player"
+          />
         </div>
       </div>
     </div>
@@ -70,9 +47,14 @@
 </template>
 
 <script>
+import PlayerStatus from '@/views/components/PlayerStatus'
+
 export default {
   name: 'Player',
   props: ['player', 'baseMove', 'currentPlayer', 'dealer', 'fallbackName', 'variant', 'isMe'],
+  components: {
+    PlayerStatus
+  },
   computed: {
     figureClass() {
       const size = this.variant === 'large' ? 96 : 48
@@ -84,12 +66,6 @@ export default {
       if (!this.baseMove) return false
       return (card.suit === this.baseMove.card.suit && card.value === this.baseMove.card.value)
     },
-    isCurrentPlayer (player) {
-      return this.currentPlayer && (this.currentPlayer.id === player.id)
-    },
-    isDealer (player) {
-      return this.dealer && (this.dealer.id === player.id)
-    }
   }
 }
 </script>

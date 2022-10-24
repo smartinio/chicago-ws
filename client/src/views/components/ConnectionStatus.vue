@@ -1,10 +1,10 @@
 <template>
-    <div class="container breathe">
-      <a @click="handleClick" class="button is-pulled-right is-small" :class="statusClass">
-        <span class="icon is-small"><i class="fa" :class="statusIcon"></i></span>
-        <span>{{ statusText }}</span>
-      </a>
-    </div>
+  <div>
+    <a @click="handleClick" class="button is-small is-rounded" :class="statusClass">
+      <span class="icon is-small"><i class="fa" :class="statusIcon"></i></span>
+      <span>{{ statusText }}</span>
+    </a>
+  </div>
 </template>
 
 <script>
@@ -36,9 +36,3 @@ export default {
   }
 }
 </script>
-
-<style lang="css">
-  .breathe {
-    margin-top: 20px;
-  }
-</style>

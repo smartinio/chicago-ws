@@ -1,24 +1,17 @@
 <template>
-  <section class="section">
-    <div class="container">
-      <div class="columns">
-        <div class="column" v-for="(player, index) in players">
-          <div class="card">
-            <div class="card-content">
-              <Player
-                :isMe="false"
-                :fallbackName="'Player ' + index + 1"
-                :player="player"
-                :currentPlayer="currentPlayer"
-                :baseMove="baseMove"
-                :dealer="dealer"
-              />
-            </div>
-          </div>
-        </div>
+    <div class="is-flex is-flex-direction-column" style="width: 100%">
+      <div v-for="(player, index) in players" style="padding-top: 15px">
+        <Player
+          :isMe="false"
+          variant="large"
+          :fallbackName="'Player ' + index + 1"
+          :player="player"
+          :currentPlayer="currentPlayer"
+          :baseMove="baseMove"
+          :dealer="dealer"
+        />
       </div>
     </div>
-  </section>
 </template>
 <script>
 import Player from '@/views/components/Player'
