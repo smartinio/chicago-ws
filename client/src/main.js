@@ -4,9 +4,7 @@ import store from './store'
 import helpers from './mixins/helpers'
 import router from './router'
 import VueChatScroll from 'vue-chat-scroll'
-import VueTimeago from 'vue-timeago'
 
-Vue.use(VueTimeago, {})
 Vue.use(VueChatScroll)
 Vue.config.productionTip = process.env.NODE_ENV === 'development'
 Vue.mixin(helpers)

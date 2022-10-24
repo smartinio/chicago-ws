@@ -1,7 +1,7 @@
 <template>
   <section class="section pb-0 pt-0" style="position: relative">
     <div class="container">
-      <div v-show="false" v-html="f('✨💰👀🤔🔁🚀🥲🥳🙌👑💦♣️❤️♦️♠️')" />
+      <div v-show="false" v-html="preload()" />
       <div class="disable-scrollbars content is-flex is-justify-content-flex-start is-flex-direction-column"
         style="overflow: scroll; height: 300px; width: 400px; padding-top: 40px"
         v-chat-scroll="{ always: false, smooth: true }">
@@ -9,15 +9,15 @@
           <div v-if="event.actor.id === 'server' && formatServerEvent(event)"
             style="border-bottom: 1px solid #ccc; height: 15px; text-align: center; margin-bottom: 15px">
             <span class="has-text-grey is-size-7" style="height: 40px; background-color: #fff; padding: 5px"
-              v-html="f(formatServerEvent(event))" />
+              v-html="formatServerEvent(event)" />
           </div>
           <div v-else-if="formatPlayerEvent(event)">
-            <strong>{{ event.actor.name }}</strong>
-            <span v-html="f(formatPlayerEvent(event))" />
-            <span width="30px" style="display: inline-block" />
             <span class="has-text-grey-light is-size-7" style="line-height: 30px;">
-              <timeago :auto-update="5" :datetime="event.timestamp" :converter-options="{ includeSeconds: true }" />
+              {{ format(event.timestamp, 'HH:mm') }}
             </span>
+            <span width="30px" style="display: inline-block" />
+            <strong>{{ event.actor.name }}</strong>
+            <span v-html="formatPlayerEvent(event)" />
           </div>
           <span ref="rows"></span>
         </div>
@@ -28,6 +28,7 @@
   </section>
 </template>
 <script>
+import { format } from 'date-fns'
 import EmojiConvertor from 'emoji-js'
 import ChatSender from './ChatSender'
 
@@ -65,65 +66,71 @@ const sanitize = (string) => {
   return pre.innerHTML ? pre.innerHTML.trim() : undefined
 }
 
+const withEmojis = (callback) => (...args) => {
+  const string = callback(...args)
+  return string ? emoji.replace_unified(string) : undefined
+}
+
 export default {
-  props: ["game"],
-  name: "EventLog",
+  props: ['game'],
+  name: 'EventLog',
   components: {
     ChatSender
   },
   computed: {
     events() {
-      return this.game.events;
+      return this.game.events
     }
   },
   methods: {
-    f: emoji.replace_unified.bind(emoji),
-    formatServerEvent(event) {
+    format,
+    preload: withEmojis(() => ('✨💰👀🤔🔁🚀🥲🥳🙌👑💦♣️❤️♦️♠️')),
+    formatServerEvent: withEmojis((event) => {
       switch (event.action) {
-        case "NEW_ROUND":
-          return "✨ A new round begins ✨";
-        case "TRICK_DONE":
-          return "👀";
+        case 'NEW_ROUND':
+          return '✨ A new round begins ✨'
+        case 'TRICK_DONE':
+          return '👀'
       }
-    },
-    formatPlayerEvent(event) {
+    }),
+    formatPlayerEvent: withEmojis((event) => {
       switch (event.action) {
-        case "CHAT_MESSAGE":
-          const message = sanitize(event.message);
-          return message ? `💬 ${message}` : undefined;
-        case "TRADED": {
-          const cards = event.numCards === 1 ? "card" : "cards";
-          const icon = event.numCards === 0 ? "🤔" : "🔁";
-          return `traded ${event.numCards} ${cards} ${icon}`;
+        case 'CHAT_MESSAGE':
+          const message = sanitize(event.message)
+          return message ? `💬 ${message}` : undefined
+        case 'TRADED': {
+          const cards = event.numCards === 1 ? 'card' : 'cards'
+          const icon = event.numCards === 0 ? '🤔' : '🔁'
+          return `traded ${event.numCards} ${cards} ${icon}`
         }
-        case "PLAYED":
-          return `played ${niceCard(event.card)}`;
-        case "WON_TRICK":
-          return `took the trick!`;
-        case "CALLED_CHICAGO":
-          return "called Chicago! 🚀";
-        case "LOST_CHICAGO":
-          return "lost 15 points for failing their Chicago... 🥲";
-        case "WON_CHICAGO":
-          return "got 15 points for their Chicago! 🥳";
-        case "WON_ROUND": {
-          const winning = event.points === 5 ? `closing with a Two!` : "winning!";
-          return `got ${points(event)} for ${winning} 🙌`;
+        case 'PLAYED':
+          return `played ${niceCard(event.card)}`
+        case 'WON_TRICK':
+          return `took the trick!`
+        case 'CALLED_CHICAGO':
+          return 'called Chicago! 🚀'
+        case 'LOST_CHICAGO':
+          return 'lost 15 points for failing their Chicago... 🥲'
+        case 'WON_CHICAGO':
+          return 'got 15 points for their Chicago! 🥳'
+        case 'WON_ROUND': {
+          const winning = event.points === 5 ? `closing with a Two!` : 'winning!'
+          return `got ${points(event)} for ${winning} 🙌`
         }
-        case "WON_BEST_HAND":
-          const Hand = capitalize(event.handType.replaceAll("_", " "));
-          return `got ${points(event)} for a ${Hand} 💰`;
-        case "WON_GAME":
-          return `won the game! 👑 👑 👑`;
-        case "WON_ROUND_GUARANTEED": {
-          const cards = event.cards.map(niceCard).join(", ");
+        case 'WON_BEST_HAND':
+          const Hand = capitalize(event.handType.replaceAll('_', ' '))
+          return `got ${points(event)} for a ${Hand} 💰`
+        case 'WON_GAME':
+          return `won the game! 👑 👑 👑`
+        case 'WON_ROUND_GUARANTEED': {
+          const cards = event.cards.map(niceCard).join(', ')
           if (event.cards.length === 1) {
-            return `won the round with an unbeatable ${cards}! 💪`;
+            return `won the round with an unbeatable ${cards}! 💪`
           }
-          return `made it rain 💦 with ${cards}`;
+          return `made it rain 💦 with ${cards}`
         }
       }
-    },
+    }),
   },
 }
 </script>
