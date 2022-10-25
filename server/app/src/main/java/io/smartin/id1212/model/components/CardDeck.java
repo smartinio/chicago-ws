@@ -7,25 +7,23 @@ import java.util.*;
 import static io.smartin.id1212.config.Strings.EMPTY_DECK;
 
 public class CardDeck {
-    private Set<PlayingCard> cards = new HashSet<>();
+    private List<PlayingCard> shuffledCards = new ArrayList<>();
 
-    public CardDeck (boolean full) {
-        if (!full) {
-            return;
-        }
+    public CardDeck () {
         for (PlayingCard.Suit suit : PlayingCard.Suit.values()) {
             for (PlayingCard.Value value : PlayingCard.Value.values()) {
-                cards.add(new PlayingCard(suit, value));
+                shuffledCards.add(new PlayingCard(suit, value));
             }
         }
+        Collections.shuffle(shuffledCards);
     }
 
     public Set<PlayingCard> getCards() {
-        return cards;
+        return new HashSet<>(shuffledCards);
     }
 
     public void addCards(Collection<PlayingCard> thrown) {
-        cards.addAll(thrown);
+        shuffledCards.addAll(thrown);
     }
 
     public Set<PlayingCard> drawInitial() {
@@ -40,30 +38,19 @@ public class CardDeck {
     }
 
     public Set<PlayingCard> draw(int amount) throws OutOfCardsException {
-        synchronized (cards) {
-            if (cards.size() == 0)
-            throw new OutOfCardsException(EMPTY_DECK);
-            Set<PlayingCard> playingCards = new HashSet<>();
-            Random random = new Random();
-            for (int i = 0; i < amount; i++) {
-                int n = random.nextInt(cards.size());
-                PlayingCard toRemove = null;
-                int j = 0;
-                for (PlayingCard card : cards) {
-                    if (j == n) {
-                        playingCards.add(card);
-                        toRemove = card;
-                        break;
-                    }
-                    j++;
-                }
-                cards.remove(toRemove);
+        synchronized (shuffledCards) {
+            if (shuffledCards.size() < amount) {
+                throw new OutOfCardsException(EMPTY_DECK);
             }
-            return playingCards;
+            Set<PlayingCard> cards = new HashSet<>();
+            for (int i=0; i<amount; i++) {
+                cards.add(shuffledCards.remove(0));
+            }
+            return cards;
         }
     }
 
     public int size() {
-        return cards.size();
+        return shuffledCards.size();
     }
 }

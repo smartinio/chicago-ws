@@ -100,14 +100,18 @@ public class ChicagoGame {
         started = true;
     }
 
-    public void throwCards(Player player, List<PlayingCard> cards)
-            throws TradeBannedException, WaitYourTurnException, OutOfCardsException, InappropriateActionException, TooManyCardsException {
+    public void throwCards(Player player, Set<PlayingCard> cards)
+            throws TradeBannedException, WaitYourTurnException, OutOfCardsException, InappropriateActionException, TooManyCardsException, UnauthorizedTradeException {
         if (!player.canTrade() && cards.size() > 0) {
             throw new TradeBannedException(TRADE_BANNED);
         }
 
         if (cards.size() > Rules.MAX_CARDS_PER_PLAYER) {
             throw new TooManyCardsException(TOO_MANY_CARDS);
+        }
+
+        if (!player.getHand().getCards().containsAll(cards)) {
+            throw new UnauthorizedTradeException(UNAUTHORIZED_TRADE);
         }
 
         List<BestHandResult> playersWithBestHand = currentRound.throwCards(player, cards);

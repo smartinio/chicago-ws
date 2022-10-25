@@ -33,11 +33,11 @@ public class Round {
 
     private TrickingManager trickingManager;
     private TradingManager tradingManager;
-    private CardDeck deck = new CardDeck(true);
+    private CardDeck deck = new CardDeck();
     private ChicagoGame game;
     private int numAskedAboutChicago = 0;
 
-    private final Set<PlayingCard> allCards = new CardDeck(true).getCards();
+    private final Set<PlayingCard> allCards = new CardDeck().getCards();
 
     public ChicagoGame getGame() {
         return game;
@@ -268,8 +268,8 @@ public class Round {
         return phase == GamePhase.PLAYING;
     }
 
-    List<BestHandResult> throwCards(Player player, List<PlayingCard> cards)
-            throws OutOfCardsException, WaitYourTurnException, InappropriateActionException {
+    List<BestHandResult> throwCards(Player player, Set<PlayingCard> cards)
+            throws OutOfCardsException, WaitYourTurnException, InappropriateActionException, UnauthorizedTradeException {
         checkPhase(GamePhase.TRADING);
         checkTurn(player);
         List<BestHandResult> result = tradingManager.handle(player, cards);

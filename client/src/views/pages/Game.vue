@@ -112,7 +112,9 @@ export default {
       this.markedCards = []
     },
     mark (card) {
-      this.markedCards.push(card)
+      if (!this.isMarked(card)) {
+        this.markedCards.push(card)
+      }
     },
     markSingle (card) {
       this.markedCards = [card]

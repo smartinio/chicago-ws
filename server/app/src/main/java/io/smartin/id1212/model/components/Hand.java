@@ -41,7 +41,7 @@ public class Hand {
         cards.remove(card);
     }
 
-    public void removeAll(List<PlayingCard> thrown) {
+    public void removeAll(Set<PlayingCard> thrown) {
         cards.removeAll(thrown);
     }
 

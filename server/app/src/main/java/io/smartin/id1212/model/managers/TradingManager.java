@@ -5,7 +5,9 @@ import io.smartin.id1212.model.components.*;
 import io.smartin.id1212.model.managers.ScoreManager.BestHandResult;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static io.smartin.id1212.config.Rules.MAX_TRADES_PER_ROUND;
 
@@ -18,21 +20,19 @@ public class TradingManager {
         this.tradingCycles.add(new TradingCycle());
     }
 
-    public List<BestHandResult> handle(Player player, List<PlayingCard> cards) throws OutOfCardsException {
+    public List<BestHandResult> handle(Player player, Set<PlayingCard> cards) throws OutOfCardsException {
         int maxThrows = round.getGame().getPlayers().size();
         List<BestHandResult> result = new ArrayList<>();
 
         synchronized (round) {
             if (cards.size() > 0) {
+                CardDeck deck = round.getDeck();
                 player.removeCards(cards);
+                deck.addCards(cards);
+                player.giveCards(deck.draw(cards.size()));
                 currentCycle().addPlayerThrow(player, cards);
-                try {
-                    player.giveCards(round.getDeck().draw(cards.size()));
-                } catch (OutOfCardsException e) {
-                    round.getDeck().addCards(thrownCards().draw(cards.size() - round.getDeck().size()));
-                }
             } else {
-                currentCycle().addPlayerThrow(player, new ArrayList<>());
+                currentCycle().addPlayerThrow(player, new HashSet<>());
             }
             if (currentCycle().isFinished(maxThrows)) {
                 if (maxTradingCyclesReached()) {
@@ -49,14 +49,6 @@ public class TradingManager {
 
     private boolean maxTradingCyclesReached() {
         return tradingCycles.size() == MAX_TRADES_PER_ROUND;
-    }
-
-    private CardDeck thrownCards() {
-        CardDeck cardDeck = new CardDeck(false);
-        for (TradingCycle tradingCycle : tradingCycles) {
-            cardDeck.addCards(tradingCycle.getCards());
-        }
-        return cardDeck;
     }
 
     private TradingCycle currentCycle() {
