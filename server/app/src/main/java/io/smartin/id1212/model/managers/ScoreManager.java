@@ -3,8 +3,10 @@ package io.smartin.id1212.model.managers;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import io.smartin.id1212.config.Rules;
 import io.smartin.id1212.exceptions.game.HandsAreEqualException;
 import io.smartin.id1212.model.components.*;
+import io.smartin.id1212.model.components.Hand.HandType;
 import io.smartin.id1212.model.components.pokerhands.abstracts.PokerHand;
 
 import java.util.*;
@@ -75,7 +77,8 @@ public class ScoreManager {
         List<BestHandResult> results = new ArrayList<>();
 
         for (Player winner : winners) {
-            int points = winner.getHand().getPokerHand().getType().ordinal();
+            HandType winnerHandType = winner.getHand().getPokerHand().getType();
+            int points = Rules.HAND_SCORES.get(winnerHandType);
             winner.addPoints(points);
             System.out.println("Added " + points + " points to player " + winner.getName());
             results.add(new BestHandResult(winner, points));
