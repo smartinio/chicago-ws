@@ -22,7 +22,7 @@ public class Hand {
         return cards;
     }
 
-    private Set<PlayingCard> getAllFive() {
+    public Set<PlayingCard> getAllFive() {
         Set<PlayingCard> allFive = new HashSet<>();
         allFive.addAll(played);
         allFive.addAll(cards);

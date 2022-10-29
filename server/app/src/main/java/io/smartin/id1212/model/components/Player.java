@@ -56,7 +56,7 @@ public class Player {
         game.playCard(this, card);
     }
 
-    void setHand(Hand hand) {
+    public void setHand(Hand hand) {
         this.hand = hand;
     }
 

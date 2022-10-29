@@ -30,8 +30,8 @@ public class Flush extends PokerHand {
     public boolean beats(PokerHand pokerHand) throws HandsAreEqualException {
         if (pokerHand instanceof Flush) {
             Flush other = (Flush) pokerHand;
-            List<PlayingCard> myCards = new ArrayList<>(hand.getCards());
-            List<PlayingCard> otherCards = new ArrayList<>(other.getHand().getCards());
+            List<PlayingCard> myCards = new ArrayList<>(hand.getAllFive());
+            List<PlayingCard> otherCards = new ArrayList<>(other.getHand().getAllFive());
             Collections.sort(myCards, new SortByValue(false));
             Collections.sort(otherCards, new SortByValue(false));
             for (int i = 0; i < myCards.size(); i++) {

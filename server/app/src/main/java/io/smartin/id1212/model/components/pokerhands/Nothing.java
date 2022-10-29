@@ -29,8 +29,8 @@ public class Nothing extends PokerHand {
     public boolean beats(PokerHand pokerHand) throws HandsAreEqualException {
         if (pokerHand instanceof Nothing) {
             Nothing nothing = (Nothing) pokerHand;
-            List<PlayingCard> myCards = new ArrayList<>(hand.getCards());
-            List<PlayingCard> otherCards = new ArrayList<>(nothing.getHand().getCards());
+            List<PlayingCard> myCards = new ArrayList<>(hand.getAllFive());
+            List<PlayingCard> otherCards = new ArrayList<>(nothing.getHand().getAllFive());
             myCards.sort(new SortByValue());
             otherCards.sort(new SortByValue());
             for (int i = 0; i < myCards.size(); i++) {
