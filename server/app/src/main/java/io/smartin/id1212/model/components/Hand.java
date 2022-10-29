@@ -2,6 +2,7 @@ package io.smartin.id1212.model.components;
 
 import com.google.gson.annotations.Expose;
 import io.smartin.id1212.exceptions.game.HandsAreEqualException;
+import io.smartin.id1212.model.components.PlayingCard.Value;
 import io.smartin.id1212.model.components.comparators.SortByValue;
 import io.smartin.id1212.model.components.pokerhands.*;
 import io.smartin.id1212.model.components.pokerhands.abstracts.PokerHand;
@@ -145,6 +146,15 @@ public class Hand {
         List<PlayingCard> cardList = new ArrayList<>(getAllFive());
         cardList.sort(new SortByValue());
         PlayingCard prev = null;
+
+        cardList.removeIf(c -> c.getValue() == Value.ACE);
+        boolean hasOneAce = cardList.size() == 4;
+
+        // Had more than one Ace, not a straight:
+        if (cardList.size() < 4) {
+            return false;
+        }
+
         for (PlayingCard card : cardList) {
             if (prev != null) {
                 if (card.getValue().ordinal() != (prev.getValue().ordinal() + 1)) {
@@ -153,6 +163,12 @@ public class Hand {
             }
             prev = card;
         }
+
+        if (hasOneAce) {
+            Value lowest = cardList.get(0).getValue();
+            return lowest == Value.TWO || lowest == Value.TEN;
+        }
+
         return true;
     }
 
