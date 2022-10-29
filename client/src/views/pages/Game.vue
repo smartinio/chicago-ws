@@ -98,7 +98,7 @@ export default {
   },
   methods: {
     toggleMark (card) {
-      if (!this.me.isMyTurn || this.isPhase(CHICAGO)) {
+      if (this.isPhase(CHICAGO)) {
         this.unmarkAll()
         return
       }
