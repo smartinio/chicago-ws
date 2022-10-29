@@ -1,6 +1,8 @@
 package io.smartin.id1212.net.communication;
 
 import com.google.gson.JsonSyntaxException;
+
+import io.smartin.id1212.exceptions.FatalException;
 import io.smartin.id1212.exceptions.GameException;
 import io.smartin.id1212.exceptions.KeyException;
 import io.smartin.id1212.exceptions.NicknameException;
@@ -30,8 +32,7 @@ public class GameEndpoint {
     @OnClose
     public void onClose(Session session) {
         ChicagoGame game = playerController.getPlayer().getGame();
-        playerController.leaveGame();
-        playerController = null;
+        playerController.setConnected(false);
         sessionHandler.unregister(session);
         sessionHandler.broadcastSnapshots(game);
     }
@@ -46,7 +47,6 @@ public class GameEndpoint {
 
     @OnMessage
     public void onMessage(Session session, String message) {
-        long logId = Math.round(Math.random() * 1000);
         try {
             Action action = Converter.toAction(message);
 
@@ -54,17 +54,19 @@ public class GameEndpoint {
                 return;
             }
 
-            playerController.handleAction(action);
+            playerController.handleAction(action, session.getId());
             ChicagoGame game = playerController.getPlayer().getGame();
             sessionHandler.broadcastSnapshots(game);
         } catch (JsonSyntaxException e) {
-            SessionHandler.sendMsg(session, new Message(JSON_ERROR, e.getMessage()), logId);
+            SessionHandler.sendMsg(session, new Message(JSON_ERROR, e.getMessage()));
         } catch (GameException e) {
-            SessionHandler.sendMsg(session, new Message(GAME_ERROR, e.getMessage()), logId);
+            SessionHandler.sendMsg(session, new Message(GAME_ERROR, e.getMessage()));
         } catch (NicknameException e) {
-            SessionHandler.sendMsg(session, new Message(NICKNAME_ERROR, e.getMessage()), logId);
+            SessionHandler.sendMsg(session, new Message(NICKNAME_ERROR, e.getMessage()));
         } catch (KeyException e) {
-            SessionHandler.sendMsg(session, new Message(KEY_ERROR, e.getMessage()), logId);
+            SessionHandler.sendMsg(session, new Message(KEY_ERROR, e.getMessage()));
+        } catch (FatalException e) {
+            SessionHandler.sendMsg(session, new Message(FATAL_ERROR, e.getMessage()));
         } catch (Exception e) {
             System.out.println("Unexpected error:");
             System.out.println(e);

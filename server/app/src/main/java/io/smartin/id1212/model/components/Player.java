@@ -13,7 +13,9 @@ import static io.smartin.id1212.config.Rules.TRADE_BAN_SCORE;
 public class Player {
     private ChicagoGame game;
     @Expose
-    private final String id;
+    private String id;
+    @Expose
+    private boolean connected = true;
     @Expose
     private String name;
     @Expose
@@ -149,7 +151,7 @@ public class Player {
     }
 
     public void leaveGame() {
-        game.removePlayer(this);
+        game.removePlayer(this, false);
     }
 
     public void setGame(ChicagoGame game) {
@@ -180,5 +182,17 @@ public class Player {
 
     public void sendChatMessage(String message) throws NotInGameException {
         game.sendChatMessage(this, message);
+    }
+
+    public void setConnected(boolean connected) {
+        this.connected = connected;
+    }
+
+    public void setId(String sessionId) {
+        this.id = sessionId;
+    }
+
+    public void kickPlayer(String playerIdToKick) throws NotInGameException, UnauthorizedKickException {
+        game.kickPlayer(this, playerIdToKick);
     }
 }

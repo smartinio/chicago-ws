@@ -3,7 +3,7 @@
     <div class="is-flex is-flex-direction-row" style="flex: 1">
       <div class="is-flex is-flex-direction-column is-justify-content-space-between" style="height: 100vh">
         <div class="is-flex" style="flex: 1; overflow: hidden; padding-top: 30px; padding-bottom: 30px">
-            <Chat :game="game" :connected="connected" @reconnect="$emit('reconnect')" />
+            <Chat :game="game" :connected="connected" @leave="$emit('leave')" />
         </div>
       </div>
       <div style="width: 30px" />
@@ -75,6 +75,13 @@ export default {
     me: {
       type: Object,
       required: true
+    }
+  },
+  watch: {
+    connected(conn) {
+      if (conn && this.game.stale) {
+        this.$emit('rejoin')
+      }
     }
   },
   components: {

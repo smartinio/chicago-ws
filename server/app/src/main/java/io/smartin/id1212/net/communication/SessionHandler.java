@@ -25,8 +25,8 @@ public class SessionHandler {
     private SessionHandler() {
     }
 
-    private static void log(long id, String message) {
-        System.out.println(id + ": " + message);
+    private static void log(String message) {
+        System.out.println(message);
     }
 
     public void broadcastSnapshots(ChicagoGame game) {
@@ -34,14 +34,13 @@ public class SessionHandler {
             return;
         }
 
-        long logId = Math.round(Math.random() * 1000);
         List<Player> players = game.getPlayers();
 
         synchronized (players) {
             for (Player player : players) {
                 Message msg = new Message(SNAPSHOT, Converter.toJson(game.snapshot(player)));
                 Session session = sessions.get(player.getId());
-                sendMsg(session, msg, logId);
+                sendMsg(session, msg);
             }
         }
     }
@@ -52,13 +51,24 @@ public class SessionHandler {
     }
 
     void unregister(Session session) {
-        sessions.remove(session.getId());
+        kill(session.getId());
+    }
+
+    public void kill(String sessionId) {
+        sessions.remove(sessionId);
         System.out.println(sessions.size() + " clients connected");
     }
 
-    static void sendMsg(Session session, Message msg, long logId) {
+    public void sendMsgToSessionId(String sessionId, Message message) {
+        Session session = sessions.get(sessionId);
+        if (session != null) {
+            sendMsg(session, message);
+        }
+    }
+
+    static void sendMsg(Session session, Message msg) {
         if (session == null || !session.isOpen()) {
-            log(logId, "Cannot send message to closed session");
+            log("Cannot send message to closed session");
             return;
         }
 

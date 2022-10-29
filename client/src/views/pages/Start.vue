@@ -3,18 +3,36 @@
         <div class="container">
           <ConnectionStatus
             :connected="connected"
-            @reconnect="$emit('reconnect')"
           />
+          <section
+            v-if="isAlreadyInAGame"
+            class="hero is-warning"
+            style="margin-top: 30px"
+          >
+            <div class="hero-body">
+              <p class="title">
+                You're currently in a game
+              </p>
+              <p class="subtitle">
+                Do you want to rejoin?
+              </p>
+              <p>
+                <a class="button is-black" @click="rejoin">Yes, rejoin</a>
+                <a class="button is-warning is-light" @click="leave">No, leave game</a>
+              </p>
+            </div>
+          </section>
           <div class="field" style="padding-top: 30px">
             <div class="control">
-              <label class="label is-large">Nickname</label>
               <input
-              @keyup.enter="handleKeyupEnter"
-              :class="dangerIfExists(errors.nickname)"
-              class="input is-large"
-              v-model="nickname"
-              ref="nickname"
-              placeholder="Choose a nickname...">
+                :disabled="isAlreadyInAGame"
+                @keyup.enter="handleKeyupEnter"
+                :class="dangerIfExists(errors.nickname)"
+                class="input is-large"
+                v-model="nickname"
+                ref="nickname"
+                placeholder="Choose a nickname..."
+              >
               <p
               class="help is-danger"
               v-if="errors.nickname">
@@ -27,6 +45,7 @@
                 <div class="field has-addons is-fullwidth">
                   <div class="control is-expanded">
                     <input
+                      :disabled="isAlreadyInAGame"
                       :class="dangerIfExists(errors.invKey)"
                       class="input is-large"
                       type="text"
@@ -42,9 +61,10 @@
                   </div>
                   <div class="control">
                     <a
-                    :disabled="!fieldsAreValid"
-                    class="button is-info is-large"
-                    @click="joinGame">
+                      :disabled="!fieldsAreValid || isAlreadyInAGame"
+                      class="button is-info is-large"
+                      @click="joinGame"
+                    >
                       Join existing game
                     </a>
                   </div>
@@ -54,7 +74,7 @@
                 <button
                 class="button is-primary is-large"
                 @click="createGame"
-                :disabled="!hasNicknameSet">
+                :disabled="!hasNicknameSet || isAlreadyInAGame">
                   Create new game
                 </button>
               </div>
@@ -94,6 +114,12 @@ export default {
     }
   },
   methods: {
+    rejoin() {
+      this.$emit('rejoin')
+    },
+    leave() {
+      this.$emit('leave')
+    },
     rememberNickname () {
       if (this.nickname) {
         localStorage.setItem('nickname', this.nickname)
@@ -124,6 +150,11 @@ export default {
     }
   },
   computed: {
+    isAlreadyInAGame () {
+      const storedInvitationKey = localStorage.getItem('invitationKey')
+      const storedPlayerId = localStorage.getItem('invitationKey')
+      return Boolean(storedInvitationKey && storedPlayerId)
+    },
     hasNicknameSet () {
       return this.nickname.length > 0
     },
@@ -157,6 +188,9 @@ export default {
     this.$refs.nickname.focus()
   },
   watch: {
+    urlKey() {
+      this.invKey = this.urlKey || this.invKey || ''
+    },
     invKey () {
       this.$emit('changeKey')
     },

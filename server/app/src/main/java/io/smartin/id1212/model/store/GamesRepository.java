@@ -2,6 +2,7 @@ package io.smartin.id1212.model.store;
 
 import io.smartin.id1212.exceptions.key.AlreadyStartedException;
 import io.smartin.id1212.exceptions.NicknameException;
+import io.smartin.id1212.exceptions.game.NotInGameException;
 import io.smartin.id1212.exceptions.key.UnknownInvitationKeyException;
 import io.smartin.id1212.model.components.ChicagoGame;
 import io.smartin.id1212.model.components.Player;
@@ -9,6 +10,7 @@ import io.smartin.id1212.model.components.Player;
 import java.util.*;
 
 import static io.smartin.id1212.config.Strings.UNKNOWN_KEY;
+import static io.smartin.id1212.config.Strings.INVALID_PLAYER;;
 
 public class GamesRepository {
     private final Map<UUID, ChicagoGame> games = new HashMap<>();
@@ -28,9 +30,8 @@ public class GamesRepository {
 
     public void createGame(Player player) {
         UUID invitationKey = UUID.randomUUID();
-        ChicagoGame game = new ChicagoGame(invitationKey);
+        ChicagoGame game = new ChicagoGame(invitationKey, player);
         player.setGame(game);
-        game.setInitialPlayer(player);
         addGame(invitationKey, game);
     }
 
@@ -60,5 +61,27 @@ public class GamesRepository {
         synchronized (games) {
             games.put(key, game);
         }
+    }
+
+    public ChicagoGame findGameForPlayer(String key, String playerId) throws UnknownInvitationKeyException, NotInGameException {
+        UUID invitationKey;
+
+        try {
+            invitationKey = UUID.fromString(key);
+        } catch (IllegalArgumentException e) {
+            throw new UnknownInvitationKeyException(UNKNOWN_KEY);
+        }
+
+        ChicagoGame game = games.get(invitationKey);
+
+        if (game == null) {
+            throw new UnknownInvitationKeyException(UNKNOWN_KEY);
+        }
+
+        if (!game.hasPlayerWithId(playerId)) {
+            throw new NotInGameException(INVALID_PLAYER);
+        }
+
+        return game;
     }
 }

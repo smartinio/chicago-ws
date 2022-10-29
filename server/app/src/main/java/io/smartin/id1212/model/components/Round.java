@@ -342,4 +342,8 @@ public class Round {
         PLAYING,
         AFTER
     }
+
+    public void abort() {
+        setPhase(GamePhase.AFTER);
+    }
 }

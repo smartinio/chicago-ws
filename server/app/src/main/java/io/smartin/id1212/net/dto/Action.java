@@ -59,5 +59,7 @@ public class Action {
         PING,
         DEAL_CARDS,
         SEND_CHAT_MESSAGE,
+        KICK_PLAYER,
+        RECONNECT,
     }
 }

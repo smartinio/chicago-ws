@@ -50,8 +50,11 @@ public class ChicagoGame {
         }).start();
     }
 
-    public ChicagoGame(UUID invitationKey) {
+    public ChicagoGame(UUID invitationKey, Player player) {
         this.invitationKey = invitationKey;
+        this.players.add(player);
+        this.host = player;
+        logEvent(GameEvent.createdGame(player));
     }
 
     public void addParticipant(Player player) throws AlreadyStartedException {
@@ -59,11 +62,13 @@ public class ChicagoGame {
             throw new AlreadyStartedException("That game has already started");
         synchronized (players) {
             players.add(player);
+            logEvent(GameEvent.joinedGame(player));
         }
     }
 
-    private void setHost(Player host) {
+    private void newHost(Player host) {
         this.host = host;
+        logEvent(GameEvent.becameHost(host));
     }
 
     private void newRound() {
@@ -267,21 +272,33 @@ public class ChicagoGame {
         return currentRound;
     }
 
-    public void removePlayer(Player player) {
+    public void removePlayer(Player player, boolean kicked) {
         synchronized (players) {
+            if (player == dealer) {
+                newDealer();
+            }
+
             players.remove(player);
+            logEvent(GameEvent.leftGame(player, kicked));
+
             if (players.size() < 1) {
                 removeGame();
                 return;
             }
             if (player.equals(host)) {
-                setHost(players.get(0));
+                newHost(players.get(0));
             }
             if (players.size() < 2) {
                 stopGame();
                 return;
             }
-            newRound();
+            abortRound();
+        }
+    }
+
+    private void abortRound() {
+        if (currentRound != null && !currentRound.isOver()) {
+            currentRound.abort();
         }
     }
 
@@ -306,9 +323,12 @@ public class ChicagoGame {
         return false;
     }
 
-    public void setInitialPlayer(Player player) {
-        players.add(player);
-        setHost(player);
+    public boolean hasPlayerWithId(String playerId) {
+        for (Player player : players) {
+            if (player.getId().equals(playerId))
+                return true;
+        }
+        return false;
     }
 
     private List<Player> createWinnersIfPossible() {
@@ -342,5 +362,23 @@ public class ChicagoGame {
             throw new NotInGameException(INVALID_PLAYER);
         }
         logEvent(GameEvent.chatMessage(player, message));
+    }
+
+    public void kickPlayer(Player player, String playerIdToKick) throws NotInGameException, UnauthorizedKickException {
+        if (player != host) {
+            throw new UnauthorizedKickException(UNAUTHORIZED_KICK);
+        }
+        Player playerToRemove = getPlayer(playerIdToKick);
+        removePlayer(playerToRemove, true);
+    }
+
+    public Player getPlayer(String playerId) throws NotInGameException {
+        for (Player player : players) {
+            if (player.getId().equals(playerId)) {
+                return player;
+            }
+
+        }
+        throw new NotInGameException(INVALID_PLAYER);
     }
 }

@@ -60,7 +60,7 @@ export default {
   },
   methods: {
     format,
-    preload: withEmojis(() => ('✨💰👀🤔🔁🚀🥲🥳🙌👑💦♣️❤️♦️♠️')),
+    preload: withEmojis(() => ('✨💬💰👀🤔🔁🚀💪🥲🥳🙌👑👋💦🍃👞👨‍✈️🌻♣️❤️♦️♠️')),
     formatServerEvent: withEmojis((event) => {
       switch (event.action) {
         case 'NEW_ROUND':
@@ -104,6 +104,18 @@ export default {
             return `won the round with an unbeatable ${cards}! 💪`
           }
           return `made it rain 💦 with ${cards}`
+        }
+        case 'CREATED_GAME': {
+          return 'created the game 🌻'
+        }
+        case 'BECAME_HOST': {
+          return 'became the new game host 👨‍✈️'
+        }
+        case 'JOINED_GAME': {
+          return 'joined the game 👋'
+        }
+        case 'LEFT_GAME': {
+          return event.kicked ? 'was kicked from the game 👞' : 'left the game 🍃'
         }
       }
     }),

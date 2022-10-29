@@ -5,7 +5,8 @@
       @action="dispatchAction"
       @changeKey="clearKeyError"
       @changeNick="clearNickError"
-      @reconnect="connect"
+      @rejoin="rejoin"
+      @leave="leave"
       :connected="socket.connected"
       :errors="errors"
       :urlKey="$route.params.key"
@@ -13,7 +14,8 @@
 
     <Game
       v-else
-      @reconnect="connect"
+      @rejoin="rejoin"
+      @leave="leave"
       :connected="socket.connected"
       :me="me"
       :game="game"
@@ -24,10 +26,15 @@
 import Start from './pages/Start'
 import Game from './pages/Game'
 import ConnectionStatus from './components/ConnectionStatus'
+import RejoinRequest from '@/dto/rejoinrequest/RejoinRequest'
+import LeaveRequest from '@/dto/leaverequest/LeaveRequest'
+import Action from '@/dto/action/Action'
+import { RECONNECT, LEAVE_GAME } from '@/dto/action/types'
 import { SOCKET, GAME, ME, ERRORS } from '@/store/state_mappings'
 import { CONNECT, SEND_ACTION } from '@/store/modules/socket/action_types'
 import { SET_KEY_ERROR, SET_NICKNAME_ERROR } from '@/store/modules/errors/mutation_types'
 import { mapState } from 'vuex'
+
 export default {
   components: {
     Start,
@@ -41,6 +48,13 @@ export default {
     errors: ERRORS,
     socket: SOCKET
   }),
+  watch: {
+    'socket.status' (status) {
+      if (status === 'failed') {
+        setTimeout(() => this.connect(), 1000)
+      }
+    }
+  },
   methods: {
     dispatchAction (actionDTO) {
       this.$store.dispatch(SEND_ACTION, actionDTO)
@@ -52,7 +66,37 @@ export default {
       this.$store.commit(SET_NICKNAME_ERROR, '')
     },
     connect () {
-      this.$store.dispatch(CONNECT)
+      if (!this.socket.connected) {
+        this.$store.dispatch(CONNECT)
+      }
+    },
+    rejoin () {
+      const storedInvitationKey = this.game.invKey || localStorage.getItem('invitationKey')
+      const storedPlayerId = this.me.id || localStorage.getItem('playerId')
+
+      if (!storedInvitationKey || !storedPlayerId) {
+        alert('Sorry! Something went wrong... You won\'t be able to rejoin the game')
+        this.leave()
+        return
+      }
+
+      const request = new RejoinRequest(storedPlayerId, storedInvitationKey)
+      const actionDTO = new Action(RECONNECT, request)
+      this.dispatchAction(actionDTO)
+    },
+    leave () {
+      const storedInvitationKey = this.game.invKey || localStorage.getItem('invitationKey')
+      const storedPlayerId = this.me.id || localStorage.getItem('playerId')
+
+      if (storedInvitationKey && storedPlayerId) {
+        const request = new LeaveRequest(storedPlayerId, storedInvitationKey)
+        const actionDTO = new Action(LEAVE_GAME, request)
+        this.dispatchAction(actionDTO)
+      }
+
+      localStorage.removeItem('invitationKey')
+      localStorage.removeItem('playerId')
+      window.location.href = '/'
     }
   },
   created () {

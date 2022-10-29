@@ -6,6 +6,8 @@ import com.google.gson.JsonSyntaxException;
 import io.smartin.id1212.model.components.PlayingCard;
 import io.smartin.id1212.net.dto.Action;
 import io.smartin.id1212.net.dto.JoinRequest;
+import io.smartin.id1212.net.dto.LeaveRequest;
+import io.smartin.id1212.net.dto.RejoinRequest;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,5 +34,13 @@ public class Converter {
 
     public static JoinRequest toJoinRequest(String json) throws JsonSyntaxException {
         return gson.fromJson(json, JoinRequest.class);
+    }
+
+    public static RejoinRequest toRejoinRequest(String json) throws JsonSyntaxException {
+        return gson.fromJson(json, RejoinRequest.class);
+    }
+
+    public static LeaveRequest toLeaveRequest(String json) throws JsonSyntaxException {
+        return gson.fromJson(json, LeaveRequest.class);
     }
 }

@@ -110,6 +110,43 @@ public class GameEvent {
     return event;
   }
 
+  public static GameEvent createdGame(Player creator) {
+    GameEvent event = new GameEvent();
+
+    event.actor = creator;
+    event.action = EventAction.CREATED_GAME;
+
+    return event;
+  }
+
+  public static GameEvent joinedGame(Player joiner) {
+    GameEvent event = new GameEvent();
+
+    event.actor = joiner;
+    event.action = EventAction.JOINED_GAME;
+
+    return event;
+  }
+
+  public static GameEvent leftGame(Player leaver, boolean kicked) {
+    GameEvent event = new GameEvent();
+
+    event.actor = leaver;
+    event.action = EventAction.LEFT_GAME;
+    event.kicked = kicked;
+
+    return event;
+  }
+
+  public static GameEvent becameHost(Player host) {
+    GameEvent event = new GameEvent();
+
+    event.actor = host;
+    event.action = EventAction.BECAME_HOST;
+
+    return event;
+  }
+
   public static GameEvent serverNewRound() {
     GameEvent event = new GameEvent();
 
@@ -168,6 +205,9 @@ public class GameEvent {
   @Expose
   public String message;
 
+  @Expose
+  public boolean kicked;
+
   public enum EventAction {
     CALLED_CHICAGO,
     LOST_CHICAGO,
@@ -179,6 +219,10 @@ public class GameEvent {
     WON_ROUND,
     WON_TRICK,
     WON_ROUND_GUARANTEED,
+    CREATED_GAME,
+    JOINED_GAME,
+    LEFT_GAME,
+    BECAME_HOST,
     // server events
     NEW_ROUND,
     TRICK_DONE,

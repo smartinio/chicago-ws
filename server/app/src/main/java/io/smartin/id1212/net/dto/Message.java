@@ -34,6 +34,8 @@ public class Message {
     }
 
     public enum MessageType {
+        FATAL_ERROR,
+        KICKED,
         JSON_ERROR,
         NICKNAME_ERROR,
         KEY_ERROR,

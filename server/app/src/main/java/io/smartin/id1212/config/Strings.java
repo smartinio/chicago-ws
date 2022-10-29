@@ -1,15 +1,16 @@
 package io.smartin.id1212.config;
 
 public class Strings {
-    public static final String INVALID_PLAYER = "You are not currently in a game";
+    public static final String INVALID_PLAYER = "You are not in that game";
     public static final String UNKNOWN_ACTION = "Unknown action";
-    public static final String UNKNOWN_KEY = "The provided key does not exist";
+    public static final String UNKNOWN_KEY = "The game does not exist anymore";
     public static final String EMPTY_DECK = "Deck is empty!";
     public static final String ILLEGAL_CARD_PLAY = "You are not allowed to play that card";
     public static final String CHICAGO_ALREADY_CALLED = "Chicago is already called";
     public static final String UNAUTHORIZED_START = "Only the host can start the game";
     public static final String UNAUTHORIZED_DEALER = "Only the dealer can deal the cards";
     public static final String UNAUTHORIZED_TRADE = "You can only trade your own cards";
+    public static final String UNAUTHORIZED_KICK = "Only the host can kick players";
     public static final String ROUND_NOT_FINISHED = "The current round is not finished yet!";
     public static final String GAME_OVER = "The game is over";
     public static final String TOO_FEW_PLAYERS = "You need to be at least two players to start playing";
