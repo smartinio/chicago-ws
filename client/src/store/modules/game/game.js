@@ -6,6 +6,16 @@ import { DISCONNECTED } from '../socket/action_types'
 
 const state = {
   stale: false,
+  oneOpen: {
+    player: {
+      id: '',
+    },
+    isOpen: false,
+    card: {
+      suit: '',
+      value: '',
+    }
+  },
   host: {
     id: ''
   },
@@ -20,7 +30,8 @@ const state = {
   round: {
     currentPlayer: '',
     phase: '',
-    tricks: []
+    tricks: [],
+    isFinalTrade: false,
   }
 }
 
@@ -43,6 +54,11 @@ const mutations = {
     state.round.currentPlayer = game.currentRound.currentPlayer
     state.round.phase = game.currentRound.phase
     state.round.tricks = game.currentRound.tricks
+    state.round.isFinalTrade = game.currentRound.isFinalTrade
+
+    state.oneOpen.player = game.oneOpen.player
+    state.oneOpen.card = game.oneOpen.card
+    state.oneOpen.isOpen = game.oneOpen.isOpen
   }
 }
 

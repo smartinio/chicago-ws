@@ -4,6 +4,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.gson.annotations.Expose;
+
+import io.smartin.id1212.exceptions.GameException;
 import io.smartin.id1212.exceptions.game.*;
 import io.smartin.id1212.model.components.PlayingCard.Value;
 import io.smartin.id1212.model.components.comparators.SortByValue;
@@ -30,6 +32,8 @@ public class Round {
     private Player chicagoTaker;
     @Expose
     private List<Trick> tricks;
+    @Expose
+    private boolean isFinalTrade = false;
 
     private TrickingManager trickingManager;
     private TradingManager tradingManager;
@@ -268,13 +272,30 @@ public class Round {
         return phase == GamePhase.PLAYING;
     }
 
-    List<BestHandResult> throwCards(Player player, Set<PlayingCard> cards)
+    List<BestHandResult> tradeCards(Player player, Set<PlayingCard> cards)
             throws OutOfCardsException, WaitYourTurnException, InappropriateActionException, UnauthorizedTradeException {
         checkPhase(GamePhase.TRADING);
         checkTurn(player);
         List<BestHandResult> result = tradingManager.handle(player, cards);
         nextTurn();
         return result;
+    }
+
+    public void throwCards(Player player, Set<PlayingCard> cards) throws WaitYourTurnException, InappropriateActionException {
+        checkPhase(GamePhase.TRADING);
+        checkTurn(player);
+        player.removeCards(cards);
+        deck.addCards(cards);
+    }
+
+    public PlayingCard getCardForOneOpen(Player player) throws InappropriateActionException, WaitYourTurnException, OutOfCardsException, UnauthorizedTradeException {
+        checkPhase(GamePhase.TRADING);
+        checkTurn(player);
+        if (!tradingManager.maxTradingCyclesReached()) {
+            throw new UnauthorizedTradeException(NOT_FINAL_TRADE);
+        }
+
+        return deck.draw(1).iterator().next();
     }
 
     private void checkPhase(GamePhase gamePhase) throws InappropriateActionException {
@@ -290,6 +311,9 @@ public class Round {
     }
 
     private void nextTurn() {
+        // hack to make sure isFinalTrade is updated before each turn
+        isFinalTrade = tradingManager.maxTradingCyclesReached();
+
         List<Player> p = game.getPlayers();
         for (int i = 0; i < p.size(); i++) {
             if (p.get(i).equals(currentPlayer)) {
@@ -345,5 +369,11 @@ public class Round {
 
     public void abort() {
         setPhase(GamePhase.AFTER);
+    }
+
+    public void completeOnOpen(Player player, PlayingCard openCard, boolean accepted) throws GameException {
+        PlayingCard finalCard = accepted ? openCard : getCardForOneOpen(player);
+        player.giveCards(Set.of(finalCard));
+        nextTurn();
     }
 }

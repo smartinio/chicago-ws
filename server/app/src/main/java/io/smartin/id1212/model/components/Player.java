@@ -1,6 +1,8 @@
 package io.smartin.id1212.model.components;
 
 import com.google.gson.annotations.Expose;
+
+import io.smartin.id1212.exceptions.GameException;
 import io.smartin.id1212.exceptions.game.*;
 
 import java.util.HashSet;
@@ -45,7 +47,7 @@ public class Player {
 
     public void throwCards(List<PlayingCard> cards) throws TradeBannedException, WaitYourTurnException, OutOfCardsException, InappropriateActionException, TooManyCardsException, UnauthorizedTradeException {
         Set<PlayingCard> cardSet = new HashSet<>(cards);
-        game.throwCards(this, cardSet);
+        game.throwCards(this, cardSet, false);
     }
 
     public void respondToChicago(boolean answer) throws ChicagoAlreadyCalledException, WaitYourTurnException, InappropriateActionException {
@@ -69,7 +71,7 @@ public class Player {
     }
 
     public void addPoints(int points) {
-            score += points;
+        score += points;
     }
 
     public void removePoints(int points) {
@@ -194,5 +196,13 @@ public class Player {
 
     public void kickPlayer(String playerIdToKick) throws NotInGameException, UnauthorizedKickException {
         game.kickPlayer(this, playerIdToKick);
+    }
+
+    public void throwOneOpen(PlayingCard cardToThrow) throws GameException {
+        game.throwOneOpen(this, cardToThrow);
+    }
+
+    public void respondToOneOpen(boolean accepted) throws GameException {
+        game.respondToOneOpen(this, accepted);
     }
 }

@@ -43,6 +43,8 @@ public class PlayerController {
             case START_GAME:        startGame();                    break;
             case DEAL_CARDS:        dealCards();                    break;
             case THROW:             handleThrowAction(action);      break;
+            case THROW_ONE_OPEN:    handleThrowOneOpen(action);     break;
+            case RESPOND_ONE_OPEN:  handleRespondOneOpen(action);   break;
             case CHICAGO:           handleChicagoAction(action);    break;
             case MOVE:              handleMoveAction(action);       break;
             case RESTART_GAME:      restartGame();                  break;
@@ -52,6 +54,16 @@ public class PlayerController {
             case LEAVE_GAME:        leaveGame(action, sessionId);   break;
             default:                throw new UnknownActionException(UNKNOWN_ACTION);
         }
+    }
+
+    private void handleRespondOneOpen(Action action) throws GameException {
+        boolean accepted = Converter.toBoolean(action.getValue());
+        player.respondToOneOpen(accepted);
+    }
+
+    private void handleThrowOneOpen(Action action) throws GameException {
+        PlayingCard cardToThrow = Converter.toCard(action.getValue());
+        player.throwOneOpen(cardToThrow);
     }
 
     private void rejoin(Action action, String sessionId) throws FatalException {

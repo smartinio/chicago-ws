@@ -20,16 +20,29 @@
         <a class="tag is-danger is-medium" @click="deal">DEAL CARDS</a>
       </span>
       <span v-else-if="me.isMyTurn">
-        <span v-if="isPhase(phase.TRADING)">
+        <span v-if="isPhase(phase.TRADING) && canRespondToOpenCard">
+          <span>Want {{ niceCard(game.oneOpen.card) }}?</span>
+          <a class="tag is-info is-medium" @click="respondToOneOpen(true)">
+            KEEP
+          </a>
+          <a class="tag is-warning is-medium" @click="respondToOneOpen(false)">
+            THROW
+          </a>
+        </span>
+        <span v-else-if="isPhase(phase.TRADING) && canTradeOpenly">
+          <a class="tag is-success is-medium" @click="trade">TRADE (1)</a>
+          <a class="tag is-info is-medium" @click="tradeOpenly">OPEN (1)</a>
+        </span>
+        <span v-else-if="isPhase(phase.TRADING)">
           <a class="tag is-info is-medium" v-if="!markedCards.length" @click="passTrade">YOUR TURN (PASS)</a>
           <a class="tag is-success is-medium" v-else @click="trade">TRADE ({{ markedCards.length }})</a>
         </span>
-        <span v-if="isPhase(phase.CHICAGO)">
+        <span v-else-if="isPhase(phase.CHICAGO)">
           <span>Want Chicago?</span>
           <a class="tag is-success is-medium" @click="callChicago">YES</a>
           <a class="tag is-danger is-medium" @click="passChicago">NO</a>
         </span>
-        <span v-if="isPhase(phase.PLAYING)">
+        <span v-else-if="isPhase(phase.PLAYING)">
           <a class="tag is-success is-medium" v-if="markedCard" @click="play">PLAY {{niceCard(markedCard)}}</a>
           <span class="tag is-black is-medium" v-else>YOUR TURN</span>
         </span>
@@ -49,7 +62,7 @@
   </div>
 </template>
 <script>
-import { START_GAME, THROW, CHICAGO, MOVE, DEAL_CARDS, RESTART_GAME } from '@/dto/action/types'
+import { START_GAME, THROW, THROW_ONE_OPEN, RESPOND_ONE_OPEN, CHICAGO, MOVE, DEAL_CARDS, RESTART_GAME } from '@/dto/action/types'
 import Action from '@/dto/action/Action'
 import { SEND_ACTION } from '@/store/modules/socket/action_types'
 import * as phaseTypes from '@/store/modules/game/phase_types'
@@ -74,6 +87,13 @@ export default {
     },
     trade () {
       this.doAction(new Action(THROW, this.markedCards))
+    },
+    tradeOpenly () {
+      const [openCard] = this.markedCards
+      this.doAction(new Action(THROW_ONE_OPEN, openCard))
+    },
+    respondToOneOpen (accepted) {
+      this.doAction(new Action(RESPOND_ONE_OPEN, accepted))
     },
     passTrade () {
       this.doAction(new Action(THROW, []))
@@ -108,6 +128,12 @@ export default {
     },
   },
   computed: {
+    canTradeOpenly () {
+      return this.markedCards.length == 1 && this.game.round.isFinalTrade
+    },
+    canRespondToOpenCard () {
+      return this.game.oneOpen.isOpen
+    },
     checkOrKey () {
       return this.copiedKey ? 'fa fa-check' : 'fa fa-key'
     },

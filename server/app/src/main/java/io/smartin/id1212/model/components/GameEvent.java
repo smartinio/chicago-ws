@@ -147,6 +147,27 @@ public class GameEvent {
     return event;
   }
 
+  public static GameEvent requestedOneOpen(Player requester, PlayingCard card) {
+    GameEvent event = new GameEvent();
+
+    event.actor = requester;
+    event.action = EventAction.REQUESTED_ONE_OPEN;
+    event.card = card;
+
+    return event;
+  }
+
+  public static GameEvent respondedToOneOpen(Player host, PlayingCard card, boolean accepted) {
+    GameEvent event = new GameEvent();
+
+    event.actor = host;
+    event.action = EventAction.RESPONDED_TO_ONE_OPEN;
+    event.card = card;
+    event.accepted = accepted;
+
+    return event;
+  }
+
   public static GameEvent serverNewRound() {
     GameEvent event = new GameEvent();
 
@@ -208,6 +229,9 @@ public class GameEvent {
   @Expose
   public boolean kicked;
 
+  @Expose
+  public boolean accepted;
+
   public enum EventAction {
     CALLED_CHICAGO,
     LOST_CHICAGO,
@@ -223,6 +247,8 @@ public class GameEvent {
     JOINED_GAME,
     LEFT_GAME,
     BECAME_HOST,
+    REQUESTED_ONE_OPEN,
+    RESPONDED_TO_ONE_OPEN,
     // server events
     NEW_ROUND,
     TRICK_DONE,

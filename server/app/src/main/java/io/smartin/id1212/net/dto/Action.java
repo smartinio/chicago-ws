@@ -53,6 +53,8 @@ public class Action {
         MOVE,
         CHICAGO,
         THROW,
+        THROW_ONE_OPEN,
+        RESPOND_ONE_OPEN,
         START_GAME,
         LEAVE_GAME,
         RESTART_GAME,

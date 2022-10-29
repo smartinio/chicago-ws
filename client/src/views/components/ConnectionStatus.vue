@@ -17,10 +17,10 @@ export default {
   },
   computed: {
     statusText () {
-      return this.connected ? 'Connected to server' : 'Connecting'
+      return this.connected ? 'Connected' : 'Connecting'
     },
     statusClass () {
-      return this.connected ? 'is-success' : 'is-info'
+      return this.connected ? 'is-success is-light' : 'is-warning'
     },
     statusIcon () {
       return this.connected ? 'fa-check' : 'fa-spinner'

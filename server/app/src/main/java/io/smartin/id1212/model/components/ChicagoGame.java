@@ -3,6 +3,7 @@ package io.smartin.id1212.model.components;
 import com.google.gson.annotations.Expose;
 
 import io.smartin.id1212.config.Rules;
+import io.smartin.id1212.exceptions.GameException;
 import io.smartin.id1212.exceptions.game.*;
 import io.smartin.id1212.exceptions.key.AlreadyStartedException;
 import io.smartin.id1212.model.components.Round.RoundMoveResult;
@@ -36,6 +37,8 @@ public class ChicagoGame {
     private final List<Player> players = new ArrayList<>();
     @Expose
     private final List<GameEvent> events = new ArrayList<>();
+    @Expose
+    private final OneOpen oneOpen = new OneOpen();
 
     private ScoreManager scoreManager = new ScoreManager(players);
 
@@ -105,7 +108,7 @@ public class ChicagoGame {
         started = true;
     }
 
-    public void throwCards(Player player, Set<PlayingCard> cards)
+    public void throwCards(Player player, Set<PlayingCard> cards, boolean isOneOpen)
             throws TradeBannedException, WaitYourTurnException, OutOfCardsException, InappropriateActionException, TooManyCardsException, UnauthorizedTradeException {
         if (!player.canTrade() && cards.size() > 0) {
             throw new TradeBannedException(TRADE_BANNED);
@@ -119,7 +122,19 @@ public class ChicagoGame {
             throw new UnauthorizedTradeException(UNAUTHORIZED_TRADE);
         }
 
-        List<BestHandResult> playersWithBestHand = currentRound.throwCards(player, cards);
+        if (isOneOpen && cards.size() != 1) {
+            throw new UnauthorizedTradeException(UNAUTHORIZED_OPEN_TRADE);
+        }
+
+        if (isOneOpen) {
+            PlayingCard openCard = currentRound.getCardForOneOpen(player);
+            currentRound.throwCards(player, cards);
+            oneOpen.start(player, openCard);
+            logEvent(GameEvent.requestedOneOpen(player, openCard));
+            return;
+        }
+
+        List<BestHandResult> playersWithBestHand = currentRound.tradeCards(player, cards);
         logEvent(GameEvent.tradedCards(player, cards.size()));
 
         for (BestHandResult result : playersWithBestHand) {
@@ -380,5 +395,22 @@ public class ChicagoGame {
 
         }
         throw new NotInGameException(INVALID_PLAYER);
+    }
+
+    public void throwOneOpen(Player player, PlayingCard cardToThrow) throws GameException {
+        throwCards(player, Set.of(cardToThrow), true);
+    }
+
+    public void respondToOneOpen(Player player, boolean accepted) throws GameException {
+        if (!oneOpen.isOpenFor(player)) {
+            throw new UnauthorizedTradeException(WAIT_YOUR_TURN);
+        }
+
+        PlayingCard openCard = oneOpen.getCard();
+
+        currentRound.completeOnOpen(player, openCard, accepted);
+
+        oneOpen.stop();
+        logEvent(GameEvent.respondedToOneOpen(player, openCard, accepted));
     }
 }

@@ -60,7 +60,7 @@ export default {
   },
   methods: {
     format,
-    preload: withEmojis(() => ('✨💬💰👀🤔🔁🚀💪🥲🥳🙌👑👋💦🍃👞👨‍✈️🌻♣️❤️♦️♠️')),
+    preload: withEmojis(() => ('✨💬👁️💰👀🤔🔁🚀💪🥲🥳🙌👑👋💦🍃👞👨‍✈️🌻♣️❤️♦️♠️')),
     formatServerEvent: withEmojis((event) => {
       switch (event.action) {
         case 'NEW_ROUND':
@@ -116,6 +116,12 @@ export default {
         }
         case 'LEFT_GAME': {
           return event.kicked ? 'was kicked from the game 👞' : 'left the game 🍃'
+        }
+        case 'REQUESTED_ONE_OPEN': {
+          return `is being offered ${niceCard(event.card)}`
+        }
+        case 'RESPONDED_TO_ONE_OPEN': {
+          return event.accepted ? 'accepted 👍' : 'declined 👎'
         }
       }
     }),

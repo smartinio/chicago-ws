@@ -47,7 +47,7 @@ public class TradingManager {
         return result;
     }
 
-    private boolean maxTradingCyclesReached() {
+    public boolean maxTradingCyclesReached() {
         return tradingCycles.size() == MAX_TRADES_PER_ROUND;
     }
 

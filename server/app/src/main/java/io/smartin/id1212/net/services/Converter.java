@@ -43,4 +43,8 @@ public class Converter {
     public static LeaveRequest toLeaveRequest(String json) throws JsonSyntaxException {
         return gson.fromJson(json, LeaveRequest.class);
     }
+
+    public static boolean toBoolean(String json) {
+      return gson.fromJson(json, Boolean.class);
+    }
 }
