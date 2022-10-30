@@ -59,7 +59,7 @@ export default {
     }
   },
   watch: {
-    'me.isMyTurn': (isMyTurn) => {
+    ['me.isMyTurn'](isMyTurn) {
       if (isMyTurn && this.isPhase(phaseTypes.PLAYING) && !this.active) {
         yourTurn.play();
       }

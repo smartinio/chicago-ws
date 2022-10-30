@@ -75,8 +75,14 @@ export default {
           return `took the trick!`
         case 'CALLED_CHICAGO':
           return 'called Chicago! 🚀'
-        case 'LOST_CHICAGO':
-          return 'lost 15 points for failing their Chicago... 🥲'
+        case 'LOST_CHICAGO': {
+          if (event.reason === 'HAND') {
+            return `lost 15 points due to <strong>${sanitize(event.opponentName)}'s</strong> hand 🥲`
+          }
+          if (event.reason === 'TRICKS') {
+            return `lost 15 points due to <strong>${sanitize(event.opponentName)}</strong> move 🥲`
+          }
+        }
         case 'WON_CHICAGO':
           return 'got 15 points for their Chicago! 🥳'
         case 'WON_ROUND': {

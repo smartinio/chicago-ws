@@ -12,6 +12,7 @@ import io.smartin.id1212.model.managers.ScoreManager.BestHandResult;
 import io.smartin.id1212.model.store.GamesRepository;
 import io.smartin.id1212.net.communication.SessionHandler;
 import io.smartin.id1212.net.dto.Snapshot;
+import io.smartin.id1212.net.dto.GameCreation.GameRules;
 
 import java.util.*;
 
@@ -42,6 +43,8 @@ public class ChicagoGame {
     private final List<GameEvent> events = new ArrayList<>();
     @Expose
     private final OneOpen oneOpen = new OneOpen();
+    @Expose
+    private final GameRules rules;
 
     private ScoreManager scoreManager = new ScoreManager(players);
     private final Logger logger = LogManager.getLogger("ChicagoGame");
@@ -72,10 +75,11 @@ public class ChicagoGame {
         }
     }
 
-    public ChicagoGame(UUID invitationKey, Player player) {
+    public ChicagoGame(UUID invitationKey, Player player, GameRules rules) {
         this.invitationKey = invitationKey;
         this.players.add(player);
         this.host = player;
+        this.rules = rules;
         logEvent(GameEvent.createdGame(player));
         scheduleActivityChecker();
     }
@@ -211,8 +215,7 @@ public class ChicagoGame {
 
     private void finishRound(Player chicagoTaker, Move winningMove) {
         if (chicagoTaker != null) {
-            boolean success = chicagoTaker.equals(winningMove.getPlayer());
-            finishChicagoCalledRound(success, chicagoTaker);
+            finishChicagoCalledRound(winningMove, chicagoTaker);
         } else {
             finishNormalRound(winningMove);
         }
@@ -273,9 +276,22 @@ public class ChicagoGame {
         }
     }
 
-    public void finishChicagoCalledRound(boolean success, Player player) {
+    public void finishChicagoCalledRound(Move winningMove, Player player) {
+        var wonAllTricks = player.equals(winningMove.getPlayer());
+        var hasBestHand = scoreManager.hasBestHand(player);
+        var success = rules.chicagoBestHand ? wonAllTricks && hasBestHand : wonAllTricks;
+
+        if (success) {
+            logEvent(GameEvent.wonChicago(player));
+        } else if (!wonAllTricks) {
+            var trickWinner = winningMove.getPlayer();
+            logEvent(GameEvent.lostChicago(player, trickWinner, "TRICKS"));
+        } else {
+            var handWinner = scoreManager.getBestHandWinner();
+            logEvent(GameEvent.lostChicago(player, handWinner, "HAND"));
+        }
+
         scoreManager.handleChicagoResult(success, player);
-        logEvent(success ? GameEvent.wonChicago(player) : GameEvent.lostChicago(player));
     }
 
     private void newDealer() {
@@ -444,5 +460,9 @@ public class ChicagoGame {
         for (BestHandResult result : playersWithBestHand) {
             logEvent(GameEvent.bestHand(result.player, result.points));
         }
+    }
+
+    public GameRules getRules() {
+        return rules;
     }
 }

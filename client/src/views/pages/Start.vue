@@ -1,92 +1,175 @@
 <template>
   <section class="section">
-        <div class="container">
-          <ConnectionStatus
-            :connected="connected && !checkingGame"
-          />
-          <section
-            v-if="isAlreadyInAGame"
-            class="hero is-warning"
-            style="margin-top: 30px"
-          >
-            <div class="hero-body">
-              <p class="title">
-                You're currently in a game
-              </p>
-              <p class="subtitle">
-                Do you want to rejoin?
-              </p>
-              <p>
-                <a class="button is-black" @click="rejoin">Yes, rejoin</a>
-                <a class="button is-warning is-light" @click="leave">No, leave game</a>
-              </p>
-            </div>
-          </section>
-          <div class="field" style="padding-top: 30px">
-            <div class="control">
-              <input
-                :disabled="isAlreadyInAGame || checkingGame"
-                @keyup.enter="handleKeyupEnter"
-                :class="dangerIfExists(errors.nickname)"
-                class="input is-large"
-                v-model="nickname"
-                ref="nickname"
-                placeholder="Choose a nickname..."
-                maxlength="15"
-              >
-              <p
-              class="help is-danger"
-              v-if="errors.nickname">
-                {{ errors.nickname }}
-              </p>
-            </div>
-          </div>
-          <div class="columns">
-            <div class="column is-expanded">
-                <div class="field has-addons is-fullwidth">
-                  <div class="control is-expanded">
-                    <input
-                      :disabled="isAlreadyInAGame || checkingGame"
-                      :class="dangerIfExists(errors.invKey)"
-                      class="input is-large"
-                      type="text"
-                      placeholder="Invitation key"
-                      v-model="invKey"
-                    >
-                      <p
-                        class="help is-danger"
-                        v-if="errors.invKey"
-                      >
-                        {{ errors.invKey }}
-                      </p>
-                  </div>
-                  <div class="control">
-                    <a
-                      :disabled="!fieldsAreValid || isAlreadyInAGame || checkingGame"
-                      class="button is-info is-large"
-                      @click="joinGame"
-                    >
-                      Join existing game
-                    </a>
-                  </div>
-                </div>
-              </div>
-              <div class="column is-narrow">
-                <button
-                class="button is-primary is-large"
-                @click="createGame"
-                :disabled="!hasNicknameSet || isAlreadyInAGame || checkingGame">
-                  Create new game
-                </button>
-              </div>
-          </div>
+    <div class="container">
+      <ConnectionStatus
+        :connected="connected && !checkingGame"
+      />
+      <section
+        v-if="isAlreadyInAGame"
+        class="hero is-warning"
+        style="margin-top: 30px"
+      >
+        <div class="hero-body">
+          <p class="title">
+            You're currently in a game
+          </p>
+          <p class="subtitle">
+            Do you want to rejoin?
+          </p>
+          <p>
+            <a class="button is-black" @click="rejoin">Yes, rejoin</a>
+            <a class="button is-warning is-light" @click="leave">No, leave game</a>
+          </p>
         </div>
       </section>
+
+      <div class="tabs is-boxed is-large is-centered is-fullwidth" style="margin-top: 30px">
+        <ul>
+          <li :class="isTab('create') ? 'is-active' : ''">
+            <a @click="tab = 'create'">
+              <span class="icon is-small"><i class="fas fa-plus"></i></span>
+              <span>Create new game</span>
+            </a>
+          </li>
+          <li :class="isTab('join') ? 'is-active' : ''">
+            <a @click="tab= 'join'">
+              <span class="icon is-small"><i class="fas fa-people-group"></i></span>
+              <span>Join existing game</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div v-if="isTab('create')">
+        <div class="field">
+          <label class="label is-large">Nickname</label>
+          <div class="control">
+            <input
+              :disabled="isAlreadyInAGame || checkingGame"
+              @keyup.enter="handleKeyupEnter"
+              :class="dangerIfExists(errors.nickname)"
+              class="input is-large is-rounded"
+              v-model="nickname"
+              ref="nickname"
+              placeholder="Choose a nickname..."
+              maxlength="15"
+            >
+            <p
+              class="help is-danger"
+              v-if="errors.nickname"
+            >
+              {{ errors.nickname }}
+            </p>
+          </div>
+        </div>
+
+        <label class="label is-large">Rules</label>
+        <div class="field is-grouped is-grouped-multiline">
+          <div class="control">
+            <div class="select is-rounded is-large">
+              <select v-model="rules.numTrades" :disabled="isAlreadyInAGame || checkingGame">
+                <option :value="2">2 trades</option>
+                <option :value="3">3 trades</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="control">
+            <div class="select is-rounded is-large">
+              <select v-model="rules.chicagoBestHand" :disabled="isAlreadyInAGame || checkingGame">
+                <option :value="false">Chicago: All tricks</option>
+                <option :value="true">Chicago: All tricks + Best hand</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="control">
+            <div class="select is-rounded is-large">
+              <select v-model="rules.oneOpen" :disabled="isAlreadyInAGame || checkingGame">
+                <option value="ALL">1 open: Anytime</option>
+                <option value="FINAL">1 open: Final trade</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="field" style="margin-top: 18px">
+          <div class="control">
+            <button
+              @click="createGame"
+              :disabled="!hasNicknameSet || isAlreadyInAGame || checkingGame"
+              class="button is-success is-rounded is-large"
+            >
+              Create new game
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="isTab('join')">
+        <div class="field">
+          <label class="label is-large">Nickname</label>
+          <div class="control">
+            <input
+              :disabled="isAlreadyInAGame || checkingGame"
+              @keyup.enter="handleKeyupEnter"
+              :class="dangerIfExists(errors.nickname)"
+              class="input is-large is-rounded"
+              v-model="nickname"
+              ref="nickname"
+              placeholder="Choose a nickname..."
+              maxlength="15"
+            >
+            <p
+              class="help is-danger"
+              v-if="errors.nickname"
+            >
+              {{ errors.nickname }}
+            </p>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label is-large">Invitation key</label>
+          <div class="control">
+            <input
+              :disabled="isAlreadyInAGame || checkingGame"
+              :class="dangerIfExists(errors.invKey)"
+              class="input is-large is-rounded"
+              type="text"
+              placeholder="Invitation key"
+              v-model="invKey"
+            >
+              <p
+                class="help is-danger"
+                v-if="errors.invKey"
+              >
+                {{ errors.invKey }}
+              </p>
+          </div>
+        </div>
+
+        <div class="field" style="margin-top: 30px">
+          <div class="control">
+            <a
+              :disabled="!fieldsAreValid || isAlreadyInAGame || checkingGame"
+              class="button is-info is-large is-rounded"
+              @click="joinGame"
+            >
+              Join game
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
 </template>
 <script>
 import { JOIN_GAME, NEW_GAME, CHECK_GAME } from '@/dto/action/types'
 import { SEND_ACTION } from '@/store/modules/socket/action_types'
 import JoinRequest from '@/dto/joinrequest/JoinRequest'
+import GameCreation from '@/dto/gamecreation/GameCreation'
 import RejoinRequest from '@/dto/rejoinrequest/RejoinRequest'
 import Action from '@/dto/action/Action'
 import ConnectionStatus from '@/views/components/ConnectionStatus'
@@ -116,12 +199,21 @@ export default {
   },
   data: () => {
     return {
+      tab: 'create',
       invKey: '',
       nickname: '',
       leftGame: false,
+      rules: {
+        numTrades: 2,
+        chicagoBestHand: false,
+        oneOpen: 'ALL',
+      }
     }
   },
   methods: {
+    isTab(tab) {
+      return this.tab === tab
+    },
     rejoin() {
       this.$emit('rejoin')
     },
@@ -134,11 +226,16 @@ export default {
         localStorage.setItem('nickname', this.nickname)
       }
     },
+    rememberRules () {
+      localStorage.setItem('rules', JSON.stringify(this.rules))
+    },
     createGame () {
       if (!this.hasNicknameSet) return
-      const actionDTO = new Action(NEW_GAME, this.nickname)
+      const gameCreation = new GameCreation(this.nickname, this.rules)
+      const actionDTO = new Action(NEW_GAME, gameCreation)
       this.$emit('action', actionDTO)
       this.rememberNickname()
+      this.rememberRules()
     },
     joinGame () {
       if (!this.fieldsAreValid) return
@@ -204,11 +301,18 @@ export default {
     this.invKey = this.urlKey || ''
 
     const nickname = localStorage.getItem('nickname')
+    const rulesJson = localStorage.getItem('rules')
+
+    if (rulesJson) {
+      this.rules = JSON.parse(rulesJson)
+    }
+
     if (nickname) {
       this.nickname = nickname
     }
   },
   mounted() {
+    if (this.invKey) this.tab = 'join'
     this.$refs.nickname.focus()
   },
   watch: {
@@ -217,8 +321,11 @@ export default {
         this.checkGame()
       }
     },
-    urlKey() {
-      this.invKey = this.urlKey || this.invKey || ''
+    urlKey(key) {
+      if (key) {
+        this.tab = 'join'
+      }
+      this.invKey = key || this.invKey || ''
     },
     invKey () {
       this.$emit('changeKey')

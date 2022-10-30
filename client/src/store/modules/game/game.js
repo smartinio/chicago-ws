@@ -7,6 +7,11 @@ import { DISCONNECTED } from '../socket/action_types'
 const state = {
   currentlyInGame: undefined,
   stale: false,
+  rules: {
+    chicagoBestHand: false,
+    oneOpen: 'ALL',
+    numTrades: 2,
+  },
   oneOpen: {
     player: {
       id: '',
@@ -53,6 +58,11 @@ const mutations = {
     state.events = game.events
     state.started = game.started
     state.hasWinners = game.hasWinners
+
+    state.rules.chicagoBestHand = game.rules.chicagoBestHand
+    state.rules.oneOpen = game.rules.oneOpen
+    state.rules.numTrades = game.rules.numTrades
+
     if (!game.currentRound) {
       return
     }

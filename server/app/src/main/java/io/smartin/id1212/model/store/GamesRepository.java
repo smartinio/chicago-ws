@@ -6,6 +6,7 @@ import io.smartin.id1212.exceptions.game.NotInGameException;
 import io.smartin.id1212.exceptions.key.UnknownInvitationKeyException;
 import io.smartin.id1212.model.components.ChicagoGame;
 import io.smartin.id1212.model.components.Player;
+import io.smartin.id1212.net.dto.GameCreation.GameRules;
 
 import java.util.*;
 
@@ -28,9 +29,9 @@ public class GamesRepository {
         }
     }
 
-    public void createGame(Player player) {
+    public void createGame(Player player, GameRules rules) {
         UUID invitationKey = UUID.randomUUID();
-        ChicagoGame game = new ChicagoGame(invitationKey, player);
+        ChicagoGame game = new ChicagoGame(invitationKey, player, rules);
         player.setGame(game);
         addGame(invitationKey, game);
     }

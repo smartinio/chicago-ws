@@ -29,8 +29,19 @@ public class ScoreManager {
     }
 
     public List<BestHandResult> givePointsForBestHand() {
+        var finalCandidates = getFinalCandidates();
+
+        if (finalCandidates.isEmpty()) {
+            return new ArrayList<BestHandResult>();
+        }
+
+        return finalizeWinners(finalCandidates);
+    }
+
+    private List<Player> getFinalCandidates() {
         Map<Hand.HandType,List<Player>> countMap = new HashMap<>();
         Hand.HandType bestType = null;
+
         for (Player player : players) {
             Logger playerLogger = LogManager.getLogger(player.getName());
             Hand hand = player.getHand();
@@ -54,25 +65,13 @@ public class ScoreManager {
             }
         }
         if (bestType != null && bestType.equals(Hand.HandType.NOTHING))
-            return new ArrayList<BestHandResult>();
-        List<Player> finalCandidates = countMap.get(bestType);
-        return finalizeWinners(finalCandidates);
+            return new ArrayList<Player>();
+
+        return countMap.get(bestType);
     }
 
     private List<BestHandResult> finalizeWinners(List<Player> finalCandidates) {
-        List<Player> winners = new ArrayList<>();
-        for (Player candidate : finalCandidates) {
-            try {
-                if (winners.size() == 0) {
-                    winners.add(candidate);
-                } else if (candidate.getHand().getPokerHand().beats(winners.get(0).getHand().getPokerHand())) {
-                    winners = new ArrayList<>();
-                    winners.add(candidate);
-                }
-            } catch (HandsAreEqualException e) {
-                winners.add(candidate);
-            }
-        }
+        List<Player> winners = getWinners(finalCandidates);
 
         List<BestHandResult> results = new ArrayList<>();
 
@@ -87,6 +86,24 @@ public class ScoreManager {
         return results;
     }
 
+    private List<Player> getWinners(List<Player> finalCandidates) {
+        List<Player> winners = new ArrayList<>();
+
+        for (Player candidate : finalCandidates) {
+            try {
+                if (winners.size() == 0) {
+                    winners.add(candidate);
+                } else if (candidate.getHand().getPokerHand().beats(winners.get(0).getHand().getPokerHand())) {
+                    winners = new ArrayList<>();
+                    winners.add(candidate);
+                }
+            } catch (HandsAreEqualException e) {
+                winners.add(candidate);
+            }
+        }
+        return winners;
+    }
+
     public void handleChicagoResult(boolean success, Player player) {
         if (success) {
             player.addPoints(15);
@@ -95,5 +112,17 @@ public class ScoreManager {
         else {
             player.removePoints(15);
         }
+    }
+
+    public Player getBestHandWinner() {
+        var finalCandidates = getFinalCandidates();
+        var winners = getWinners(finalCandidates);
+        return winners.iterator().next();
+    }
+
+    public boolean hasBestHand(Player chicagoTaker) {
+        var finalCandidates = getFinalCandidates();
+        var winners = getWinners(finalCandidates);
+        return winners.contains(chicagoTaker);
     }
 }

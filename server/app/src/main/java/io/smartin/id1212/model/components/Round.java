@@ -13,6 +13,7 @@ import io.smartin.id1212.model.managers.TradingManager;
 import io.smartin.id1212.model.managers.TrickingManager;
 import io.smartin.id1212.model.managers.ScoreManager.BestHandResult;
 import io.smartin.id1212.model.managers.TrickingManager.MoveResult;
+import io.smartin.id1212.net.dto.GameCreation.OneOpenMode;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -292,6 +293,11 @@ public class Round {
     public PlayingCard getCardForOneOpen(Player player) throws InappropriateActionException, WaitYourTurnException, OutOfCardsException, UnauthorizedTradeException {
         checkPhase(GamePhase.TRADING);
         checkTurn(player);
+
+        var isFinalTrade = tradingManager.maxTradingCyclesReached();
+        if (game.getRules().oneOpen == OneOpenMode.FINAL && !isFinalTrade) {
+            throw new UnauthorizedTradeException(NOT_FINAL_TRADE);
+        }
 
         return deck.draw(1).iterator().next();
     }

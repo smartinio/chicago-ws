@@ -52,11 +52,13 @@ public class GameEvent {
     return event;
   }
 
-  public static GameEvent lostChicago(Player loser) {
+  public static GameEvent lostChicago(Player loser, Player opponent, String reason) {
     GameEvent event = new GameEvent();
 
     event.actor = loser;
     event.action = EventAction.LOST_CHICAGO;
+    event.opponentName = opponent.getName();
+    event.reason = reason;
 
     return event;
   }
@@ -231,6 +233,12 @@ public class GameEvent {
 
   @Expose
   public boolean accepted;
+
+  @Expose
+  public String reason;
+
+  @Expose
+  public String opponentName;
 
   public enum EventAction {
     CALLED_CHICAGO,

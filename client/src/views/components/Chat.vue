@@ -9,6 +9,14 @@
           :connected="connected"
         />
         <a
+          class="button is-small is-rounded is-info is-light"
+          @click="showRules = true"
+          v-if="!showRules"
+        >
+          <span class="icon is-small"><i class="fa fa-scale-balanced"></i></span>
+          <span>Show rules</span>
+        </a>
+        <a
           class="button is-small is-rounded is-danger is-light"
           @click="$emit('leave')"
         >
@@ -16,6 +24,16 @@
           <span>Leave game</span>
         </a>
       </div>
+
+      <div class="is-flex" style="width: 400px" v-if="showRules">
+        <div class="notification is-info" style="flex: 1">
+          <button class="delete" aria-label="delete" @click="showRules = false"></button>
+          <p><strong>{{numTrades}}</strong> trades</p>
+          <p>Chicago <strong>{{chicagoBestHand ? 'requires' : 'does not require'}}</strong> best hand</p>
+          <p>1 open card available at <strong>{{ oneOpenFinal ? 'the final trade' : 'every trade'}}</strong></p>
+        </div>
+      </div>
+
       <div style="height: 15px" />
       <EventLog :game="game" />
     </div>
@@ -33,6 +51,22 @@ import EventLog from './EventLog'
 export default {
   name: 'Chat',
   props: ['game', 'connected'],
+  data() {
+    return {
+      showRules: true,
+    }
+  },
+  computed: {
+    numTrades () {
+      return this.game.rules.numTrades
+    },
+    chicagoBestHand() {
+      return this.game.rules.chicagoBestHand
+    },
+    oneOpenFinal() {
+      return this.game.rules.oneOpen === 'FINAL'
+    }
+  },
   components: {
     ChatSender,
     EventLog,

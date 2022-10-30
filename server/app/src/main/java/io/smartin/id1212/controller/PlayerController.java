@@ -148,8 +148,12 @@ public class PlayerController {
     }
 
     private void createNewGame(Action action) {
-        player.setName(action.getValue());
-        GamesRepository.getInstance().createGame(player);
+        var creation = Converter.toGameCreation(action.getValue());
+        var nickname = creation.getNickname();
+        var rules = creation.getRules();
+
+        player.setName(nickname);
+        GamesRepository.getInstance().createGame(player, rules);
     }
 
     private void joinGame(Action action) throws UnknownInvitationKeyException, NicknameException, AlreadyStartedException {

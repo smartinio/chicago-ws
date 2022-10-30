@@ -136,7 +136,12 @@ export default {
       return this.phase !== 'AFTER' && !this.canRespondToOpenCard
     },
     canTradeOpenly () {
-      return this.markedCards.length == 1
+      if (this.game.rules.oneOpen === 'ALL') {
+        return this.markedCards.length == 1
+      }
+      if (this.game.rules.oneOpen === 'FINAL') {
+        return this.markedCards.length == 1 && this.game.round.isFinalTrade
+      }
     },
     canSeeOpenCard () {
       return this.game.oneOpen.isOpen

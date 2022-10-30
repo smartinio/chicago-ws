@@ -9,15 +9,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static io.smartin.id1212.config.Rules.MAX_TRADES_PER_ROUND;
-
 public class TradingManager {
     private Round round;
     private List<TradingCycle> tradingCycles = new ArrayList<>();
+    private int MAX_TRADES_PER_ROUND;
 
     public TradingManager(Round round) {
         this.round = round;
         this.tradingCycles.add(new TradingCycle());
+        this.MAX_TRADES_PER_ROUND = round.getGame().getRules().numTrades;
     }
 
     public void throwCards(Player player, Set<PlayingCard> cards) throws OutOfCardsException {
