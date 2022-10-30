@@ -206,4 +206,8 @@ public class Player {
     public void respondToOneOpen(boolean accepted) throws GameException {
         game.respondToOneOpen(this, accepted);
     }
+
+    public boolean isConnected() {
+        return connected;
+    }
 }

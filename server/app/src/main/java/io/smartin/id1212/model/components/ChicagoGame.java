@@ -46,10 +46,10 @@ public class ChicagoGame {
     private ScoreManager scoreManager = new ScoreManager(players);
     private final Logger logger = LogManager.getLogger("ChicagoGame");
 
-    private static void setTimeout(Runnable runnable, int delay) {
+    private static void setTimeout(Runnable runnable, int delaySeconds) {
         new Thread(() -> {
             try {
-                Thread.sleep(delay);
+                Thread.sleep(delaySeconds * 1000);
                 runnable.run();
             } catch (Exception e) {
                 System.err.println(e);
@@ -57,11 +57,27 @@ public class ChicagoGame {
         }).start();
     }
 
+    private void scheduleActivityChecker() {
+        var latestEvent = events.get(events.size() - 1);
+        var idleTimeMillis = new Date().getTime() - latestEvent.timestamp;
+        var idleTimeSeconds = Math.round(idleTimeMillis / 1000);
+        var delaySeconds = 60;
+
+        if (idleTimeSeconds >= MAX_GAME_IDLE_TIME_SECONDS) {
+            logger.info("Game with key '{}' is idle. Removing.", invitationKey);
+            removeGame();
+        } else {
+            logger.info("Game with key '{}' was active {}s ago. Checking again in {}s.", invitationKey, idleTimeSeconds, delaySeconds);
+            setTimeout(this::scheduleActivityChecker, delaySeconds);
+        }
+    }
+
     public ChicagoGame(UUID invitationKey, Player player) {
         this.invitationKey = invitationKey;
         this.players.add(player);
         this.host = player;
         logEvent(GameEvent.createdGame(player));
+        scheduleActivityChecker();
     }
 
     public void addParticipant(Player player) throws AlreadyStartedException {

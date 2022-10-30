@@ -22,10 +22,9 @@ emoji.replace_mode = 'img'
 emoji.img_set = 'apple'
 emoji.img_sets.apple.path = 'https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/'
 
-const withEmojis = (callback) => (...args) => {
-  const string = callback(...args)
-  return string ? emoji.replace_unified(string) : undefined
-}
+const emojify = (string) => string ? emoji.replace_unified(string) : undefined
+
+const withEmojis = (callback) => (...args) => emojify(callback(...args))
 
 export default {
   methods: {
@@ -38,5 +37,6 @@ export default {
     niceCard,
     capitalize,
     withEmojis,
+    emojify,
   }
 }

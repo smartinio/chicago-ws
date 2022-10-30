@@ -69,5 +69,6 @@ public class Action {
         SEND_CHAT_MESSAGE,
         KICK_PLAYER,
         RECONNECT,
+        CHECK_GAME,
     }
 }

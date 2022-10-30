@@ -1,3 +1,4 @@
+export const CURRENTLY_IN_GAME = 'CURRENTLY_IN_GAME'
 export const FATAL_ERROR = 'FATAL_ERROR'
 export const KICKED = 'KICKED'
 export const KEY_ERROR = 'KEY_ERROR'

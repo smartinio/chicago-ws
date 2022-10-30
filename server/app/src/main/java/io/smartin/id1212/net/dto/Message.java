@@ -43,5 +43,6 @@ public class Message {
         GAME_WINNER,
         SNAPSHOT,
         KEEP_ALIVE,
+        CURRENTLY_IN_GAME,
     }
 }

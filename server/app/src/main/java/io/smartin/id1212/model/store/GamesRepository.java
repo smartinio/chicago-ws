@@ -63,7 +63,7 @@ public class GamesRepository {
         }
     }
 
-    public ChicagoGame findGameForPlayer(String key, String playerId) throws UnknownInvitationKeyException, NotInGameException {
+    public ChicagoGame findGame(String key) throws UnknownInvitationKeyException {
         UUID invitationKey;
 
         try {
@@ -72,7 +72,11 @@ public class GamesRepository {
             throw new UnknownInvitationKeyException(UNKNOWN_KEY);
         }
 
-        ChicagoGame game = games.get(invitationKey);
+        return games.get(invitationKey);
+    }
+
+    public ChicagoGame findGameForPlayer(String key, String playerId) throws UnknownInvitationKeyException, NotInGameException {
+        var game = findGame(key);
 
         if (game == null) {
             throw new UnknownInvitationKeyException(UNKNOWN_KEY);

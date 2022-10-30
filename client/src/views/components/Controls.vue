@@ -17,35 +17,10 @@
         <span>Restart</span>
       </a>
       <span v-if="me.imDealing && isPhase(phase.AFTER)">
-        <a class="tag is-danger is-medium" @click="deal">DEAL CARDS</a>
+        <a class="tag is-danger is-medium deal-pulse" @click="deal">DEAL CARDS</a>
       </span>
       <span v-else-if="me.isMyTurn">
-        <span v-if="isPhase(phase.TRADING) && canRespondToOpenCard">
-          <span v-html="`Want ${withEmojis(() => niceCard(game.oneOpen.card))() }?`" style="margin-right: 10px" />
-          <a class="tag is-info is-medium" @click="respondToOneOpen(true)">
-            KEEP
-          </a>
-          <a class="tag is-warning is-medium" @click="respondToOneOpen(false)">
-            THROW
-          </a>
-        </span>
-        <span v-else-if="isPhase(phase.TRADING) && canTradeOpenly">
-          <a class="tag is-success is-medium" @click="trade">TRADE (1)</a>
-          <a class="tag is-info is-medium" @click="tradeOpenly">OPEN (1)</a>
-        </span>
-        <span v-else-if="isPhase(phase.TRADING)">
-          <a class="tag is-info is-medium" v-if="!markedCards.length" @click="passTrade">YOUR TURN (PASS)</a>
-          <a class="tag is-success is-medium" v-else @click="trade">TRADE ({{ markedCards.length }})</a>
-        </span>
-        <span v-else-if="isPhase(phase.CHICAGO)">
-          <span>Want Chicago?</span>
-          <a class="tag is-success is-medium" @click="callChicago">YES</a>
-          <a class="tag is-danger is-medium" @click="passChicago">NO</a>
-        </span>
-        <span v-else-if="isPhase(phase.PLAYING)">
-          <a class="tag is-success is-medium" v-if="markedCard" @click="play">PLAY CARD</a>
-          <span class="tag is-black is-medium" v-else>YOUR TURN</span>
-        </span>
+        <span class="tag is-info is-medium">YOUR TURN</span>
       </span>
       <span v-else>
         <span class="tag is-warning is-medium">WAITING</span>
@@ -67,7 +42,7 @@ import Action from '@/dto/action/Action'
 import { SEND_ACTION } from '@/store/modules/socket/action_types'
 import * as phaseTypes from '@/store/modules/game/phase_types'
 import PlayerStatus from '@/views/components/PlayerStatus'
-const audio = new Audio('static/audio/yourturn.ogg');
+const yourTurn = new Audio('static/audio/yourturn.ogg');
 
 export default {
   props: ['game', 'me', 'dealer', 'controlPlayer', 'markedCards', 'currentPlayer', 'baseMove'],
@@ -79,41 +54,28 @@ export default {
     return {
       copiedKey: false,
       inviteText: 'Invite friends',
-      phase: phaseTypes
+      phase: phaseTypes,
+      active: true,
     }
   },
   watch: {
     'me.isMyTurn': (isMyTurn) => {
-      if (isMyTurn) {
-        audio.play();
+      if (isMyTurn && !this.active) {
+        yourTurn.play();
       }
+    }
+  },
+  created () {
+    window.onblur = () => {
+      this.active = false
+    }
+    window.onfocus = () => {
+      this.active = true
     }
   },
   methods: {
     startGame () {
       this.doAction(new Action(START_GAME))
-    },
-    trade () {
-      this.doAction(new Action(THROW, this.markedCards))
-    },
-    tradeOpenly () {
-      const [openCard] = this.markedCards
-      this.doAction(new Action(THROW_ONE_OPEN, openCard))
-    },
-    respondToOneOpen (accepted) {
-      this.doAction(new Action(RESPOND_ONE_OPEN, accepted))
-    },
-    passTrade () {
-      this.doAction(new Action(THROW, []))
-    },
-    callChicago () {
-      this.doAction(new Action(CHICAGO, true))
-    },
-    passChicago () {
-      this.doAction(new Action(CHICAGO, false))
-    },
-    play () {
-      this.doAction(new Action(MOVE, this.markedCard))
     },
     deal () {
       this.doAction(new Action(DEAL_CARDS))
@@ -160,4 +122,18 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.deal-pulse {
+  animation: shadow-pulse 0.5s infinite ease-in-out alternate;
+}
+
+@keyframes shadow-pulse {
+  from {
+    scale: 1;
+    box-shadow: 0 8px 20px rgba(255, 0, 0, 0);
+  }
+  to {
+    scale: 1.05;
+    box-shadow: 0 8px 20px rgba(255, 0, 0, 0.6);
+  }
+}
 </style>

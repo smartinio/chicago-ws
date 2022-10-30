@@ -1,10 +1,11 @@
-import { MIRROR_GAME_STATE, SET_STALE } from './mutation_types'
-import { HANDLE_SNAPSHOT } from './action_types'
+import { MIRROR_GAME_STATE, SET_STALE, SET_CURRENTLY_IN_GAME } from './mutation_types'
+import { HANDLE_SNAPSHOT, HANDLE_CURRENTLY_IN_GAME } from './action_types'
 import { SET_MY_TURN, SET_MY_HAND, SET_MY_PLAYER, SET_IM_DEALING } from './../me/mutation_types'
 import router from '@/router'
 import { DISCONNECTED } from '../socket/action_types'
 
 const state = {
+  currentlyInGame: undefined,
   stale: false,
   oneOpen: {
     player: {
@@ -36,10 +37,14 @@ const state = {
 }
 
 const mutations = {
+  [SET_CURRENTLY_IN_GAME] (state, value) {
+    state.currentlyInGame = value
+  },
   [SET_STALE] (state, value) {
     state.stale = value
   },
   [MIRROR_GAME_STATE] (state, game) {
+    state.currentlyInGame = true
     state.stale = false
     state.host.id = game.host.id
     state.dealer = game.dealer
@@ -63,6 +68,9 @@ const mutations = {
 }
 
 const actions = {
+  [HANDLE_CURRENTLY_IN_GAME] ({ commit }, json) {
+    commit(SET_CURRENTLY_IN_GAME, JSON.parse(json))
+  },
   [DISCONNECTED] ({ commit }) {
     commit(SET_STALE, true)
   },

@@ -26,6 +26,7 @@
 import helpers from '@/mixins/helpers'
 import { format } from 'date-fns'
 
+const { withEmojis, capitalize, niceCard } = helpers.methods
 
 const points = (event) => {
   const numerus = event.points === 1 ? 'point' : 'points'
@@ -38,8 +39,6 @@ const sanitize = (string) => {
   pre.appendChild(text)
   return pre.innerHTML ? pre.innerHTML.trim() : undefined
 }
-
-const { withEmojis, capitalize, niceCard } = helpers.methods
 
 export default {
   props: ['game'],

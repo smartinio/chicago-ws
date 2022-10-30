@@ -1,9 +1,9 @@
 import { SET_SOCKET, SET_STATUS_CONNECTING, SET_STATUS_CONNECTED, SET_STATUS_FAILED } from './mutation_types'
 import { CONNECT, HANDLE_MESSAGE, SEND_ACTION, DISCONNECTED } from './action_types'
-import { KICKED, FATAL_ERROR, KEY_ERROR, NICKNAME_ERROR, GAME_ERROR, JSON_ERROR, SNAPSHOT } from '@/dto/message/types'
+import { KICKED, FATAL_ERROR, KEY_ERROR, NICKNAME_ERROR, GAME_ERROR, JSON_ERROR, SNAPSHOT, CURRENTLY_IN_GAME } from '@/dto/message/types'
 import { SET_KEY_ERROR, SET_NICKNAME_ERROR } from './../errors/mutation_types'
 import { HANDLE_GAME_ERROR, HANDLE_JSON_ERROR, HANDLE_FATAL_ERROR } from './../errors/action_types'
-import { HANDLE_SNAPSHOT } from './../game/action_types'
+import { HANDLE_CURRENTLY_IN_GAME, HANDLE_SNAPSHOT } from './../game/action_types'
 import Message from '@/dto/message/Message'
 import Action from '@/dto/action/Action'
 import { PING } from '@/dto/action/types'
@@ -66,11 +66,15 @@ const actions = {
   [HANDLE_MESSAGE] ({commit, dispatch}, event) {
     const message = new Message(event)
     switch (message.type) {
+      case CURRENTLY_IN_GAME:
+        dispatch(HANDLE_CURRENTLY_IN_GAME, message.body)
+        break
       case KICKED:
         localStorage.removeItem('invitationKey')
         localStorage.removeItem('playerId')
         alert('You were kicked from the game')
         window.location.href = '/'
+        break
       case KEY_ERROR:
         commit(SET_KEY_ERROR, message.body)
         break

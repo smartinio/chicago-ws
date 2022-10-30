@@ -10,6 +10,7 @@
       :connected="socket.connected"
       :errors="errors"
       :urlKey="$route.params.key"
+      :currentlyInGame="game.currentlyInGame"
     />
 
     <Game

@@ -6,6 +6,7 @@ import java.util.Map;
 import io.smartin.id1212.model.components.Hand.HandType;
 
 public class Rules {
+    public static final int    MAX_GAME_IDLE_TIME_SECONDS = 1800; // 30 min
     public static final int    MAX_TRADES_PER_ROUND = 2;
     public static final int    ROUND_WIN_SCORE = 2;
     public static final int    WIN_WITH_TWO_SCORE = 5;

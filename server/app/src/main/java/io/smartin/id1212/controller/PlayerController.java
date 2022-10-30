@@ -26,7 +26,9 @@ import static io.smartin.id1212.config.Strings.*;
 import static io.smartin.id1212.net.dto.Action.ActionType.JOIN_GAME;
 import static io.smartin.id1212.net.dto.Action.ActionType.NEW_GAME;
 import static io.smartin.id1212.net.dto.Action.ActionType.RECONNECT;
-import static io.smartin.id1212.net.dto.Action.ActionType.LEAVE_GAME;;
+import static io.smartin.id1212.net.dto.Action.ActionType.CHECK_GAME;
+import static io.smartin.id1212.net.dto.Action.ActionType.LEAVE_GAME;
+import static io.smartin.id1212.net.dto.Action.ActionType.PING;
 
 public class PlayerController {
     private Player player;
@@ -53,7 +55,24 @@ public class PlayerController {
             case RECONNECT:         rejoin(action, sessionId);      break;
             case KICK_PLAYER:       kickPlayer(action);             break;
             case LEAVE_GAME:        leaveGame(action, sessionId);   break;
+            case CHECK_GAME:        checkGame(action, sessionId);   break;
+            case PING:                                              return;
             default:                throw new UnknownActionException(UNKNOWN_ACTION);
+        }
+    }
+
+    private void checkGame(Action action, String sessionId) {
+        try {
+            var request = Converter.toRejoinRequest(action.getValue());
+            var key = request.getKey();
+            var oldPlayerId = request.getPlayerId();
+            var game = GamesRepository.getInstance().findGame(key);
+            var exists = game != null && game.hasPlayerWithId(oldPlayerId);
+            var message = new Message(MessageType.CURRENTLY_IN_GAME, Converter.toJson(exists));
+            SessionHandler.getInstance().sendMsgToSessionId(sessionId, message);
+        } catch (Throwable e) {
+            var message = new Message(MessageType.CURRENTLY_IN_GAME, Converter.toJson(false));
+            SessionHandler.getInstance().sendMsgToSessionId(sessionId, message);
         }
     }
 
@@ -158,10 +177,12 @@ public class PlayerController {
     }
 
     private void validateAuthority(Action action) throws NotInGameException {
+        if (action.getType().equals(CHECK_GAME)) return;
         if (action.getType().equals(JOIN_GAME)) return;
         if (action.getType().equals(NEW_GAME)) return;
         if (action.getType().equals(LEAVE_GAME)) return;
         if (action.getType().equals(RECONNECT)) return;
+        if (action.getType().equals(PING)) return;
         if (player == null) throw new NotInGameException(INVALID_PLAYER);
         if (player.getGame() == null) throw new NotInGameException(INVALID_PLAYER);
     }

@@ -38,7 +38,7 @@
               <img
                 :src="getCardUrl(card)"
                 :alt="card.type + '' + card.value"
-                :class="isBaseCard(card) ? 'baseCard' : ''"
+                :class="isBaseCard(card) ? 'red-pulse' : ''"
               >
             </figure>
           </div>

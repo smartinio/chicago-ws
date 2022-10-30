@@ -44,6 +44,7 @@
             :me="me"
             :markedCards="markedCards"
             :phase="game.round.phase"
+            :game="game"
             @toggleMark="toggleMark"
             @action="unmarkAll"
           />
@@ -185,17 +186,17 @@ export default {
     width: 1rem;
     height: 1rem;
   }
-  .baseCard {
+  .red-pulse {
     border: 2px solid;
     box-sizing: border-box;
     border-radius: 5px;
-    animation: pulse 1s infinite ease-in-out alternate;
+    animation: border-pulse 1s infinite ease-in-out alternate;
   }
   .avatar {
     border-radius: 25%;
   }
 
-  @keyframes pulse {
+  @keyframes border-pulse {
     from {
       border-color: rgba(255, 0, 0, 0);
     }

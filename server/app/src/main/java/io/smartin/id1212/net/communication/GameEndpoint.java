@@ -9,7 +9,6 @@ import io.smartin.id1212.exceptions.NicknameException;
 import io.smartin.id1212.model.components.ChicagoGame;
 import io.smartin.id1212.net.dto.Action;
 import io.smartin.id1212.net.dto.Message;
-import io.smartin.id1212.net.dto.Action.ActionType;
 import io.smartin.id1212.controller.PlayerController;
 import io.smartin.id1212.net.services.Converter;
 
@@ -53,6 +52,14 @@ public class GameEndpoint {
         thr.printStackTrace();
     }
 
+    private boolean requiresSnapshot(Action action) {
+        switch (action.getType()) {
+            case PING:                  return false;
+            case CHECK_GAME:            return false;
+            default:                    return true;
+        }
+    }
+
     @OnMessage
     public void onMessage(Session session, String message) {
         try {
@@ -60,14 +67,13 @@ public class GameEndpoint {
             playerController.markAsConnected();
             Action action = Converter.toAction(message);
 
-            if (action.getType() == ActionType.PING) {
-                return;
-            }
-
             logger.info("Message received on session {}", session.getId());
             playerController.handleAction(action, session.getId());
-            ChicagoGame game = playerController.getPlayer().getGame();
-            sessionHandler.broadcastSnapshots(game);
+
+            if (requiresSnapshot(action)) {
+                ChicagoGame game = playerController.getPlayer().getGame();
+                sessionHandler.broadcastSnapshots(game);
+            }
         } catch (JsonSyntaxException e) {
             SessionHandler.sendMsg(session, new Message(JSON_ERROR, e.getMessage()));
         } catch (GameException e) {

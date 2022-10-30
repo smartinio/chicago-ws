@@ -2,7 +2,7 @@
   <section class="section">
         <div class="container">
           <ConnectionStatus
-            :connected="connected"
+            :connected="connected && !checkingGame"
           />
           <section
             v-if="isAlreadyInAGame"
@@ -25,7 +25,7 @@
           <div class="field" style="padding-top: 30px">
             <div class="control">
               <input
-                :disabled="isAlreadyInAGame"
+                :disabled="isAlreadyInAGame || checkingGame"
                 @keyup.enter="handleKeyupEnter"
                 :class="dangerIfExists(errors.nickname)"
                 class="input is-large"
@@ -45,7 +45,7 @@
                 <div class="field has-addons is-fullwidth">
                   <div class="control is-expanded">
                     <input
-                      :disabled="isAlreadyInAGame"
+                      :disabled="isAlreadyInAGame || checkingGame"
                       :class="dangerIfExists(errors.invKey)"
                       class="input is-large"
                       type="text"
@@ -61,7 +61,7 @@
                   </div>
                   <div class="control">
                     <a
-                      :disabled="!fieldsAreValid || isAlreadyInAGame"
+                      :disabled="!fieldsAreValid || isAlreadyInAGame || checkingGame"
                       class="button is-info is-large"
                       @click="joinGame"
                     >
@@ -74,7 +74,7 @@
                 <button
                 class="button is-primary is-large"
                 @click="createGame"
-                :disabled="!hasNicknameSet || isAlreadyInAGame">
+                :disabled="!hasNicknameSet || isAlreadyInAGame || checkingGame">
                   Create new game
                 </button>
               </div>
@@ -83,8 +83,10 @@
       </section>
 </template>
 <script>
-import { JOIN_GAME, NEW_GAME } from '@/dto/action/types'
+import { JOIN_GAME, NEW_GAME, CHECK_GAME } from '@/dto/action/types'
+import { SEND_ACTION } from '@/store/modules/socket/action_types'
 import JoinRequest from '@/dto/joinrequest/JoinRequest'
+import RejoinRequest from '@/dto/rejoinrequest/RejoinRequest'
 import Action from '@/dto/action/Action'
 import ConnectionStatus from '@/views/components/ConnectionStatus'
 
@@ -94,6 +96,10 @@ export default {
     ConnectionStatus,
   },
   props: {
+    currentlyInGame: {
+      type: Boolean,
+      default: undefined,
+    },
     connected: {
       type: Boolean,
       required: true,
@@ -140,6 +146,20 @@ export default {
       this.$emit('action', actionDTO)
       this.rememberNickname()
     },
+    checkGame() {
+      const storedInvitationKey = localStorage.getItem('invitationKey')
+      const storedPlayerId = localStorage.getItem('playerId')
+
+      if (storedInvitationKey && storedPlayerId) {
+        const details = new RejoinRequest(storedPlayerId, storedInvitationKey)
+        const actionDTO = new Action(CHECK_GAME, details)
+        this.$store.dispatch(SEND_ACTION, actionDTO)
+      } else {
+        localStorage.removeItem('invitationKey')
+        localStorage.removeItem('playerId')
+        this.$store.commit('SET_CURRENTLY_IN_GAME', false) // yolo
+      }
+    },
     dangerIfExists (value) {
       return this[value] ? 'is-danger' : ''
     },
@@ -152,10 +172,11 @@ export default {
     }
   },
   computed: {
+    checkingGame () {
+      return this.currentlyInGame === undefined
+    },
     isAlreadyInAGame () {
-      const storedInvitationKey = localStorage.getItem('invitationKey')
-      const storedPlayerId = localStorage.getItem('invitationKey')
-      return !this.leftGame && Boolean(storedInvitationKey && storedPlayerId)
+      return !this.leftGame && this.currentlyInGame
     },
     hasNicknameSet () {
       return this.nickname.length > 0
@@ -190,6 +211,11 @@ export default {
     this.$refs.nickname.focus()
   },
   watch: {
+    connected (conn) {
+      if (conn) {
+        this.checkGame()
+      }
+    },
     urlKey() {
       this.invKey = this.urlKey || this.invKey || ''
     },
