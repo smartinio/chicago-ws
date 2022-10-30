@@ -21,7 +21,7 @@
       </span>
       <span v-else-if="me.isMyTurn">
         <span v-if="isPhase(phase.TRADING) && canRespondToOpenCard">
-          <span>Want {{ niceCard(game.oneOpen.card) }}?</span>
+          <span v-html="`Want ${withEmojis(() => niceCard(game.oneOpen.card))() }?`" style="margin-right: 10px" />
           <a class="tag is-info is-medium" @click="respondToOneOpen(true)">
             KEEP
           </a>
@@ -43,7 +43,7 @@
           <a class="tag is-danger is-medium" @click="passChicago">NO</a>
         </span>
         <span v-else-if="isPhase(phase.PLAYING)">
-          <a class="tag is-success is-medium" v-if="markedCard" @click="play">PLAY {{niceCard(markedCard)}}</a>
+          <a class="tag is-success is-medium" v-if="markedCard" @click="play">PLAY CARD</a>
           <span class="tag is-black is-medium" v-else>YOUR TURN</span>
         </span>
       </span>
@@ -67,6 +67,7 @@ import Action from '@/dto/action/Action'
 import { SEND_ACTION } from '@/store/modules/socket/action_types'
 import * as phaseTypes from '@/store/modules/game/phase_types'
 import PlayerStatus from '@/views/components/PlayerStatus'
+const audio = new Audio('static/audio/yourturn.ogg');
 
 export default {
   props: ['game', 'me', 'dealer', 'controlPlayer', 'markedCards', 'currentPlayer', 'baseMove'],
@@ -79,6 +80,13 @@ export default {
       copiedKey: false,
       inviteText: 'Invite friends',
       phase: phaseTypes
+    }
+  },
+  watch: {
+    'me.isMyTurn': (isMyTurn) => {
+      if (isMyTurn) {
+        audio.play();
+      }
     }
   },
   methods: {
@@ -129,7 +137,7 @@ export default {
   },
   computed: {
     canTradeOpenly () {
-      return this.markedCards.length == 1 && this.game.round.isFinalTrade
+      return this.markedCards.length == 1
     },
     canRespondToOpenCard () {
       return this.game.oneOpen.isOpen

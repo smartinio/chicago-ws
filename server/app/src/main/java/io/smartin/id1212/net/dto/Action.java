@@ -1,5 +1,6 @@
 package io.smartin.id1212.net.dto;
 
+import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 
 import javax.websocket.Session;
@@ -45,6 +46,11 @@ public class Action {
 
     public void setSession(Session session) {
         this.session = session;
+    }
+
+    @Override
+    public String toString() {
+        return new Gson().toJson(this);
     }
 
     public enum ActionType {

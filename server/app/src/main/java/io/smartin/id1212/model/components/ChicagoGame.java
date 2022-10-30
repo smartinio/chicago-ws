@@ -15,6 +15,9 @@ import io.smartin.id1212.net.dto.Snapshot;
 
 import java.util.*;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import static io.smartin.id1212.config.Rules.*;
 import static io.smartin.id1212.config.Strings.*;
 
@@ -41,6 +44,7 @@ public class ChicagoGame {
     private final OneOpen oneOpen = new OneOpen();
 
     private ScoreManager scoreManager = new ScoreManager(players);
+    private final Logger logger = LogManager.getLogger("ChicagoGame");
 
     private static void setTimeout(Runnable runnable, int delay) {
         new Thread(() -> {
@@ -108,6 +112,12 @@ public class ChicagoGame {
         started = true;
     }
 
+    private <T> void logSet(String title, Set<T> set) {
+        logger.info(title);
+        set.forEach(logger::info);
+        logger.info("-------------------------------");
+    }
+
     public void throwCards(Player player, Set<PlayingCard> cards, boolean isOneOpen)
             throws TradeBannedException, WaitYourTurnException, OutOfCardsException, InappropriateActionException, TooManyCardsException, UnauthorizedTradeException {
         if (!player.canTrade() && cards.size() > 0) {
@@ -119,6 +129,8 @@ public class ChicagoGame {
         }
 
         if (!player.getHand().getCards().containsAll(cards)) {
+            logger.warn("Received erroneous trade from player '{}'", player);
+            logSet("Invalid trade", cards);
             throw new UnauthorizedTradeException(UNAUTHORIZED_TRADE);
         }
 
@@ -408,9 +420,13 @@ public class ChicagoGame {
 
         PlayingCard openCard = oneOpen.getCard();
 
-        currentRound.completeOnOpen(player, openCard, accepted);
+        List<BestHandResult> playersWithBestHand = currentRound.completeOnOpen(player, openCard, accepted);
 
         oneOpen.stop();
         logEvent(GameEvent.respondedToOneOpen(player, openCard, accepted));
+
+        for (BestHandResult result : playersWithBestHand) {
+            logEvent(GameEvent.bestHand(result.player, result.points));
+        }
     }
 }

@@ -3,7 +3,7 @@
     <div class="is-flex is-flex-direction-row" style="flex: 1">
       <div class="is-flex is-flex-direction-column is-justify-content-space-between" style="height: 100vh">
         <div class="is-flex" style="flex: 1; overflow: hidden; padding-top: 30px; padding-bottom: 30px">
-            <Chat :game="game" :connected="connected" @leave="$emit('leave')" />
+            <Chat :game="game" :connected="connected" @leave="leave" />
         </div>
       </div>
       <div style="width: 30px" />
@@ -43,7 +43,9 @@
             v-if="game.started"
             :me="me"
             :markedCards="markedCards"
+            :phase="game.round.phase"
             @toggleMark="toggleMark"
+            @action="unmarkAll"
           />
         </div>
       </div>
@@ -97,6 +99,12 @@ export default {
     }
   },
   methods: {
+    leave () {
+      this.$emit('leave')
+      setTimeout(() => {
+        window.location.href = '/'
+      }, 0)
+    },
     toggleMark (card) {
       if (this.isPhase(CHICAGO)) {
         this.unmarkAll()

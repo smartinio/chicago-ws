@@ -191,6 +191,7 @@ public class Player {
     }
 
     public void setId(String sessionId) {
+        System.out.println("setting player id from " + this.id + " to " + sessionId);
         this.id = sessionId;
     }
 

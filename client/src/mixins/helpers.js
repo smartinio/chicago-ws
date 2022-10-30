@@ -1,3 +1,5 @@
+import EmojiConvertor from 'emoji-js'
+
 const suits = {
   CLUBS: '♣️',
   HEARTS: '❤️',
@@ -15,6 +17,16 @@ const niceCard = (card) => {
   return `${suits[card.suit]} ${Card}`
 }
 
+const emoji = new EmojiConvertor();
+emoji.replace_mode = 'img'
+emoji.img_set = 'apple'
+emoji.img_sets.apple.path = 'https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/'
+
+const withEmojis = (callback) => (...args) => {
+  const string = callback(...args)
+  return string ? emoji.replace_unified(string) : undefined
+}
+
 export default {
   methods: {
     getCardUrl (card) {
@@ -25,5 +37,6 @@ export default {
     },
     niceCard,
     capitalize,
+    withEmojis,
   }
 }

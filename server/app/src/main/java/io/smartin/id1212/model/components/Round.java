@@ -276,24 +276,22 @@ public class Round {
             throws OutOfCardsException, WaitYourTurnException, InappropriateActionException, UnauthorizedTradeException {
         checkPhase(GamePhase.TRADING);
         checkTurn(player);
-        List<BestHandResult> result = tradingManager.handle(player, cards);
+        tradingManager.throwCards(player, cards);
+        tradingManager.drawCards(player, cards);
+        List<BestHandResult> result =  tradingManager.completeTrade();
         nextTurn();
         return result;
     }
 
-    public void throwCards(Player player, Set<PlayingCard> cards) throws WaitYourTurnException, InappropriateActionException {
+    public void throwCards(Player player, Set<PlayingCard> cards) throws WaitYourTurnException, InappropriateActionException, OutOfCardsException {
         checkPhase(GamePhase.TRADING);
         checkTurn(player);
-        player.removeCards(cards);
-        deck.addCards(cards);
+        tradingManager.throwCards(player, cards);
     }
 
     public PlayingCard getCardForOneOpen(Player player) throws InappropriateActionException, WaitYourTurnException, OutOfCardsException, UnauthorizedTradeException {
         checkPhase(GamePhase.TRADING);
         checkTurn(player);
-        if (!tradingManager.maxTradingCyclesReached()) {
-            throw new UnauthorizedTradeException(NOT_FINAL_TRADE);
-        }
 
         return deck.draw(1).iterator().next();
     }
@@ -371,9 +369,11 @@ public class Round {
         setPhase(GamePhase.AFTER);
     }
 
-    public void completeOnOpen(Player player, PlayingCard openCard, boolean accepted) throws GameException {
+    public List<BestHandResult> completeOnOpen(Player player, PlayingCard openCard, boolean accepted) throws GameException {
         PlayingCard finalCard = accepted ? openCard : getCardForOneOpen(player);
         player.giveCards(Set.of(finalCard));
+        List<BestHandResult> result =  tradingManager.completeTrade();
         nextTurn();
+        return result;
     }
 }

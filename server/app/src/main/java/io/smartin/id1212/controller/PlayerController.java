@@ -37,6 +37,7 @@ public class PlayerController {
 
     public void handleAction(Action action, String sessionId) throws GameException, NicknameException, KeyException, FatalException {
         validateAuthority(action);
+        System.out.println(action + " -> handling for player: " + player.getId() + ". session: " + sessionId);
         switch (action.getType()) {
             case NEW_GAME:          createNewGame(action);          break;
             case JOIN_GAME:         joinGame(action);               break;
@@ -90,7 +91,16 @@ public class PlayerController {
             ChicagoGame game = GamesRepository.getInstance().findGameForPlayer(key, oldPlayerId);
             player = game.getPlayer(oldPlayerId);
             player.leaveGame();
-            SessionHandler.getInstance().kill(oldPlayerId);
+
+            if (oldPlayerId != sessionId) {
+                System.out.println("killing old (" + oldPlayerId + ") " + " because its not same as new: " + sessionId);
+                SessionHandler.getInstance().kill(oldPlayerId);
+
+                List<Player> players = game.getPlayers();
+                for (Player p : players) {
+                    System.out.println(p.getId() + " -> remains as player");
+                }
+            }
         } catch (UnknownInvitationKeyException e) {
             throw new FatalException(e.getMessage());
         } catch (NotInGameException e) {
@@ -162,5 +172,18 @@ public class PlayerController {
 
     public void setConnected(boolean connected) {
         player.setConnected(connected);
+    }
+
+    public void updateId(String id) {
+        player.setId(id);
+    }
+
+    public void markAsConnected() {
+        System.out.println("Marking player " + player.getId() + " aka " + player.getName() + " as connected");
+        if (player.getGame() != null) {
+            System.out.println("-- The are in game " + player.getGame().getInvitationKey());
+        }
+
+        player.setConnected(true);
     }
 }

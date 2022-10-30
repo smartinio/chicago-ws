@@ -16,21 +16,29 @@ import io.smartin.id1212.net.services.Converter;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import static io.smartin.id1212.net.dto.Message.MessageType.*;
+
 
 @ServerEndpoint("/game")
 public class GameEndpoint {
     private PlayerController playerController;
     private final SessionHandler sessionHandler = SessionHandler.getInstance();
+    private Logger logger;
 
     @OnOpen
     public void onOpen(Session session) {
+        logger = LogManager.getLogger("sessionId:" + session.getId());
+        logger.info("onOpen. creating playercontroller");
         playerController = new PlayerController(session.getId());
         sessionHandler.register(session);
     }
 
     @OnClose
     public void onClose(Session session) {
+        logger.info("onClose. marking as disconnected and unregistering session. should fail broadcast to 1 player. on session", session.getId());
         ChicagoGame game = playerController.getPlayer().getGame();
         playerController.setConnected(false);
         sessionHandler.unregister(session);
@@ -48,12 +56,15 @@ public class GameEndpoint {
     @OnMessage
     public void onMessage(Session session, String message) {
         try {
+            playerController.updateId(session.getId());
+            playerController.markAsConnected();
             Action action = Converter.toAction(message);
 
             if (action.getType() == ActionType.PING) {
                 return;
             }
 
+            logger.info("Message received on session {}", session.getId());
             playerController.handleAction(action, session.getId());
             ChicagoGame game = playerController.getPlayer().getGame();
             sessionHandler.broadcastSnapshots(game);

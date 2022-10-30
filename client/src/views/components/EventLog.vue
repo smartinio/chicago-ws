@@ -25,13 +25,7 @@
 <script>
 import helpers from '@/mixins/helpers'
 import { format } from 'date-fns'
-import EmojiConvertor from 'emoji-js'
 
-const { capitalize, niceCard } = helpers.methods
-const emoji = new EmojiConvertor();
-emoji.replace_mode = 'img'
-emoji.img_set = 'apple'
-emoji.img_sets.apple.path = 'https://raw.githubusercontent.com/iamcal/emoji-data/master/img-apple-64/'
 
 const points = (event) => {
   const numerus = event.points === 1 ? 'point' : 'points'
@@ -45,10 +39,7 @@ const sanitize = (string) => {
   return pre.innerHTML ? pre.innerHTML.trim() : undefined
 }
 
-const withEmojis = (callback) => (...args) => {
-  const string = callback(...args)
-  return string ? emoji.replace_unified(string) : undefined
-}
+const { withEmojis, capitalize, niceCard } = helpers.methods
 
 export default {
   props: ['game'],

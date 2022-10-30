@@ -110,7 +110,8 @@ export default {
   data: () => {
     return {
       invKey: '',
-      nickname: ''
+      nickname: '',
+      leftGame: false,
     }
   },
   methods: {
@@ -119,6 +120,7 @@ export default {
     },
     leave() {
       this.$emit('leave')
+      this.leftGame = true
     },
     rememberNickname () {
       if (this.nickname) {
@@ -153,7 +155,7 @@ export default {
     isAlreadyInAGame () {
       const storedInvitationKey = localStorage.getItem('invitationKey')
       const storedPlayerId = localStorage.getItem('invitationKey')
-      return Boolean(storedInvitationKey && storedPlayerId)
+      return !this.leftGame && Boolean(storedInvitationKey && storedPlayerId)
     },
     hasNicknameSet () {
       return this.nickname.length > 0

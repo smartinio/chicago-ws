@@ -40,6 +40,8 @@ public class SessionHandler {
             for (Player player : players) {
                 Message msg = new Message(SNAPSHOT, Converter.toJson(game.snapshot(player)));
                 Session session = sessions.get(player.getId());
+                System.out.println("Attempting message to player ID: " + player.getId());
+                System.out.println("Exists in sessions: " + sessions.containsKey(player.getId()));
                 sendMsg(session, msg);
             }
         }

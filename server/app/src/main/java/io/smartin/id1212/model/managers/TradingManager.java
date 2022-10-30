@@ -20,30 +20,36 @@ public class TradingManager {
         this.tradingCycles.add(new TradingCycle());
     }
 
-    public List<BestHandResult> handle(Player player, Set<PlayingCard> cards) throws OutOfCardsException {
-        int maxThrows = round.getGame().getPlayers().size();
-        List<BestHandResult> result = new ArrayList<>();
-
+    public void throwCards(Player player, Set<PlayingCard> cards) throws OutOfCardsException {
         synchronized (round) {
             if (cards.size() > 0) {
                 CardDeck deck = round.getDeck();
                 player.removeCards(cards);
                 deck.addCards(cards);
-                player.giveCards(deck.draw(cards.size()));
                 currentCycle().addPlayerThrow(player, cards);
             } else {
                 currentCycle().addPlayerThrow(player, new HashSet<>());
             }
-            if (currentCycle().isFinished(maxThrows)) {
-                if (maxTradingCyclesReached()) {
-                    round.endTradingPhase();
-                } else {
-                    result = round.getGame().getScoreManager().givePointsForBestHand();
-                    tradingCycles.add(new TradingCycle());
-                }
+        }
+    }
+
+    public void drawCards(Player player, Set<PlayingCard> cards) throws OutOfCardsException {
+        CardDeck deck = round.getDeck();
+        player.giveCards(deck.draw(cards.size()));
+    }
+
+    public List<BestHandResult> completeTrade() {
+        int maxThrows = round.getGame().getPlayers().size();
+        List<BestHandResult> result = new ArrayList<>();
+
+        if (currentCycle().isFinished(maxThrows)) {
+            if (maxTradingCyclesReached()) {
+                round.endTradingPhase();
+            } else {
+                result = round.getGame().getScoreManager().givePointsForBestHand();
+                tradingCycles.add(new TradingCycle());
             }
         }
-
         return result;
     }
 

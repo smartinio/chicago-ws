@@ -3,18 +3,33 @@
     <div :style="me.isMyTurn ? 'opacity: 1' : 'opacity: 0.4'" class="is-flex">
       <div
         v-for="card in me.hand"
+        class="is-flex is-flex-direction-column is-align-items-center"
       >
+        <a
+          v-if="phase === 'PLAYING'"
+          class="button is-small is-rounded is-success playingCard"
+          :class="getCardButtonClass(card)"
+          style="margin-bottom: 15px;"
+          @click="play(card)"
+          :disabled="!me.isMyTurn"
+        >
+          PLAY
+        </a>
         <img
-        @click="toggleMark(card)"
-        :src="getCardUrl(card)"
-        class="playingCard"
-        :class="getCardClass(card)"
+          @click="toggleMark(card)"
+          class="playingCard"
+          :class="getCardClass(card)"
+          :src="getCardUrl(card)"
         />
       </div>
     </div>
   </div>
 </template>
 <script>
+import { MOVE } from '@/dto/action/types'
+import { SEND_ACTION } from '@/store/modules/socket/action_types'
+import Action from '@/dto/action/Action'
+
 const isCard = (a) => (b) => a.suit === b.suit && a.value === b.value
 
 export default {
@@ -29,6 +44,15 @@ export default {
     },
     getCardClass (card) {
       return this.isMarked(card) ? 'markedCard' : ''
+    },
+    getCardButtonClass (card) {
+      return this.isMarked(card) ? 'markedCard' : 'invis'
+    },
+    play (card) {
+      if (!this.me.isMyTurn) return;
+      const actionDTO = new Action(MOVE, card);
+      this.$store.dispatch(SEND_ACTION, actionDTO)
+      this.$emit('action')
     }
   }
 }
@@ -48,5 +72,8 @@ export default {
   }
   .myTurn {
     opacity: 1;
+  }
+  .invis {
+    opacity: 0;
   }
 </style>

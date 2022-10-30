@@ -96,7 +96,6 @@ export default {
 
       localStorage.removeItem('invitationKey')
       localStorage.removeItem('playerId')
-      window.location.href = '/'
     }
   },
   created () {
