@@ -32,6 +32,7 @@
                 v-model="nickname"
                 ref="nickname"
                 placeholder="Choose a nickname..."
+                maxlength="15"
               >
               <p
               class="help is-danger"

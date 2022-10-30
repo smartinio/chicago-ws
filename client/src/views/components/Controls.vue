@@ -37,7 +37,7 @@
   </div>
 </template>
 <script>
-import { START_GAME, THROW, THROW_ONE_OPEN, RESPOND_ONE_OPEN, CHICAGO, MOVE, DEAL_CARDS, RESTART_GAME } from '@/dto/action/types'
+import { START_GAME, DEAL_CARDS, RESTART_GAME } from '@/dto/action/types'
 import Action from '@/dto/action/Action'
 import { SEND_ACTION } from '@/store/modules/socket/action_types'
 import * as phaseTypes from '@/store/modules/game/phase_types'
@@ -60,7 +60,7 @@ export default {
   },
   watch: {
     'me.isMyTurn': (isMyTurn) => {
-      if (isMyTurn && !this.active) {
+      if (isMyTurn && this.isPhase(phaseTypes.PLAYING) && !this.active) {
         yourTurn.play();
       }
     }

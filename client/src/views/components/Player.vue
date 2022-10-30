@@ -9,10 +9,12 @@
         >
       </figure>
     </div>
-    <div class="media-content" style="overflow: hidden">
+    <div class="media-content">
       <div class="columns">
         <div class="column is-narrow">
-          <p class="title is-4">
+          <p
+            class="title is-4"
+            style="text-overflow: ellipsis; width: 150px !important; overflow: hidden; white-space: nowrap;">
             {{ player.name || fallbackName }}
           </p>
           <p class="subtitle is-6" style="margin-bottom: 5px">
