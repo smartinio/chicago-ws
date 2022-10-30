@@ -26,14 +26,14 @@
         </a>
       </div>
     </div>
-    <div v-if="phase === 'TRADING' && canRespondToOpenCard" class="is-flex is-flex-direction-column is-align-items-center">
+    <div v-if="phase === 'TRADING' && canSeeOpenCard" class="is-flex is-flex-direction-column is-align-items-center">
       <div
         class="control-text"
         style="margin-bottom: 15px; margin-right: 0px; overflow: visible"
       >
         <img :src="getCardUrl(game.oneOpen.card)" style="maxWidth: 64px" class="open-card" />
       </div>
-      <div class="is-flex">
+      <div class="is-flex" v-if="canRespondToOpenCard">
         <a
           @click="respondToOneOpen(true)"
           class="control-button button is-success is-small is-rounded"
@@ -50,6 +50,9 @@
         >
           DECLINE
         </a>
+      </div>
+      <div v-else class="control-text">
+        Open offer for <strong>{{ game.oneOpen.player.name }}</strong>
       </div>
     </div>
     <div v-else-if="phase === 'TRADING' && canTradeOpenly">
@@ -90,7 +93,7 @@
         PASS
       </a>
     </div>
-    <div :style="me.isMyTurn ? 'opacity: 1' : 'opacity: 0.4'" class="is-flex">
+    <div :style="canReleaseCards ? 'opacity: 1' : 'opacity: 0.4'" class="is-flex">
       <div
         v-for="card in me.hand"
         class="is-flex is-flex-direction-column is-align-items-center"
@@ -126,16 +129,25 @@ export default {
   props: ['me', 'game', 'phase', 'markedCards'],
   name: 'MyHand',
   computed: {
+    canReleaseCards () {
+      return this.canSelectCards && this.me.isMyTurn
+    },
+    canSelectCards () {
+      return this.phase !== 'AFTER' && !this.canRespondToOpenCard
+    },
     canTradeOpenly () {
       return this.markedCards.length == 1
     },
-    canRespondToOpenCard () {
+    canSeeOpenCard () {
       return this.game.oneOpen.isOpen
+    },
+    canRespondToOpenCard () {
+      return this.canSeeOpenCard && this.game.oneOpen.player.id === this.me.id
     },
   },
   methods: {
     toggleMark (card) {
-      if (this.canRespondToOpenCard) return;
+      if (!this.canSelectCards) return;
       this.$emit('toggleMark', card)
     },
     isMarked (card) {

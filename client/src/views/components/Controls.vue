@@ -19,7 +19,7 @@
       <span v-if="me.imDealing && isPhase(phase.AFTER)">
         <a class="tag is-danger is-medium deal-pulse" @click="deal">DEAL CARDS</a>
       </span>
-      <span v-else-if="me.isMyTurn">
+      <span v-else-if="me.isMyTurn && !isPhase(phase.AFTER)">
         <span class="tag is-info is-medium">YOUR TURN</span>
       </span>
       <span v-else>
