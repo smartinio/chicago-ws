@@ -16,10 +16,10 @@
         <span class="icon is-small"><i class="fa fa-refresh"></i></span>
         <span>Restart</span>
       </a>
-      <span v-if="me.imDealing && isPhase(phase.AFTER)">
+      <span v-if="canDeal">
         <a class="tag is-danger is-medium deal-pulse" @click="deal">DEAL CARDS</a>
       </span>
-      <span v-else-if="me.isMyTurn && !isPhase(phase.AFTER)">
+      <span v-else-if="canAct">
         <span class="tag is-info is-medium">YOUR TURN</span>
       </span>
       <span v-else>
@@ -59,8 +59,13 @@ export default {
     }
   },
   watch: {
-    ['me.isMyTurn'](isMyTurn) {
-      if (isMyTurn && this.isPhase(phaseTypes.PLAYING) && !this.active) {
+    ['me.imDealing']() {
+      if (this.canDeal && !this.active) {
+        yourTurn.play()
+      }
+    },
+    ['me.isMyTurn']() {
+      if (this.canAct && !this.active) {
         yourTurn.play();
       }
     }
@@ -98,6 +103,15 @@ export default {
     },
   },
   computed: {
+    canDeal () {
+      return this.me.imDealing && !this.isMidGame
+    },
+    canAct () {
+      return this.me.isMyTurn && this.isMidGame
+    },
+    isMidGame () {
+      return !this.isPhase(phaseTypes.BEFORE) && !this.isPhase(phaseTypes.AFTER)
+    },
     canTradeOpenly () {
       return this.markedCards.length == 1
     },
