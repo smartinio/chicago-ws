@@ -83,6 +83,11 @@ export default {
     }
   },
   watch: {
+    ['game.round.phase'](phase) {
+      if (phase === 'AFTER') {
+        this.unmarkAll()
+      }
+    },
     connected(conn) {
       if (conn && this.game.stale) {
         this.$emit('rejoin')
