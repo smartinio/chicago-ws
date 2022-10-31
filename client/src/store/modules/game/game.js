@@ -35,6 +35,7 @@ const state = {
   hasWinners: false,
   round: {
     currentPlayer: '',
+    chicagoTaker: '',
     phase: '',
     tricks: [],
     isFinalTrade: false,
@@ -66,6 +67,7 @@ const mutations = {
     if (!game.currentRound) {
       return
     }
+    state.round.chicagoTaker = game.currentRound.chicagoTaker
     state.round.currentPlayer = game.currentRound.currentPlayer
     state.round.phase = game.currentRound.phase
     state.round.tricks = game.currentRound.tricks
@@ -87,8 +89,10 @@ const actions = {
   [HANDLE_SNAPSHOT] ({ commit }, json) {
     const snapshot = JSON.parse(json)
 
-    localStorage.setItem('invitationKey', snapshot.game.invitationKey)
-    localStorage.setItem('playerId', snapshot.me.id)
+    requestAnimationFrame(() => {
+      localStorage.setItem('invitationKey', snapshot.game.invitationKey)
+      localStorage.setItem('playerId', snapshot.me.id)
+    })
 
     router.push(snapshot.game.invitationKey)
     commit(SET_MY_TURN, snapshot.myTurn)

@@ -18,6 +18,7 @@
               :baseMove="baseMove"
               :currentPlayer="currentPlayer"
               :dealer="dealer"
+              :chicagoTaker="chicagoTaker"
             />
             <Controls
               :game="game"
@@ -36,6 +37,7 @@
             :baseMove="baseMove"
             :currentPlayer="currentPlayer"
             :dealer="dealer"
+            :chicagoTaker="chicagoTaker"
           />
         </div>
         <div class="is-flex is-justify-content-flex-end" style="flex: 1">
@@ -154,6 +156,9 @@ export default {
       const tricks = round && round.tricks
       if (!tricks) return
       return tricks.length > 0 && tricks[tricks.length - 1]
+    },
+    chicagoTaker () {
+      return this.game.round && this.game.round.chicagoTaker
     },
     currentPlayer () {
       return this.game.round && this.game.round.currentPlayer

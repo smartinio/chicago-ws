@@ -9,6 +9,7 @@
           :currentPlayer="currentPlayer"
           :baseMove="baseMove"
           :dealer="dealer"
+          :chicagoTaker="chicagoTaker"
         />
       </div>
     </div>
@@ -17,7 +18,7 @@
 import Player from '@/views/components/Player'
 export default {
   name: 'Players',
-  props: ['players', 'baseMove', 'currentPlayer', 'dealer'],
+  props: ['players', 'baseMove', 'currentPlayer', 'dealer', 'chicagoTaker'],
   components: {
     Player
   }

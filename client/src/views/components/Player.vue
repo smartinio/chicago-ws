@@ -15,7 +15,8 @@
           <p
             class="title is-4"
             style="text-overflow: ellipsis; width: 150px !important; overflow: hidden; white-space: nowrap;">
-            {{ player.name || fallbackName }}
+            <span>{{ player.name || fallbackName }}</span>
+            <span class="shake-it" v-if="isChicagoTaker(player)" v-html="emojify('🚀')"></span>
           </p>
           <p class="subtitle is-6" style="margin-bottom: 5px">
             {{ player.score }} points
@@ -65,7 +66,7 @@ import Action from '@/dto/action/Action'
 
 export default {
   name: 'Player',
-  props: ['player', 'baseMove', 'currentPlayer', 'dealer', 'fallbackName', 'variant', 'isMe'],
+  props: ['player', 'baseMove', 'currentPlayer', 'dealer', 'chicagoTaker', 'fallbackName', 'variant', 'isMe'],
   components: {
     PlayerStatus
   },
@@ -87,6 +88,31 @@ export default {
       if (!this.baseMove) return false
       return (card.suit === this.baseMove.card.suit && card.value === this.baseMove.card.value)
     },
+    isChicagoTaker (player) {
+      return this.chicagoTaker && player.id === this.chicagoTaker.id
+    }
   }
 }
 </script>
+
+<style scoped>
+.shake-it {
+  margin-top: -25px;
+  display: inline-block;
+  animation: shake 0.5s infinite;
+}
+
+@keyframes shake {
+  0% { transform: translate(1px, 1px) rotate(0deg); }
+  10% { transform: translate(-1px, -2px) rotate(-1deg); }
+  20% { transform: translate(-2px, 0px) rotate(1deg); }
+  30% { transform: translate(2px, 2px) rotate(0deg); }
+  40% { transform: translate(1px, -1px) rotate(1deg); }
+  50% { transform: translate(-1px, 2px) rotate(-1deg); }
+  60% { transform: translate(-2px, 1px) rotate(0deg); }
+  70% { transform: translate(2px, 1px) rotate(-1deg); }
+  80% { transform: translate(-1px, -1px) rotate(1deg); }
+  90% { transform: translate(1px, 2px) rotate(0deg); }
+  100% { transform: translate(1px, -2px) rotate(-1deg); }
+}
+</style>
