@@ -158,6 +158,7 @@ public class PlayerController {
 
     private void joinGame(Action action) throws UnknownInvitationKeyException, NicknameException, AlreadyStartedException {
         JoinRequest request = Converter.toJoinRequest(action.getValue());
+        player.reset();
         player.setName(request.getNickname());
         GamesRepository.getInstance().joinGame(player, request.getKey());
     }
