@@ -97,7 +97,6 @@ export default {
 
 <style scoped>
 .shake-it {
-  margin-top: -25px;
   display: inline-block;
   animation: shake 0.5s infinite;
 }

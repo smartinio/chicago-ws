@@ -26,13 +26,13 @@
       <div class="tabs is-boxed is-large is-centered is-fullwidth" style="margin-top: 30px">
         <ul>
           <li :class="isTab('create') ? 'is-active' : ''">
-            <a @click="tab = 'create'">
+            <a @click="tab = 'create'" class="rounded-tab">
               <span class="icon is-small"><i class="fas fa-plus"></i></span>
               <span>Create new game</span>
             </a>
           </li>
           <li :class="isTab('join') ? 'is-active' : ''">
-            <a @click="tab= 'join'">
+            <a @click="tab= 'join'" class="rounded-tab">
               <span class="icon is-small"><i class="fas fa-people-group"></i></span>
               <span>Join existing game</span>
             </a>
@@ -338,4 +338,8 @@ export default {
 </script>
 
 <style lang="scss">
+  .rounded-tab {
+    border-top-left-radius: 20px !important;
+    border-top-right-radius: 20px !important;
+  }
 </style>
