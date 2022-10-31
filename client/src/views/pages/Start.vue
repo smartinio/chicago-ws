@@ -86,7 +86,7 @@
           <div class="control">
             <div class="select is-rounded is-large">
               <select v-model="rules.oneOpen" :disabled="isAlreadyInAGame || checkingGame">
-                <option value="ALL">1 open: Anytime</option>
+                <option value="ALL">1 open: All trades</option>
                 <option value="FINAL">1 open: Final trade</option>
               </select>
             </div>
