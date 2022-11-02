@@ -1,7 +1,11 @@
 <template>
-  <div class="disable-scrollbars is-flex is-justify-content-flex-start is-flex-direction-column"
+  <div
+    @mouseenter="chatScroll.enabled = false"
+    @mouseleave="chatScroll.enabled = true"
+    v-chat-scroll="chatScroll"
+    class="disable-scrollbars is-flex is-justify-content-flex-start is-flex-direction-column"
     style="overflow: scroll; width: 400px"
-    v-chat-scroll="{ always: false, smooth: true }">
+  >
     <div v-show="false" v-html="preload()" />
     <div v-for="event in events">
       <div v-if="event.actor.id === 'server' && formatServerEvent(event)"
@@ -43,6 +47,15 @@ const sanitize = (string) => {
 export default {
   props: ['game'],
   name: 'EventLog',
+  data() {
+    return {
+      chatScroll: {
+        enabled: true,
+        always: true,
+        smooth: true
+      }
+    }
+  },
   computed: {
     events() {
       return this.game.events
