@@ -6,14 +6,14 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   methods: {
-    getSrc (value, suit) {
-      return this.getCardUrl({value, suit})
+    getSrc(this: any, value: any, suit: any) {
+      return this.getCardUrl({ value, suit })
     }
   },
-  data () {
+  data() {
     return {
       cards: {
         suits: {

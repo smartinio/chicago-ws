@@ -1,13 +1,8 @@
 <template>
   <div>
     <div class="is-flex is-flex-direction-row is-justify-content-flex-end" style="gap: 10px">
-      <span
-        v-if="!game.started"
-        class="tag is-medium is-primary"
-        @click="copyLink"
-        @mouseleave="inviteText = 'Invite friends'; copiedKey = false"
-        style="cursor: pointer"
-      >
+      <span v-if="!game.started" class="tag is-medium is-primary" @click="copyLink"
+        @mouseleave="inviteText = 'Invite friends'; copiedKey = false" style="cursor: pointer">
         <span class="icon"><i :class="checkOrKey"></i></span>
         <span>{{ inviteText }}</span>
       </span>
@@ -27,22 +22,17 @@
       </span>
     </div>
     <div style="margin-top: 10px" class="is-flex is-justify-content-flex-end">
-      <PlayerStatus
-        :isMe="true"
-        :player="controlPlayer"
-        :dealer="dealer"
-        :currentPlayer="currentPlayer"
-      />
+      <PlayerStatus :isMe="true" :player="controlPlayer" :dealer="dealer" :currentPlayer="currentPlayer" />
     </div>
   </div>
 </template>
-<script>
+<script lang="ts">
 import { START_GAME, DEAL_CARDS, RESTART_GAME } from '@/dto/action/types'
 import Action from '@/dto/action/Action'
 import { SEND_ACTION } from '@/store/modules/socket/action_types'
 import * as phaseTypes from '@/store/modules/game/phase_types'
-import PlayerStatus from '@/views/components/PlayerStatus'
-const yourTurn = new Audio('static/audio/yourturn.ogg');
+import PlayerStatus from '@/views/components/PlayerStatus.vue'
+const yourTurn = new Audio('audio/yourturn.ogg');
 
 export default {
   props: ['game', 'me', 'dealer', 'controlPlayer', 'markedCards', 'currentPlayer', 'baseMove'],
@@ -50,7 +40,7 @@ export default {
   components: {
     PlayerStatus,
   },
-  data () {
+  data() {
     return {
       copiedKey: false,
       inviteText: 'Invite friends',
@@ -70,7 +60,7 @@ export default {
       }
     }
   },
-  created () {
+  created() {
     window.onblur = () => {
       this.active = false
     }
@@ -79,23 +69,23 @@ export default {
     }
   },
   methods: {
-    startGame () {
+    startGame() {
       this.doAction(new Action(START_GAME))
     },
-    deal () {
+    deal() {
       this.doAction(new Action(DEAL_CARDS))
     },
-    restartGame () {
+    restartGame() {
       this.doAction(new Action(RESTART_GAME))
     },
-    doAction (actionDTO) {
+    doAction(actionDTO) {
       this.$store.dispatch(SEND_ACTION, actionDTO)
       this.$emit('action')
     },
-    isPhase (phase) {
+    isPhase(phase) {
       return this.game.round.phase === phase
     },
-    async copyLink () {
+    async copyLink() {
       this.tmpKey = this.game.invKey
       await navigator.clipboard.writeText(window.location.href)
       this.copiedKey = true
@@ -103,33 +93,33 @@ export default {
     },
   },
   computed: {
-    canDeal () {
+    canDeal() {
       return this.me.imDealing && !this.isMidGame
     },
-    canAct () {
+    canAct() {
       return this.me.isMyTurn && this.isMidGame
     },
-    isMidGame () {
+    isMidGame() {
       return !this.isPhase(phaseTypes.BEFORE) && !this.isPhase(phaseTypes.AFTER)
     },
-    canTradeOpenly () {
+    canTradeOpenly() {
       return this.markedCards.length == 1
     },
-    canRespondToOpenCard () {
+    canRespondToOpenCard() {
       return this.game.oneOpen.isOpen
     },
-    checkOrKey () {
+    checkOrKey() {
       return this.copiedKey ? 'fa fa-check' : 'fa fa-key'
     },
-    canStart () {
+    canStart() {
       return this.me.id === this.game.host.id &&
         this.game.players.length > 1 &&
         !this.game.started
     },
-    canRestart () {
+    canRestart() {
       return (this.me.id === this.game.host.id) && this.game.hasWinners
     },
-    markedCard () {
+    markedCard() {
       return this.markedCards.length === 1 && this.markedCards[0]
     }
   }
@@ -145,6 +135,7 @@ export default {
     scale: 1;
     box-shadow: 0 8px 20px rgba(255, 0, 0, 0);
   }
+
   to {
     scale: 1.05;
     box-shadow: 0 8px 20px rgba(255, 0, 0, 0.6);

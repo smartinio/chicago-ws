@@ -1,13 +1,13 @@
 <template>
   <div>
-    <a class="button is-small is-rounded" :class="statusClass">
+    <button class="button is-small is-rounded" :class="statusClass">
       <span class="icon is-small" :class="animationClass"><i class="fa" :class="statusIcon"></i></span>
       <span>{{ statusText }}</span>
-    </a>
+    </button>
   </div>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   props: {
     connected: {
@@ -16,16 +16,16 @@ export default {
     }
   },
   computed: {
-    statusText () {
+    statusText() {
       return this.connected ? 'Connected' : 'Connecting'
     },
-    statusClass () {
+    statusClass() {
       return this.connected ? 'is-success is-light' : 'is-warning'
     },
-    statusIcon () {
+    statusIcon() {
       return this.connected ? 'fa-check' : 'fa-spinner'
     },
-    animationClass () {
+    animationClass() {
       return this.connected ? '' : 'is-spinning'
     }
   }
@@ -33,16 +33,17 @@ export default {
 </script>
 
 <style scoped>
-  .is-spinning {
-    animation: spin 2s linear infinite;
+.is-spinning {
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
   }
 
-  @keyframes spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
+  to {
+    transform: rotate(360deg);
   }
+}
 </style>

@@ -1,32 +1,16 @@
 <template>
   <div>
-    <Start
-      v-if="!game.invKey"
-      @action="dispatchAction"
-      @changeKey="clearKeyError"
-      @changeNick="clearNickError"
-      @rejoin="rejoin"
-      @leave="leave"
-      :connected="socket.connected"
-      :errors="errors"
-      :urlKey="$route.params.key"
-      :currentlyInGame="game.currentlyInGame"
-    />
+    <Start v-if="!game.invKey" @action="dispatchAction" @changeKey="clearKeyError" @changeNick="clearNickError"
+      @rejoin="rejoin" @leave="leave" :connected="socket.connected" :errors="errors" :urlKey="$route.params.key"
+      :currentlyInGame="game.currentlyInGame" />
 
-    <Game
-      v-else
-      @rejoin="rejoin"
-      @leave="leave"
-      :connected="socket.connected"
-      :me="me"
-      :game="game"
-    />
+    <Game v-else @rejoin="rejoin" @leave="leave" :connected="socket.connected" :me="me" :game="game" />
   </div>
 </template>
 <script>
-import Start from './pages/Start'
-import Game from './pages/Game'
-import ConnectionStatus from './components/ConnectionStatus'
+import Start from './pages/Start.vue'
+import Game from './pages/Game.vue'
+import ConnectionStatus from './components/ConnectionStatus.vue'
 import RejoinRequest from '@/dto/rejoinrequest/RejoinRequest'
 import LeaveRequest from '@/dto/leaverequest/LeaveRequest'
 import Action from '@/dto/action/Action'
@@ -50,28 +34,28 @@ export default {
     socket: SOCKET
   }),
   watch: {
-    'socket.status' (status) {
+    'socket.status'(status) {
       if (status === 'failed') {
         setTimeout(() => this.connect(), 1000)
       }
     }
   },
   methods: {
-    dispatchAction (actionDTO) {
+    dispatchAction(actionDTO) {
       this.$store.dispatch(SEND_ACTION, actionDTO)
     },
-    clearKeyError () {
+    clearKeyError() {
       this.$store.commit(SET_KEY_ERROR, '')
     },
-    clearNickError () {
+    clearNickError() {
       this.$store.commit(SET_NICKNAME_ERROR, '')
     },
-    connect () {
+    connect() {
       if (!this.socket.connected) {
         this.$store.dispatch(CONNECT)
       }
     },
-    rejoin () {
+    rejoin() {
       const storedInvitationKey = this.game.invKey || localStorage.getItem('invitationKey')
       const storedPlayerId = this.me.id || localStorage.getItem('playerId')
 
@@ -85,7 +69,7 @@ export default {
       const actionDTO = new Action(RECONNECT, request)
       this.dispatchAction(actionDTO)
     },
-    leave () {
+    leave() {
       const storedInvitationKey = this.game.invKey || localStorage.getItem('invitationKey')
       const storedPlayerId = this.me.id || localStorage.getItem('playerId')
 
@@ -99,7 +83,7 @@ export default {
       localStorage.removeItem('playerId')
     }
   },
-  created () {
+  created() {
     this.connect()
   }
 }

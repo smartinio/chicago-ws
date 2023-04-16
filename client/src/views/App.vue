@@ -5,10 +5,10 @@
   </div>
 </template>
 
-<script>
-import Preloader from '@/views/components/Preloader'
+<script lang="ts">
+import Preloader from '@/views/components/Preloader.vue'
 
-let keepalive
+let keepalive: number
 
 export default {
   name: 'app',
@@ -16,9 +16,9 @@ export default {
     Preloader
   },
   mounted() {
-    if (process.env.NODE_ENV === 'production') {
+    if (import.meta.env.PROD) {
       keepalive = setInterval(() => {
-        fetch(process.env.HTTP_URL, { method: 'HEAD' })
+        fetch(import.meta.env.VITE_HTTP_URL, { method: 'HEAD' })
       }, 10000)
     }
   },
@@ -31,7 +31,7 @@ export default {
 <style>
 html,
 body {
-	height: 100%;
+  height: 100%;
   overflow: hidden;
 }
 </style>

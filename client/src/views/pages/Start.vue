@@ -1,14 +1,14 @@
+<script setup lang="ts">
+import { useStore } from 'vuex'
+
+const store = useStore()
+</script>
+
 <template>
   <section class="section">
     <div class="container">
-      <ConnectionStatus
-        :connected="connected && !checkingGame"
-      />
-      <section
-        v-if="isAlreadyInAGame"
-        class="hero is-warning"
-        style="margin-top: 30px"
-      >
+      <ConnectionStatus :connected="connected && !checkingGame" />
+      <section v-if="isAlreadyInAGame" class="hero is-warning" style="margin-top: 30px">
         <div class="hero-body">
           <p class="title">
             You're currently in a game
@@ -17,8 +17,8 @@
             Do you want to rejoin?
           </p>
           <p>
-            <a class="button is-black" @click="rejoin">Yes, rejoin</a>
-            <a class="button is-warning is-light" @click="leave">No, leave game</a>
+            <button class="button is-black" @click="rejoin">Yes, rejoin</button>
+            <button class="button is-warning is-light" @click="leave">No, leave game</button>
           </p>
         </div>
       </section>
@@ -32,7 +32,7 @@
             </a>
           </li>
           <li :class="isTab('join') ? 'is-active' : ''">
-            <a @click="tab= 'join'" class="rounded-tab">
+            <a @click="tab = 'join'" class="rounded-tab">
               <span class="icon is-small"><i class="fas fa-people-group"></i></span>
               <span>Join existing game</span>
             </a>
@@ -44,20 +44,10 @@
         <div class="field">
           <label class="label is-large">Nickname</label>
           <div class="control">
-            <input
-              :disabled="isAlreadyInAGame || checkingGame"
-              @keyup.enter="handleKeyupEnter"
-              :class="dangerIfExists(errors.nickname)"
-              class="input is-large is-rounded"
-              v-model="nickname"
-              ref="nickname"
-              placeholder="Choose a nickname..."
-              maxlength="15"
-            >
-            <p
-              class="help is-danger"
-              v-if="errors.nickname"
-            >
+            <input :disabled="isAlreadyInAGame || checkingGame" @keyup.enter="handleKeyupEnter"
+              :class="dangerIfExists(errors.nickname)" class="input is-large is-rounded" v-model="nickname" ref="nickname"
+              placeholder="Choose a nickname..." maxlength="15">
+            <p class="help is-danger" v-if="errors.nickname">
               {{ errors.nickname }}
             </p>
           </div>
@@ -95,11 +85,8 @@
 
         <div class="field" style="margin-top: 18px">
           <div class="control">
-            <button
-              @click="createGame"
-              :disabled="!hasNicknameSet || isAlreadyInAGame || checkingGame"
-              class="button is-success is-rounded is-large"
-            >
+            <button @click="createGame" :disabled="!hasNicknameSet || isAlreadyInAGame || checkingGame"
+              class="button is-success is-rounded is-large">
               Create new game
             </button>
           </div>
@@ -110,20 +97,10 @@
         <div class="field">
           <label class="label is-large">Nickname</label>
           <div class="control">
-            <input
-              :disabled="isAlreadyInAGame || checkingGame"
-              @keyup.enter="handleKeyupEnter"
-              :class="dangerIfExists(errors.nickname)"
-              class="input is-large is-rounded"
-              v-model="nickname"
-              ref="nickname"
-              placeholder="Choose a nickname..."
-              maxlength="15"
-            >
-            <p
-              class="help is-danger"
-              v-if="errors.nickname"
-            >
+            <input :disabled="isAlreadyInAGame || checkingGame" @keyup.enter="handleKeyupEnter"
+              :class="dangerIfExists(errors.nickname)" class="input is-large is-rounded" v-model="nickname" ref="nickname"
+              placeholder="Choose a nickname..." maxlength="15">
+            <p class="help is-danger" v-if="errors.nickname">
               {{ errors.nickname }}
             </p>
           </div>
@@ -132,32 +109,20 @@
         <div class="field">
           <label class="label is-large">Invitation key</label>
           <div class="control">
-            <input
-              :disabled="isAlreadyInAGame || checkingGame"
-              :class="dangerIfExists(errors.invKey)"
-              class="input is-large is-rounded"
-              type="text"
-              placeholder="Invitation key"
-              v-model="invKey"
-            >
-              <p
-                class="help is-danger"
-                v-if="errors.invKey"
-              >
-                {{ errors.invKey }}
-              </p>
+            <input :disabled="isAlreadyInAGame || checkingGame" :class="dangerIfExists(errors.invKey)"
+              class="input is-large is-rounded" type="text" placeholder="Invitation key" v-model="invKey">
+            <p class="help is-danger" v-if="errors.invKey">
+              {{ errors.invKey }}
+            </p>
           </div>
         </div>
 
         <div class="field" style="margin-top: 30px">
           <div class="control">
-            <a
-              :disabled="!fieldsAreValid || isAlreadyInAGame || checkingGame"
-              class="button is-info is-large is-rounded"
-              @click="joinGame"
-            >
+            <button :disabled="!fieldsAreValid || isAlreadyInAGame || checkingGame"
+              class="button is-info is-large is-rounded" @click="joinGame">
               Join game
-            </a>
+            </button>
           </div>
         </div>
       </div>
@@ -165,16 +130,17 @@
     </div>
   </section>
 </template>
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue'
 import { JOIN_GAME, NEW_GAME, CHECK_GAME } from '@/dto/action/types'
 import { SEND_ACTION } from '@/store/modules/socket/action_types'
 import JoinRequest from '@/dto/joinrequest/JoinRequest'
 import GameCreation from '@/dto/gamecreation/GameCreation'
 import RejoinRequest from '@/dto/rejoinrequest/RejoinRequest'
 import Action from '@/dto/action/Action'
-import ConnectionStatus from '@/views/components/ConnectionStatus'
+import ConnectionStatus from '@/views/components/ConnectionStatus.vue'
 
-export default {
+export default defineComponent({
   name: 'Start',
   components: {
     ConnectionStatus,
@@ -211,7 +177,7 @@ export default {
     }
   },
   methods: {
-    isTab(tab) {
+    isTab(tab: string) {
       return this.tab === tab
     },
     rejoin() {
@@ -221,15 +187,15 @@ export default {
       this.$emit('leave')
       this.leftGame = true
     },
-    rememberNickname () {
+    rememberNickname() {
       if (this.nickname) {
         localStorage.setItem('nickname', this.nickname)
       }
     },
-    rememberRules () {
+    rememberRules() {
       localStorage.setItem('rules', JSON.stringify(this.rules))
     },
-    createGame () {
+    createGame() {
       if (!this.hasNicknameSet) return
       const gameCreation = new GameCreation(this.nickname, this.rules)
       const actionDTO = new Action(NEW_GAME, gameCreation)
@@ -237,7 +203,7 @@ export default {
       this.rememberNickname()
       this.rememberRules()
     },
-    joinGame () {
+    joinGame() {
       if (!this.fieldsAreValid) return
       const request = new JoinRequest(this.nickname, this.invKey)
       const actionDTO = new Action(JOIN_GAME, request)
@@ -251,17 +217,19 @@ export default {
       if (storedInvitationKey && storedPlayerId) {
         const details = new RejoinRequest(storedPlayerId, storedInvitationKey)
         const actionDTO = new Action(CHECK_GAME, details)
+        // @ts-ignore
         this.$store.dispatch(SEND_ACTION, actionDTO)
       } else {
         localStorage.removeItem('invitationKey')
         localStorage.removeItem('playerId')
+        // @ts-ignore
         this.$store.commit('SET_CURRENTLY_IN_GAME', false) // yolo
       }
     },
-    dangerIfExists (value) {
-      return this[value] ? 'is-danger' : ''
+    dangerIfExists(value: string) {
+      return this.errors[value] ? 'is-danger' : ''
     },
-    handleKeyupEnter () {
+    handleKeyupEnter() {
       if (this.invKey) {
         this.joinGame()
       } else {
@@ -270,16 +238,16 @@ export default {
     }
   },
   computed: {
-    checkingGame () {
+    checkingGame() {
       return this.currentlyInGame === undefined
     },
-    isAlreadyInAGame () {
+    isAlreadyInAGame() {
       return !this.leftGame && this.currentlyInGame
     },
-    hasNicknameSet () {
+    hasNicknameSet() {
       return this.nickname.length > 0
     },
-    hasKeySet () {
+    hasKeySet() {
       const sections = this.invKey.split('-')
       if (sections.length === 5) {
         for (let section of sections) {
@@ -289,15 +257,15 @@ export default {
       }
       return false
     },
-    hasErrors () {
+    hasErrors() {
       return this.errors.invKey.length > 0 ||
         this.errors.nickname.length > 0
     },
-    fieldsAreValid () {
+    fieldsAreValid() {
       return !this.hasErrors && this.hasNicknameSet && this.hasKeySet
     }
   },
-  created () {
+  created() {
     this.invKey = this.urlKey || ''
 
     const nickname = localStorage.getItem('nickname')
@@ -313,10 +281,11 @@ export default {
   },
   mounted() {
     if (this.invKey) this.tab = 'join'
+    // @ts-ignore
     this.$refs.nickname.focus()
   },
   watch: {
-    connected (conn) {
+    connected(conn) {
       if (conn) {
         this.checkGame()
       }
@@ -327,19 +296,19 @@ export default {
       }
       this.invKey = key || this.invKey || ''
     },
-    invKey () {
+    invKey() {
       this.$emit('changeKey')
     },
-    nickname () {
+    nickname() {
       this.$emit('changeNick')
     }
   }
-}
+})
 </script>
 
 <style lang="scss">
-  .rounded-tab {
-    border-top-left-radius: 20px !important;
-    border-top-right-radius: 20px !important;
-  }
+.rounded-tab {
+  border-top-left-radius: 20px !important;
+  border-top-right-radius: 20px !important;
+}
 </style>

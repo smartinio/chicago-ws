@@ -7,10 +7,20 @@ public class PlayingCard {
     private Suit suit;
     @Expose
     private Value value;
+    @Expose
+    private String shortValue;
 
     public PlayingCard(Suit suit, Value value) {
         this.suit = suit;
         this.value = value;
+
+        int normalizedOrdinal = this.value.ordinal() + 2;
+
+        if (normalizedOrdinal <= 10) {
+            this.shortValue = String.valueOf(normalizedOrdinal);
+        } else {
+            this.shortValue = this.value.name().substring(0, 1);
+        }
     }
 
     public Suit getSuit() {

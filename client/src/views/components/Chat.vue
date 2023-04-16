@@ -1,36 +1,25 @@
 <template>
-  <div
-    class="is-flex is-flex-direction-column is-justify-content-space-between"
-    style="background-color: #f5f5f5; border-radius: 20px; padding: 15px"
-  >
+  <div class="is-flex is-flex-direction-column is-justify-content-space-between"
+    style="background-color: #f5f5f5; border-radius: 20px; padding: 15px">
     <div class="is-flex is-flex-direction-column" style="flex: 1; overflow: hidden">
       <div class="is-flex is-justify-content-space-between">
-        <ConnectionStatus
-          :connected="connected"
-        />
-        <a
-          class="button is-small is-rounded is-info is-light"
-          @click="showRules = true"
-          v-if="!showRules"
-        >
+        <ConnectionStatus :connected="connected" />
+        <button class="button is-small is-rounded is-info is-light" @click="showRules = true" v-if="!showRules">
           <span class="icon is-small"><i class="fa fa-scale-balanced"></i></span>
           <span>Show rules</span>
-        </a>
-        <a
-          class="button is-small is-rounded is-danger is-light"
-          @click="$emit('leave')"
-        >
+        </button>
+        <button class="button is-small is-rounded is-danger is-light" @click="$emit('leave')">
           <span class="icon is-small"><i class="fa fa-right-from-bracket"></i></span>
           <span>Leave game</span>
-        </a>
+        </button>
       </div>
 
       <div class="is-flex" style="width: 400px" v-if="showRules">
         <div class="notification is-info" style="flex: 1">
           <button class="delete" aria-label="delete" @click="showRules = false"></button>
-          <p><strong>{{numTrades}}</strong> trades</p>
-          <p>Chicago <strong>{{chicagoBestHand ? 'requires' : 'does not require'}}</strong> best hand</p>
-          <p>1 open card available at <strong>{{ oneOpenFinal ? 'the final trade' : 'every trade'}}</strong></p>
+          <p><strong>{{ numTrades }}</strong> trades</p>
+          <p>Chicago <strong>{{ chicagoBestHand ? 'requires' : 'does not require' }}</strong> best hand</p>
+          <p>1 open card available at <strong>{{ oneOpenFinal ? 'the final trade' : 'every trade' }}</strong></p>
         </div>
       </div>
 
@@ -43,10 +32,10 @@
   </div>
 </template>
 
-<script>
-import ConnectionStatus from './ConnectionStatus'
-import ChatSender from './ChatSender'
-import EventLog from './EventLog'
+<script lang="ts">
+import ConnectionStatus from './ConnectionStatus.vue'
+import ChatSender from './ChatSender.vue'
+import EventLog from './EventLog.vue'
 
 export default {
   name: 'Chat',
@@ -57,7 +46,7 @@ export default {
     }
   },
   computed: {
-    numTrades () {
+    numTrades() {
       return this.game.rules.numTrades
     },
     chicagoBestHand() {
