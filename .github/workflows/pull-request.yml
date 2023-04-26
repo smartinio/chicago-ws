@@ -21,8 +21,7 @@ jobs:
             - cwd: client
             - args: [--frozen-lockfile]
 
-      - name: Build & Preview 🔧
+      - name: Build 🔧
         run: |
           cd client
           pnpm build
-          pnpm preview
