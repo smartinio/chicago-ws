@@ -1,0 +1,27 @@
+name: Build and test
+
+on:
+  pull_request:
+    branches: [main]
+    paths: [client/**]
+
+jobs:
+  build:
+    concurrency: ci-${{ github.ref }} # Recommended if you intend to make multiple deployments in quick succession.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🐱
+        uses: actions/checkout@v3
+
+      - name: Install 📦
+        uses: pnpm/action-setup@v2
+        with:
+          version: 6.0.2
+          run_install: |
+            - cwd: client
+            - args: [--frozen-lockfile]
+
+      - name: Build 🔧
+        run: |
+          cd client
+          pnpm build
