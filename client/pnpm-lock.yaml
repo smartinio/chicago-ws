@@ -19,8 +19,8 @@ dependencies:
 
 devDependencies:
   '@types/emoji-js':
-    specifier: ^3.5.0
-    version: 3.5.0
+    specifier: ^3.5.1
+    version: 3.5.1
   '@vitejs/plugin-vue':
     specifier: ^4.3.4
     version: 4.3.4(vite@4.4.9)(vue@3.3.4)
@@ -270,8 +270,8 @@ packages:
   /@jridgewell/sourcemap-codec@1.4.15:
     resolution: {integrity: sha512-eF2rxCRulEKXHTRiDrDy6erMYWqNw4LPdQ8UQA4huuxaQsVeRPFl2oM8oDGxMFhJUWZf9McpLtJasDDZb/Bpeg==}
 
-  /@types/emoji-js@3.5.0:
-    resolution: {integrity: sha512-6dWe6Hyo7PR5tNEvWNAtnOeiQTLFoyPEofUc/waVJC1fkQqvJPw1j30szbzfJRehyg1/Mw82p4w714x0ImF9ZA==}
+  /@types/emoji-js@3.5.1:
+    resolution: {integrity: sha512-SpNHkt/7UF9dO9Ik27mlh2yP4rCAHfO+aXQidIWJ8Q4LQ/Sgshirop7Xf9xVAxUy/ufvf4GbtVAPM8mwV23XqA==}
     dev: true
 
   /@vitejs/plugin-vue@4.3.4(vite@4.4.9)(vue@3.3.4):

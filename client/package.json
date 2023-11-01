@@ -17,7 +17,7 @@
     "vuex": "^4.1.0"
   },
   "devDependencies": {
-    "@types/emoji-js": "^3.5.0",
+    "@types/emoji-js": "^3.5.1",
     "@vitejs/plugin-vue": "^4.3.4",
     "sass": "^1.66.1",
     "typescript": "^5.2.2",
