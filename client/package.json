@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "date-fns": "^2.30.0",
+    "date-fns": "^3.0.0",
     "emoji-js": "^3.8.0",
     "vue": "^3.3.4",
     "vue-router": "^4.3.0",
