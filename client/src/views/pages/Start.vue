@@ -248,14 +248,7 @@ export default defineComponent({
       return this.nickname.length > 0
     },
     hasKeySet() {
-      const sections = this.invKey.split('-')
-      if (sections.length === 5) {
-        for (let section of sections) {
-          if (section === '') return false
-        }
-        return true
-      }
-      return false
+      return this.invKey.length >= 10
     },
     hasErrors() {
       return this.errors.invKey.length > 0 ||
