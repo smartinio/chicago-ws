@@ -5,8 +5,8 @@ import java.util.*;
 public class TradingCycle {
     private Map<Player,Set<PlayingCard>> thrown = new HashMap<>();
 
-    public boolean isFinished(int numPlayers) {
-        return thrown.size() == numPlayers;
+    public boolean isFinished(List<Player> tradeEligiblePlayers) {
+        return tradeEligiblePlayers.stream().allMatch(player -> thrown.containsKey(player));
     }
 
     public void addPlayerThrow(Player player, Set<PlayingCard> cards) {

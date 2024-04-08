@@ -1,5 +1,6 @@
 package io.smartin.id1212.model.components;
 
+import io.smartin.id1212.config.Rules;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static io.smartin.id1212.config.Strings.*;
 
@@ -66,8 +68,14 @@ public class Round {
             Hand hand = new Hand(cards);
             player.setHand(hand);
         }
+
+        if (game.getTradeEligiblePlayers().size() == 0) {
+            phase = GamePhase.CHICAGO;
+        } else {
+            phase = GamePhase.TRADING;
+        }
+
         currentPlayer = dealer;
-        phase = GamePhase.TRADING;
         nextTurn();
     }
 
@@ -318,7 +326,14 @@ public class Round {
         // hack to make sure isFinalTrade is updated before each turn
         isFinalTrade = tradingManager.maxTradingCyclesReached();
 
-        List<Player> p = game.getPlayers();
+        List<Player> p;
+
+        if (phase == GamePhase.TRADING) {
+            p = game.getTradeEligiblePlayers();
+        } else {
+            p = game.getPlayers();
+        }
+
         for (int i = 0; i < p.size(); i++) {
             if (p.get(i).equals(currentPlayer)) {
                 currentPlayer = p.get((i + 1) % p.size());

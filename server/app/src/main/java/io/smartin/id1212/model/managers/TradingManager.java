@@ -39,10 +39,10 @@ public class TradingManager {
     }
 
     public List<BestHandResult> completeTrade() {
-        int maxThrows = round.getGame().getPlayers().size();
         List<BestHandResult> result = new ArrayList<>();
+        List<Player> tradeEligiblePlayers = round.getGame().getTradeEligiblePlayers();
 
-        if (currentCycle().isFinished(maxThrows)) {
+        if (currentCycle().isFinished(tradeEligiblePlayers)) {
             if (maxTradingCyclesReached()) {
                 round.endTradingPhase();
             } else {
@@ -50,6 +50,7 @@ public class TradingManager {
                 tradingCycles.add(new TradingCycle());
             }
         }
+
         return result;
     }
 

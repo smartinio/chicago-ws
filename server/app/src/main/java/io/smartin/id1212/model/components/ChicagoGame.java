@@ -15,6 +15,7 @@ import io.smartin.id1212.net.dto.Snapshot;
 import io.smartin.id1212.net.dto.GameCreation.GameRules;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -331,6 +332,10 @@ public class ChicagoGame {
 
     public Round getCurrentRound() {
         return currentRound;
+    }
+
+    public List<Player> getTradeEligiblePlayers() {
+        return getPlayers().stream().filter(Player::canTrade).collect(Collectors.toList());
     }
 
     public void removePlayer(Player player, boolean kicked) {
