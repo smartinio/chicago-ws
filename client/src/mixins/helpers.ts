@@ -44,7 +44,7 @@ export default {
       return `cards/${card.value}_${card.suit}.svg`
     },
     getAvatarUrl (player: Player) {
-      return `https://avatars.dicebear.com/api/adventurer-neutral/${player.id}.svg`
+      return `https://api.dicebear.com/8.x/avataaars-neutral/svg?seed=${player.id}`
     },
     niceCard,
     capitalize,
