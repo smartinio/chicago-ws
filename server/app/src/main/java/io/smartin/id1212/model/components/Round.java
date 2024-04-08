@@ -325,20 +325,20 @@ public class Round {
     private void nextTurn() {
         // hack to make sure isFinalTrade is updated before each turn
         isFinalTrade = tradingManager.maxTradingCyclesReached();
+        List<Player> p = game.getPlayers();
+        int currentPlayerIndex = p.indexOf(currentPlayer);
+        int offset = 1;
 
-        List<Player> p;
+        while (offset <= p.size()) {
+            Player candidate = p.get((currentPlayerIndex + offset) % p.size());
 
-        if (phase == GamePhase.TRADING) {
-            p = game.getTradeEligiblePlayers();
-        } else {
-            p = game.getPlayers();
-        }
-
-        for (int i = 0; i < p.size(); i++) {
-            if (p.get(i).equals(currentPlayer)) {
-                currentPlayer = p.get((i + 1) % p.size());
-                break;
+            if (phase == GamePhase.TRADING && !candidate.canTrade()) {
+                offset++;
+                continue;
             }
+
+            currentPlayer = candidate;
+            break;
         }
     }
 
