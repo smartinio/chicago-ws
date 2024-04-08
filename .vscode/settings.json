@@ -3,5 +3,6 @@
   "cSpell.words": [
     "vnode",
     "vuex"
-  ]
+  ],
+  "java.compile.nullAnalysis.mode": "disabled"
 }

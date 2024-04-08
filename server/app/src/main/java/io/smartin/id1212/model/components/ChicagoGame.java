@@ -28,7 +28,7 @@ public class ChicagoGame {
     @Expose
     private Player dealer;
     @Expose
-    private UUID invitationKey;
+    private String invitationKey;
     @Expose
     private boolean started;
     @Expose
@@ -70,12 +70,13 @@ public class ChicagoGame {
             logger.info("Game with key '{}' is idle. Removing.", invitationKey);
             removeGame();
         } else {
-            logger.info("Game with key '{}' was active {}s ago. Checking again in {}s.", invitationKey, idleTimeSeconds, delaySeconds);
+            logger.info("Game with key '{}' was active {}s ago. Checking again in {}s.", invitationKey, idleTimeSeconds,
+                    delaySeconds);
             setTimeout(this::scheduleActivityChecker, delaySeconds);
         }
     }
 
-    public ChicagoGame(UUID invitationKey, Player player, GameRules rules) {
+    public ChicagoGame(String invitationKey, Player player, GameRules rules) {
         this.invitationKey = invitationKey;
         this.players.add(player);
         this.host = player;
@@ -139,7 +140,8 @@ public class ChicagoGame {
     }
 
     public void throwCards(Player player, Set<PlayingCard> cards, boolean isOneOpen)
-            throws TradeBannedException, WaitYourTurnException, OutOfCardsException, InappropriateActionException, TooManyCardsException, UnauthorizedTradeException {
+            throws TradeBannedException, WaitYourTurnException, OutOfCardsException, InappropriateActionException,
+            TooManyCardsException, UnauthorizedTradeException {
         if (!player.canTrade() && cards.size() > 0) {
             throw new TradeBannedException(TRADE_BANNED);
         }
