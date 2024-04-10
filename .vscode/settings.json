@@ -4,5 +4,10 @@
     "vnode",
     "vuex"
   ],
-  "java.compile.nullAnalysis.mode": "disabled"
+  "java.compile.nullAnalysis.mode": "automatic",
+  "yaml.schemas": {
+    "https://taskfile.dev/schema.json": [
+      "**/taskfile.yml",
+    ]
+  }
 }

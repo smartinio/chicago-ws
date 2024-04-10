@@ -1,0 +1,25 @@
+version: '3'
+
+tasks:
+  client.run:
+    dir: client
+    cmds:
+      - pnpm install
+      - pnpm dev
+    interactive: true
+
+  server.run:
+    deps: [server.war.exists]
+    dir: server
+    cmd: java -cp "" -jar app/build/server/webapp-runner-*.jar --expand-war-file false --context-xml app/context.xml --port 8080 app/build/libs/*.war
+    interactive: true
+
+  server.build:
+    dir: server
+    cmd: ./gradlew stage -t
+    interactive: true
+
+  # health checks:
+
+  server.war.exists:
+    cmd: test -f server/app/build/libs/*.war
