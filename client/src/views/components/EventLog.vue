@@ -17,7 +17,7 @@ const scrollToBottom = (eventIndex: number, events: any[]) => {
     style="overflow: scroll; width: 400px">
     <div v-show="false" v-html="preload()" />
     <div v-for="event, i in events">
-      <Event :event="event" @vnodeMounted="scrollToBottom(i, events)" />
+      <Event :event="event" @vue:mounted="scrollToBottom(i, events)" />
     </div>
   </div>
 </template>
