@@ -1,1 +1,5 @@
-<Context reloadable="true"/>
+<Context reloadable="true">
+  <JarScanner scanManifest="false">
+      <JarScanFilter defaultPluggabilityScan="false" />
+  </JarScanner>
+</Context>
