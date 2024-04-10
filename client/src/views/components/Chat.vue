@@ -17,9 +17,13 @@
       <div class="is-flex" style="width: 400px" v-if="showRules">
         <div class="notification is-info" style="flex: 1">
           <button class="delete" aria-label="delete" @click="showRules = false"></button>
-          <p><strong>{{ numTrades }}</strong> trades</p>
+          <p><strong>{{ numTrades }}</strong> {{ numTrades == 1 ? 'trade' : 'trades' }}</p>
+          <p>Chicago <strong>{{ chicagoBefore15 ? 'can be called' : 'cannot be called'}}</strong> before 15p</p>
           <p>Chicago <strong>{{ chicagoBestHand ? 'requires' : 'does not require' }}</strong> best hand</p>
           <p>1 open card available at <strong>{{ oneOpenFinal ? 'the final trade' : 'every trade' }}</strong></p>
+          <p>Trading is banned at <strong>{{ tradeBanScore }}p</strong></p>
+          <p>Winning a round gives <strong>{{ roundWinScore }}p</strong></p>
+          <p>Closing with a Two gives <strong>{{ winWithTwoScore }}p</strong></p>
         </div>
       </div>
 
@@ -54,7 +58,19 @@ export default {
     },
     oneOpenFinal() {
       return this.game.rules.oneOpen === 'FINAL'
-    }
+    },
+    chicagoBefore15() {
+      return this.game.rules.chicagoBefore15;
+    },
+    roundWinScore() {
+      return this.game.rules.roundWinScore;
+    },
+    winWithTwoScore() {
+      return this.game.rules.winWithTwoScore;
+    },
+    tradeBanScore() {
+      return this.game.rules.tradeBanScore;
+    },
   },
   components: {
     ChatSender,

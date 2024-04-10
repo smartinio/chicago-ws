@@ -53,44 +53,90 @@ const store = useStore()
           </div>
         </div>
 
-        <label class="label is-large">Rules</label>
-        <div class="field is-grouped is-grouped-multiline">
-          <div class="control">
-            <div class="select is-rounded is-large">
-              <select v-model="rules.numTrades" :disabled="isAlreadyInAGame || checkingGame">
-                <option :value="2">2 trades</option>
-                <option :value="3">3 trades</option>
-              </select>
+        <div id="wtf" class="is-flex is-justify-content-space-between">
+          <div>
+            <label class="label is-large">Rules</label>
+            <div class="field is-grouped is-grouped-multiline">
+              <div class="control block">
+                <div class="select is-rounded">
+                  <select v-model="rules.numTrades" :disabled="isAlreadyInAGame || checkingGame">
+                    <option :value="1">1 trade</option>
+                    <option :value="2">2 trades</option>
+                    <option :value="3">3 trades</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="control block">
+                <div class="select is-rounded">
+                  <select v-model="rules.chicagoBefore15" :disabled="isAlreadyInAGame || checkingGame">
+                    <option :value="false">Chicago: Needs 15p</option>
+                    <option :value="true">Chicago: Anytime</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="control block">
+                <div class="select is-rounded">
+                  <select v-model="rules.roundWinScore" :disabled="isAlreadyInAGame || checkingGame">
+                    <option :value="2">Trick win: 2p</option>
+                    <option :value="5">Trick win: 5p</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="control block">
+                <div class="select is-rounded">
+                  <select v-model="rules.winWithTwoScore" :disabled="isAlreadyInAGame || checkingGame">
+                    <option :value="5">Closing with Two: 5p</option>
+                    <option :value="10">Closing with Two: 10p</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="control block">
+                <div class="select is-rounded">
+                  <select v-model="rules.tradeBanScore" :disabled="isAlreadyInAGame || checkingGame">
+                    <option :value="41">Trade ban: 41p</option>
+                    <option :value="42">Trade ban: 42p</option>
+                    <option :value="45">Trade ban: 45p</option>
+                    <option :value="46">Trade ban: 46p</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="control block">
+                <div class="select is-rounded">
+                  <select v-model="rules.chicagoBestHand" :disabled="isAlreadyInAGame || checkingGame">
+                    <option :value="false">Chicago: All tricks</option>
+                    <option :value="true">Chicago: + Best hand</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="control">
+                <div class="select is-rounded">
+                  <select v-model="rules.oneOpen" :disabled="isAlreadyInAGame || checkingGame">
+                    <option value="ALL">1 open: All trades</option>
+                    <option value="FINAL">1 open: Final trade</option>
+                  </select>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div class="control">
-            <div class="select is-rounded is-large">
-              <select v-model="rules.chicagoBestHand" :disabled="isAlreadyInAGame || checkingGame">
-                <option :value="false">Chicago: All tricks</option>
-                <option :value="true">Chicago: All tricks + Best hand</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="control">
-            <div class="select is-rounded is-large">
-              <select v-model="rules.oneOpen" :disabled="isAlreadyInAGame || checkingGame">
-                <option value="ALL">1 open: All trades</option>
-                <option value="FINAL">1 open: Final trade</option>
-              </select>
+          <div>
+            <div class="field" style="margin-top: 18px">
+              <div class="control">
+                <button @click="createGame" :disabled="!hasNicknameSet || isAlreadyInAGame || checkingGame"
+                  class="button is-success is-rounded is-large">
+                  Create new game
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="field" style="margin-top: 18px">
-          <div class="control">
-            <button @click="createGame" :disabled="!hasNicknameSet || isAlreadyInAGame || checkingGame"
-              class="button is-success is-rounded is-large">
-              Create new game
-            </button>
-          </div>
-        </div>
       </div>
 
       <div v-if="isTab('join')">
@@ -170,8 +216,12 @@ export default defineComponent({
       nickname: '',
       leftGame: false,
       rules: {
-        numTrades: 2,
+        chicagoBefore15: false,
         chicagoBestHand: false,
+        roundWinScore: 5,
+        tradeBanScore: 45,
+        winWithTwoScore: 10,
+        numTrades: 2,
         oneOpen: 'ALL',
       }
     }
@@ -265,7 +315,10 @@ export default defineComponent({
     const rulesJson = localStorage.getItem('rules')
 
     if (rulesJson) {
-      this.rules = JSON.parse(rulesJson)
+      this.rules = {
+        ...this.rules,
+        ...JSON.parse(rulesJson),
+      }
     }
 
     if (nickname) {

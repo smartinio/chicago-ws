@@ -15,6 +15,7 @@ import io.smartin.id1212.net.dto.Snapshot;
 import io.smartin.id1212.net.dto.GameCreation.GameRules;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
@@ -249,6 +250,10 @@ public class ChicagoGame {
             throw new ChicagoAlreadyCalledException(CHICAGO_ALREADY_CALLED);
         }
 
+        if (!player.canCallChicago()) {
+            throw new InappropriateActionException(CANNOT_CALL_CHICAGO);
+        }
+
         boolean isDoneAsking = currentRound.respondToChicago(player, isCallingChicago);
 
         if (isCallingChicago) {
@@ -265,11 +270,11 @@ public class ChicagoGame {
     public void finishNormalRound(Move winningMove) {
         Player winner = winningMove.getPlayer();
         if (winningMove.getCard().getValue().equals(PlayingCard.Value.TWO)) {
-            winner.addPoints(WIN_WITH_TWO_SCORE);
-            logEvent(GameEvent.wonRound(winningMove, WIN_WITH_TWO_SCORE));
+            winner.addPoints(rules.winWithTwoScore);
+            logEvent(GameEvent.wonRound(winningMove, rules.winWithTwoScore));
         } else {
-            winner.addPoints(ROUND_WIN_SCORE);
-            logEvent(GameEvent.wonRound(winningMove, ROUND_WIN_SCORE));
+            winner.addPoints(rules.roundWinScore);
+            logEvent(GameEvent.wonRound(winningMove, rules.roundWinScore));
         }
 
         List<BestHandResult> playersWithBestHand = scoreManager.givePointsForBestHand();
@@ -335,7 +340,15 @@ public class ChicagoGame {
     }
 
     public List<Player> getTradeEligiblePlayers() {
-        return getPlayers().stream().filter(Player::canTrade).collect(Collectors.toList());
+        return getFilteredPlayers(Player::canTrade);
+    }
+
+    public List<Player> getChicagoEligiblePlayers() {
+        return getFilteredPlayers(Player::canCallChicago);
+    }
+
+    public List<Player> getFilteredPlayers(Predicate<Player> predicate) {
+        return getPlayers().stream().filter(predicate).collect(Collectors.toList());
     }
 
     public void removePlayer(Player player, boolean kicked) {

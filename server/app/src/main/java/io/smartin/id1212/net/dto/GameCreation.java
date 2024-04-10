@@ -14,9 +14,17 @@ public class GameCreation {
         @Expose
         public boolean chicagoBestHand;
         @Expose
+        public boolean chicagoBefore15;
+        @Expose
         public int numTrades;
         @Expose
+        public int tradeBanScore;
+        @Expose
         public OneOpenMode oneOpen;
+        @Expose
+        public int roundWinScore;
+        @Expose
+        public int winWithTwoScore;
     }
 
     @Expose

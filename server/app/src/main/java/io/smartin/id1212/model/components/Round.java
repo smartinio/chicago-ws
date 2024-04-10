@@ -1,6 +1,5 @@
 package io.smartin.id1212.model.components;
 
-import io.smartin.id1212.config.Rules;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -69,10 +68,12 @@ public class Round {
             player.setHand(hand);
         }
 
-        if (game.getTradeEligiblePlayers().size() == 0) {
+        if (game.getTradeEligiblePlayers().size() > 0) {
+            phase = GamePhase.TRADING;
+        } else if (game.getChicagoEligiblePlayers().size() > 0) {
             phase = GamePhase.CHICAGO;
         } else {
-            phase = GamePhase.TRADING;
+            phase = GamePhase.PLAYING;
         }
 
         currentPlayer = dealer;
@@ -273,7 +274,7 @@ public class Round {
             phase = GamePhase.PLAYING;
             return true;
         }
-        if (numAskedAboutChicago == game.getPlayers().size()) {
+        if (numAskedAboutChicago == game.getChicagoEligiblePlayers().size()) {
             phase = GamePhase.PLAYING;
         }
 
@@ -335,6 +336,9 @@ public class Round {
             if (phase == GamePhase.TRADING && !candidate.canTrade()) {
                 offset++;
                 continue;
+            } else if (phase == GamePhase.CHICAGO && !candidate.canCallChicago()) {
+                offset++;
+                continue;
             }
 
             currentPlayer = candidate;
@@ -363,7 +367,11 @@ public class Round {
     }
 
     public void endTradingPhase() {
-        phase = GamePhase.CHICAGO;
+        if (game.getChicagoEligiblePlayers().size() > 0) {
+            phase = GamePhase.CHICAGO;
+        } else {
+            phase = GamePhase.PLAYING;
+        }
     }
 
     public Trick getFinalTrick() {

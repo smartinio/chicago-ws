@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const props = defineProps<{
+  rules: any
   event: any
 }>()
 </script>
@@ -11,14 +12,14 @@ const props = defineProps<{
       <span class="has-text-grey is-size-7" style="height: 40px; background-color: #f5f5f5; padding: 5px"
         v-html="formatServerEvent(event)" />
     </div>
-    <div v-else-if="formatPlayerEvent(event)">
+    <div v-else-if="formatPlayerEvent(event, rules)">
       <span class="has-text-grey-light is-size-7" style="line-height: 30px;">
         {{ format(event.timestamp, 'HH:mm') }}
       </span>
       <span style="display: inline-block; background-color: red; width: 10px" />
       <strong>{{ event.actor.name }}</strong>
       <span style="display: inline-block; background-color: red; width: 5px" />
-      <span v-html="formatPlayerEvent(event)" />
+      <span v-html="formatPlayerEvent(event, rules)" />
     </div>
   </div>
 </template>
@@ -53,7 +54,7 @@ export default {
           return '👀'
       }
     }),
-    formatPlayerEvent: withEmojis((event: Event) => {
+    formatPlayerEvent: withEmojis((event: Event, rules: any) => {
       switch (event.action) {
         case 'CHAT_MESSAGE':
           const message = sanitize(event.message)
@@ -80,7 +81,7 @@ export default {
         case 'WON_CHICAGO':
           return 'got 15 points for their Chicago! 🥳'
         case 'WON_ROUND': {
-          const winning = event.points === 5 ? `closing with a Two!` : 'winning!'
+          const winning = event.points === rules.winWithTwoScore ? `closing with a Two!` : 'winning!'
           return `got ${points(event)} for ${winning} 🙌`
         }
         case 'WON_BEST_HAND':

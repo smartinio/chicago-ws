@@ -95,9 +95,7 @@ public class PlayerController {
             player = game.getPlayer(oldPlayerId);
             player.setId(sessionId);
             player.setConnected(true);
-        } catch (UnknownInvitationKeyException e) {
-            throw new FatalException(e.getMessage());
-        } catch (NotInGameException e) {
+        } catch (UnknownInvitationKeyException | NotInGameException e) {
             throw new FatalException(e.getMessage());
         }
     }
@@ -120,9 +118,7 @@ public class PlayerController {
                     System.out.println(p.getId() + " -> remains as player");
                 }
             }
-        } catch (UnknownInvitationKeyException e) {
-            throw new FatalException(e.getMessage());
-        } catch (NotInGameException e) {
+        } catch (UnknownInvitationKeyException | NotInGameException e) {
             throw new FatalException(e.getMessage());
         }
     }

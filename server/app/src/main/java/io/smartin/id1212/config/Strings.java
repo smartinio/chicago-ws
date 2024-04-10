@@ -7,6 +7,7 @@ public class Strings {
     public static final String EMPTY_DECK = "Deck is empty!";
     public static final String ILLEGAL_CARD_PLAY = "You are not allowed to play that card";
     public static final String CHICAGO_ALREADY_CALLED = "Chicago is already called";
+    public static final String CANNOT_CALL_CHICAGO = "Your score is too low to call chicago";
     public static final String UNAUTHORIZED_START = "Only the host can start the game";
     public static final String UNAUTHORIZED_DEALER = "Only the dealer can deal the cards";
     public static final String UNAUTHORIZED_TRADE = "You can only trade your own cards";

@@ -37,7 +37,7 @@ public class GameEndpoint {
 
     @OnClose
     public void onClose(Session session) {
-        logger.info("onClose. marking as disconnected and unregistering session. should fail broadcast to 1 player. on session", session.getId());
+        logger.info("onClose. marking as disconnected and unregistering session. should fail broadcast to 1 player. on session {}", session.getId());
         ChicagoGame game = playerController.getPlayer().getGame();
         playerController.setConnected(false);
         sessionHandler.unregister(session);

@@ -8,9 +8,13 @@ const state = {
   currentlyInGame: undefined as boolean | undefined,
   stale: false,
   rules: {
+    chicagoBefore15: false,
     chicagoBestHand: false,
-    oneOpen: 'ALL',
+    roundWinScore: 5,
+    tradeBanScore: 45,
+    winWithTwoScore: 10,
     numTrades: 2,
+    oneOpen: 'ALL',
   },
   oneOpen: {
     player: {
@@ -68,10 +72,15 @@ const mutations = {
     state.rules.chicagoBestHand = game.rules.chicagoBestHand
     state.rules.oneOpen = game.rules.oneOpen
     state.rules.numTrades = game.rules.numTrades
+    state.rules.roundWinScore = game.rules.roundWinScore
+    state.rules.tradeBanScore = game.rules.tradeBanScore
+    state.rules.winWithTwoScore = game.rules.winWithTwoScore
+    state.rules.chicagoBefore15 = game.rules.chicagoBefore15
 
     if (!game.currentRound) {
       return
     }
+
     state.round.chicagoTaker = game.currentRound.chicagoTaker
     state.round.currentPlayer = game.currentRound.currentPlayer
     state.round.phase = game.currentRound.phase

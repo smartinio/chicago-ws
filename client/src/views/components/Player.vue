@@ -24,10 +24,10 @@
         </div>
         <div class="column is-expanded">
           <div v-if="player.hand" style="padding-right: 40px">
-            <figure v-for="card in player.hand.played" class="image is-inline-flex"
+            <figure v-for="card, idx in player.hand.played" class="image is-inline-flex opaque"
               style="width: 66px; height: 96px; margin-right: -40px">
               <img :src="getCardUrl(card)" :alt="card.type + '' + card.value"
-                :class="isBaseCard(card) ? 'red-pulse' : ''">
+                :class="isBaseCard(card) ? 'red-pulse' : isOldNews(card, idx) ? 'dim' : ''">
             </figure>
           </div>
         </div>
@@ -65,6 +65,11 @@ export default {
       const actionDTO = new Action(KICK_PLAYER, player.id)
       this.$store.dispatch(SEND_ACTION, actionDTO)
     },
+    isOldNews(card, idx) {
+      if (!this.baseMove) return idx < this.player.hand.played.length - 1;
+
+      return !this.isBaseCard(card);
+    },
     isBaseCard(card) {
       if (!this.baseMove) return false
       return (card.suit === this.baseMove.card.suit && card.value === this.baseMove.card.value)
@@ -80,6 +85,14 @@ export default {
 .shake-it {
   display: inline-block;
   animation: shake 0.5s infinite;
+}
+
+.opaque {
+  background-color: #FFF;
+}
+
+.dim {
+  opacity: 0.4;
 }
 
 @keyframes shake {

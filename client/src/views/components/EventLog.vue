@@ -17,7 +17,7 @@ const scrollToBottom = (eventIndex: number, events: any[]) => {
     style="overflow: scroll; width: 400px">
     <div v-show="false" v-html="preload()" />
     <div v-for="event, i in events">
-      <Event :event="event" @vue:mounted="scrollToBottom(i, events)" />
+      <Event :event="event" :rules="rules" @vue:mounted="scrollToBottom(i, events)" />
     </div>
   </div>
 </template>
@@ -45,6 +45,9 @@ export default {
     }
   },
   computed: {
+    rules() {
+      return this.game.rules
+    },
     events() {
       return this.game.events
     }

@@ -1,5 +1,5 @@
 <template>
-  <div style="transform: translateY(100px)"
+  <div style="transform: translateY(100px); overflow-y: hidden"
     class="is-flex is-flex-direction-column is-justify-content-flex-end is-align-items-center">
     <div v-if="phase === 'CHICAGO' && me.isMyTurn" class="is-flex is-flex-direction-column is-align-items-center">
       <span class="control-text" style="margin-bottom: 15px; margin-right: 0px;">

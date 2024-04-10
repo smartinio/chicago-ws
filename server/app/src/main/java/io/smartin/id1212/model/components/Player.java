@@ -9,8 +9,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static io.smartin.id1212.config.Rules.CHICAGO_POINTS;
 import static io.smartin.id1212.config.Rules.MAX_GAME_SCORE;
-import static io.smartin.id1212.config.Rules.TRADE_BAN_SCORE;
 
 public class Player {
     private ChicagoGame game;
@@ -107,7 +107,7 @@ public class Player {
     }
 
     public boolean canTrade() {
-        return score < TRADE_BAN_SCORE;
+        return score < game.getRules().tradeBanScore;
     }
 
     public void removeCards(Set<PlayingCard> cards) {
@@ -209,5 +209,9 @@ public class Player {
 
     public boolean isConnected() {
         return connected;
+    }
+
+    public boolean canCallChicago() {
+        return game.getRules().chicagoBefore15 || score >= CHICAGO_POINTS;
     }
 }

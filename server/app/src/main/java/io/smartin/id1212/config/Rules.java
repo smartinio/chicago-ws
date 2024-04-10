@@ -7,11 +7,8 @@ import io.smartin.id1212.model.components.Hand.HandType;
 
 public class Rules {
     public static final int    MAX_GAME_IDLE_TIME_SECONDS = 1800; // 30 min
-    public static final int    ROUND_WIN_SCORE = 2;
-    public static final int    WIN_WITH_TWO_SCORE = 5;
-    public static final int    TRADE_BAN_SCORE = 45;
     public static final int    MAX_CARDS_PER_PLAYER = 5;
-    public static final int    POINTS_FOR_WON_CHICAGO = 15;
+    public static final int    CHICAGO_POINTS = 15;
     public static final int    MAX_GAME_SCORE = 52;
     public static final Map<HandType, Integer> HAND_SCORES = new HashMap<HandType, Integer>() {{
         put(HandType.NOTHING, 0);

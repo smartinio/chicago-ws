@@ -106,11 +106,11 @@ public class ScoreManager {
 
     public void handleChicagoResult(boolean success, Player player) {
         if (success) {
-            player.addPoints(15);
+            player.addPoints(Rules.CHICAGO_POINTS);
             player.setHasTakenChicago(true);
         }
         else {
-            player.removePoints(15);
+            player.removePoints(Rules.CHICAGO_POINTS);
         }
     }
 
