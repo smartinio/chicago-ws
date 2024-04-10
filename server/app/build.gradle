@@ -20,7 +20,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly group: 'com.github.jsimone', name: 'webapp-runner', version: '9.0.27.1'
+    implementation 'org.apache.tomcat.embed:tomcat-embed-websocket:9.0.87'
+    compileOnly 'com.heroku:webapp-runner:9.0.87.0'
     implementation 'com.aventrix.jnanoid:jnanoid:2.0.0'
     implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'com.google.guava:guava:33.1.0-jre'
