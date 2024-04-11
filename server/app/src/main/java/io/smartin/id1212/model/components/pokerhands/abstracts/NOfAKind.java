@@ -4,7 +4,7 @@ import io.smartin.id1212.model.components.Hand;
 import io.smartin.id1212.model.components.PlayingCard;
 
 public abstract class NOfAKind extends PokerHand {
-    private PlayingCard.Value of;
+    private final PlayingCard.Value of;
     private Hand.HandType type;
 
     @Override

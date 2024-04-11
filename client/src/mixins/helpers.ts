@@ -8,6 +8,7 @@ type Card = {
 
 type Player = {
   id: string
+  name: string
 }
 
 const suits = {
@@ -44,7 +45,7 @@ export default {
       return `cards/${card.value}_${card.suit}.svg`
     },
     getAvatarUrl (player: Player) {
-      return `https://api.dicebear.com/8.x/avataaars-neutral/svg?seed=${player.id}`
+      return `https://api.dicebear.com/8.x/avataaars-neutral/svg?seed=${player.name}`
     },
     niceCard,
     capitalize,

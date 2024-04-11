@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Nothing extends PokerHand {
-    private Hand hand;
+    private final Hand hand;
 
     public Nothing(Hand hand) {
         this.hand = hand;
@@ -27,8 +27,7 @@ public class Nothing extends PokerHand {
 
     @Override
     public boolean beats(PokerHand pokerHand) throws HandsAreEqualException {
-        if (pokerHand instanceof Nothing) {
-            Nothing nothing = (Nothing) pokerHand;
+        if (pokerHand instanceof Nothing nothing) {
             List<PlayingCard> myCards = new ArrayList<>(hand.getAllFive());
             List<PlayingCard> otherCards = new ArrayList<>(nothing.getHand().getAllFive());
             myCards.sort(new SortByValue());

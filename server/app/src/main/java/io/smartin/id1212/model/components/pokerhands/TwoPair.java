@@ -46,8 +46,7 @@ public class TwoPair extends PokerHand {
 
     @Override
     public boolean beats(PokerHand pokerHand) throws HandsAreEqualException {
-        if (pokerHand instanceof TwoPair) {
-            TwoPair other = (TwoPair) pokerHand;
+        if (pokerHand instanceof TwoPair other) {
             if (other.getHighest().ordinal() > getHighest().ordinal()) return false;
             if (other.getHighest().ordinal() < getHighest().ordinal()) return true;
             if (other.getSecond().ordinal() > getSecond().ordinal()) return false;

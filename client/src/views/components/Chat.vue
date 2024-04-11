@@ -12,6 +12,10 @@
           <span class="icon is-small"><i class="fa fa-right-from-bracket"></i></span>
           <span>Leave game</span>
         </button>
+        <button class="button is-small is-rounded is-gray is-light" @click="toggleHide">
+          <span class="icon is-small"><i class="fa" :class="hidden ? 'fa-arrow-right' : 'fa-arrow-left'"></i></span>
+          <span v-if="!hidden">Hide</span>
+        </button>
       </div>
 
       <div class="is-flex" style="width: 400px" v-if="showRules">
@@ -47,6 +51,13 @@ export default {
   data() {
     return {
       showRules: true,
+      hidden: false,
+    }
+  },
+  methods: {
+    toggleHide() {
+      this.$emit(this.hidden ? 'show' : 'hide')
+      this.hidden = !this.hidden
     }
   },
   computed: {

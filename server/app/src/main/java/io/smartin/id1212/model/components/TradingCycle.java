@@ -3,10 +3,10 @@ package io.smartin.id1212.model.components;
 import java.util.*;
 
 public class TradingCycle {
-    private Map<Player,Set<PlayingCard>> thrown = new HashMap<>();
+    private final Map<Player,Set<PlayingCard>> thrown = new HashMap<>();
 
     public boolean isFinished(List<Player> tradeEligiblePlayers) {
-        return tradeEligiblePlayers.stream().allMatch(player -> thrown.containsKey(player));
+        return tradeEligiblePlayers.stream().allMatch(thrown::containsKey);
     }
 
     public void addPlayerThrow(Player player, Set<PlayingCard> cards) {

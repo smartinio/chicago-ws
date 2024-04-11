@@ -1,5 +1,6 @@
 package io.smartin.id1212.model.components;
 
+import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import com.google.gson.annotations.Expose;
 
 import io.smartin.id1212.exceptions.GameException;
@@ -14,6 +15,7 @@ import static io.smartin.id1212.config.Rules.MAX_GAME_SCORE;
 
 public class Player {
     private ChicagoGame game;
+    private String sessionId;
     @Expose
     private String id;
     @Expose
@@ -29,8 +31,9 @@ public class Player {
     @Expose
     private boolean winner = false;
 
-    public Player(String id) {
-        this.id = id;
+    public Player(String sessionId) {
+        this.sessionId = sessionId;
+        this.id = NanoIdUtils.randomNanoId();
     }
 
     public ChicagoGame getGame() {
@@ -129,6 +132,10 @@ public class Player {
 
         Player player = (Player) o;
 
+        if (name.equals(player.name)) {
+            System.out.println("Comparing player " + name + " by id (" + id + "==" + player.id + ")");
+        }
+
         return id.equals(player.id);
     }
 
@@ -195,8 +202,8 @@ public class Player {
         this.id = sessionId;
     }
 
-    public void kickPlayer(String playerIdToKick) throws NotInGameException, UnauthorizedKickException {
-        game.kickPlayer(this, playerIdToKick);
+    public Player kickPlayer(String playerIdToKick) throws NotInGameException, UnauthorizedKickException {
+        return game.kickPlayer(this, playerIdToKick);
     }
 
     public void throwOneOpen(PlayingCard cardToThrow) throws GameException {
@@ -213,5 +220,13 @@ public class Player {
 
     public boolean canCallChicago() {
         return game.getRules().chicagoBefore15 || score >= CHICAGO_POINTS;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    public String getSessionId() {
+        return sessionId;
     }
 }

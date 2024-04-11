@@ -30,7 +30,7 @@ public class GameEndpoint {
     @OnOpen
     public void onOpen(Session session) {
         logger = LogManager.getLogger("sessionId:" + session.getId());
-        logger.info("onOpen. creating playercontroller");
+        logger.info("onOpen. creating playerController");
         playerController = new PlayerController(session.getId());
         sessionHandler.register(session);
     }
@@ -53,17 +53,16 @@ public class GameEndpoint {
     }
 
     private boolean requiresSnapshot(Action action) {
-        switch (action.getType()) {
-            case PING:                  return false;
-            case CHECK_GAME:            return false;
-            default:                    return true;
-        }
+        return switch (action.getType()) {
+            case PING, CHECK_GAME -> false;
+            default -> true;
+        };
     }
 
     @OnMessage
     public void onMessage(Session session, String message) {
         try {
-            playerController.updateId(session.getId());
+            playerController.updateSessionId(session.getId());
             playerController.markAsConnected();
             Action action = Converter.toAction(message);
 

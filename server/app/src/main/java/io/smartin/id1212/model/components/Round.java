@@ -1,7 +1,6 @@
 package io.smartin.id1212.model.components;
 
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import com.google.gson.annotations.Expose;
 
@@ -12,14 +11,12 @@ import io.smartin.id1212.model.components.comparators.SortByValue;
 import io.smartin.id1212.model.managers.TradingManager;
 import io.smartin.id1212.model.managers.TrickingManager;
 import io.smartin.id1212.model.managers.ScoreManager.BestHandResult;
-import io.smartin.id1212.model.managers.TrickingManager.MoveResult;
 import io.smartin.id1212.net.dto.GameCreation.OneOpenMode;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static io.smartin.id1212.config.Strings.*;
 
@@ -27,20 +24,22 @@ public class Round {
     @Expose
     private GamePhase phase = GamePhase.BEFORE;
     @Expose
-    private Player dealer;
+    private final Player dealer;
     @Expose
     private Player currentPlayer;
     @Expose
     private Player chicagoTaker;
     @Expose
-    private List<Trick> tricks;
+    private Player winner;
+    @Expose
+    private final List<Trick> tricks;
     @Expose
     private boolean isFinalTrade = false;
 
-    private TrickingManager trickingManager;
-    private TradingManager tradingManager;
-    private CardDeck deck = new CardDeck();
-    private ChicagoGame game;
+    private final TrickingManager trickingManager;
+    private final TradingManager tradingManager;
+    private final CardDeck deck = new CardDeck();
+    private final ChicagoGame game;
     private int numAskedAboutChicago = 0;
 
     private final Set<PlayingCard> allCards = new CardDeck().getCards();
@@ -62,9 +61,9 @@ public class Round {
     }
 
     void start() {
-        for (Player player : game.getPlayers()) {
-            Set<PlayingCard> cards = deck.drawInitial();
-            Hand hand = new Hand(cards);
+        for (var player : game.getPlayers()) {
+            var cards = deck.drawInitial();
+            var hand = new Hand(cards);
             player.setHand(hand);
         }
 
@@ -80,58 +79,47 @@ public class Round {
         nextTurn();
     }
 
-    public class RoundMoveResult {
-        public final Move winningMove;
-        public final Player chicagoTaker;
-        public final boolean isRoundOver;
-        public final boolean isTrickDone;
-        public final boolean isGuaranteedWin;
-        public final List<PlayingCard> finalCards;
-
-        public RoundMoveResult(
-                Move winningMove,
-                Player chicagoTaker,
-                boolean isRoundOver,
-                boolean isTrickDone,
-                boolean isGuaranteedWin,
-                List<PlayingCard> finalCards) {
-            this.winningMove = winningMove;
-            this.chicagoTaker = chicagoTaker;
-            this.isRoundOver = isRoundOver;
-            this.isTrickDone = isTrickDone;
-            this.isGuaranteedWin = isGuaranteedWin;
-            this.finalCards = finalCards;
-        }
+    public void setWinner(Player player) {
+        winner = player;
     }
+
+    public record RoundMoveResult(
+            Move winningMove,
+            Player chicagoTaker,
+            boolean isRoundOver,
+            boolean isTrickDone,
+            boolean isGuaranteedWin,
+            List<PlayingCard> finalCards
+    ) { }
 
     RoundMoveResult addMove(Move move)
             throws WaitYourTurnException, InappropriateActionException, IllegalMoveException {
-        Player player = move.getPlayer();
+        var player = move.getPlayer();
         checkPhase(GamePhase.PLAYING);
         checkTurn(player);
 
-        MoveResult moveResult = trickingManager.handle(move);
+        var moveResult = trickingManager.handle(move);
 
-        Move winningMove = moveResult.winningMove;
-        List<PlayingCard> finalCards = new ArrayList<>(player.getHand().getCards());
-        boolean hasMoreTricks = moveResult.hasMoreTricks;
-        boolean isTrickDone = moveResult.isTrickDone;
-        boolean isPlayerWinning = winningMove.getPlayer().equals(player);
-        boolean chicagoWasLost = hasChicagoCalled() && !winningMove.getPlayer().equals(chicagoTaker);
-        boolean playerGuaranteedToWin = isPlayerWinning && playerIsGuaranteedToWinRound(player, winningMove);
+        var winningMove = moveResult.winningMove();
+        var finalCards = new ArrayList<>(player.getHand().getCards());
+        var hasMoreTricks = moveResult.hasMoreTricks();
+        var isTrickDone = moveResult.isTrickDone();
+        var isPlayerWinning = winningMove.getPlayer().equals(player);
+        var chicagoWasLost = hasChicagoCalled() && !winningMove.getPlayer().equals(chicagoTaker);
+        var playerGuaranteedToWin = isPlayerWinning && playerIsGuaranteedToWinRound(player, winningMove);
 
         if (hasMoreTricks && playerGuaranteedToWin) {
             // sort final cards descending (as one would play irl)
             finalCards.sort(new SortByValue(false));
 
-            // add the winning move to the start so client reads: "..made it rain with X, Y, Z" where X is winning move and Y, Z are the finalCards sorted descending
+            // add the winning move to the start so client reads: "...made it rain with X, Y, Z" where X is winning move and Y, Z are the finalCards sorted descending
             finalCards.add(0, winningMove.getCard());
 
             // move remaining cards to played so hand is shown in client (same sorting as above)
             player.getHand().moveAllToPlayed(true);
 
             // use the final card to get correct score (card will be a 2 if present due to sort order)
-            PlayingCard finalCard = player.getHand().getLastPlayedCard();
+            var finalCard = player.getHand().getLastPlayedCard();
             winningMove = new Move(player, finalCard);
 
             setPhase(Round.GamePhase.AFTER);
@@ -157,21 +145,21 @@ public class Round {
     }
 
     private boolean playerIsGuaranteedToWinRound(Player currentPlayer, Move currentMove) {
-        Logger playerLogger = LogManager.getLogger("gtw:" + currentPlayer.getName());
-        Logger gtwLogger = LogManager.getLogger("gtw");
+        var playerLogger = LogManager.getLogger("gtw:" + currentPlayer.getName());
+        var gtwLogger = LogManager.getLogger("gtw");
 
-        Set<PlayingCard> playedCards = getPlayedCards();
-        List<PlayingCard> playerPlayedCards = currentPlayer.getHand().getPlayed();
-        Set<PlayingCard> ownCards = currentPlayer.getHand().getCards();
-        PlayingCard currentCard = currentMove.getCard();
-        Set<Player> remainingPlayers = trickingManager.currentTrick().getRemainingPlayers();
-        Set<Player> allPlayers = new HashSet<>(game.getPlayers());
+        var playedCards = getPlayedCards();
+        var playerPlayedCards = currentPlayer.getHand().getPlayed();
+        var ownCards = currentPlayer.getHand().getCards();
+        var currentCard = currentMove.getCard();
+        var remainingPlayers = trickingManager.currentTrick().getRemainingPlayers();
+        var allPlayers = new HashSet<>(game.getPlayers());
 
         if (someoneElseCouldBeatCard(currentCard, currentPlayer, playedCards, remainingPlayers)) {
             return false;
         }
 
-        for (PlayingCard card : ownCards) {
+        for (var card : ownCards) {
             if (someoneElseCouldBeatCard(card, currentPlayer, playedCards, allPlayers)) {
                 return false;
             }
@@ -193,7 +181,7 @@ public class Round {
     }
 
     private <T> void logSet(String title, Set<T> set) {
-        Logger logSetLogger = LogManager.getLogger("logSet");
+        var logSetLogger = LogManager.getLogger("logSet");
         logSetLogger.info(title);
         set.forEach(logSetLogger::info);
         logSetLogger.info("-------------------------------");
@@ -201,13 +189,13 @@ public class Round {
 
     private boolean someoneElseCouldBeatCard(PlayingCard card, Player currentPlayer, Set<PlayingCard> playedCards,
             Set<Player> eligiblePlayers) {
-        Logger methodLogger = LogManager.getLogger("someoneElseCouldBeatCard:" + card);
+        var methodLogger = LogManager.getLogger("someoneElseCouldBeatCard:" + card);
 
         if (card.getValue() == Value.ACE) {
             return false;
         }
 
-        Set<Player> potentialContenders = trickingManager.playersWithPotentialSuit(card.getSuit());
+        var potentialContenders = trickingManager.playersWithPotentialSuit(card.getSuit());
 
         logSet("These can still play this trick: " + card, eligiblePlayers);
         logSet("These players might still have suit: " + card.getSuit(), potentialContenders);
@@ -222,12 +210,12 @@ public class Round {
             return false;
         }
 
-        Set<PlayingCard> betterCards = getBetterCards(card);
-        Set<PlayingCard> ownCards = currentPlayer.getHand().getCards();
+        var betterCards = getBetterCards(card);
+        var ownCards = currentPlayer.getHand().getCards();
 
         logSet("These cards are better than " + card, betterCards);
 
-        for (PlayingCard betterCard : betterCards) {
+        for (var betterCard : betterCards) {
             boolean nobodyCanBeatCard = ownCards.contains(betterCard) || playedCards.contains(betterCard);
             boolean someoneElseMightHaveThisBetterCard = !nobodyCanBeatCard;
 
@@ -244,7 +232,7 @@ public class Round {
     }
 
     private Set<PlayingCard> getBetterCards(PlayingCard card) {
-        Set<PlayingCard> betterCards = new HashSet<>();
+        var betterCards = new HashSet<PlayingCard>();
 
         for (PlayingCard otherCard : allCards) {
             if (otherCard.beats(card)) {
@@ -256,7 +244,7 @@ public class Round {
     }
 
     private Set<PlayingCard> getPlayedCards() {
-        Set<PlayingCard> playedCards = new HashSet<>();
+        var playedCards = new HashSet<PlayingCard>();
 
         for (Player player : game.getPlayers()) {
             playedCards.addAll(player.getHand().getPlayed());
@@ -283,17 +271,17 @@ public class Round {
     }
 
     List<BestHandResult> tradeCards(Player player, Set<PlayingCard> cards)
-            throws OutOfCardsException, WaitYourTurnException, InappropriateActionException, UnauthorizedTradeException {
+            throws OutOfCardsException, WaitYourTurnException, InappropriateActionException {
         checkPhase(GamePhase.TRADING);
         checkTurn(player);
         tradingManager.throwCards(player, cards);
         tradingManager.drawCards(player, cards);
-        List<BestHandResult> result =  tradingManager.completeTrade();
+        var result =  tradingManager.completeTrade();
         nextTurn();
         return result;
     }
 
-    public void throwCards(Player player, Set<PlayingCard> cards) throws WaitYourTurnException, InappropriateActionException, OutOfCardsException {
+    public void throwCards(Player player, Set<PlayingCard> cards) throws WaitYourTurnException, InappropriateActionException {
         checkPhase(GamePhase.TRADING);
         checkTurn(player);
         tradingManager.throwCards(player, cards);
@@ -326,12 +314,12 @@ public class Round {
     private void nextTurn() {
         // hack to make sure isFinalTrade is updated before each turn
         isFinalTrade = tradingManager.maxTradingCyclesReached();
-        List<Player> p = game.getPlayers();
+        var p = game.getPlayers();
         int currentPlayerIndex = p.indexOf(currentPlayer);
         int offset = 1;
 
         while (offset <= p.size()) {
-            Player candidate = p.get((currentPlayerIndex + offset) % p.size());
+            var candidate = p.get((currentPlayerIndex + offset) % p.size());
 
             if (phase == GamePhase.TRADING && !candidate.canTrade()) {
                 offset++;
@@ -374,16 +362,8 @@ public class Round {
         }
     }
 
-    public Trick getFinalTrick() {
-        return trickingManager.currentTrick();
-    }
-
     public void setPhase(GamePhase phase) {
         this.phase = phase;
-    }
-
-    public Player getChicagoTaker() {
-        return chicagoTaker;
     }
 
     public enum GamePhase {
@@ -399,9 +379,9 @@ public class Round {
     }
 
     public List<BestHandResult> completeOnOpen(Player player, PlayingCard openCard, boolean accepted) throws GameException {
-        PlayingCard finalCard = accepted ? openCard : getCardForOneOpen(player);
+        var finalCard = accepted ? openCard : getCardForOneOpen(player);
         player.giveCards(Set.of(finalCard));
-        List<BestHandResult> result =  tradingManager.completeTrade();
+        var result =  tradingManager.completeTrade();
         nextTurn();
         return result;
     }

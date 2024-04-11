@@ -10,7 +10,7 @@ public class GameCreation {
         FINAL,
     }
 
-    public class GameRules {
+    public static class GameRules {
         @Expose
         public boolean chicagoBestHand;
         @Expose

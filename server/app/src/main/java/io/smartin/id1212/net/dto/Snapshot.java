@@ -10,9 +10,9 @@ import java.util.*;
 
 public class Snapshot {
     @Expose
-    private Player me;
+    private final Player me;
     @Expose
-    private ChicagoGame game;
+    private final ChicagoGame game;
     @Expose
     private boolean myTurn = false;
     @Expose

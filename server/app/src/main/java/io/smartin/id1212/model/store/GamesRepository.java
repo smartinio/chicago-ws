@@ -13,11 +13,11 @@ import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import java.util.*;
 
 import static io.smartin.id1212.config.Strings.UNKNOWN_KEY;
-import static io.smartin.id1212.config.Strings.INVALID_PLAYER;;
+import static io.smartin.id1212.config.Strings.INVALID_PLAYER;
 
 public class GamesRepository {
     private final Map<String, ChicagoGame> games = new HashMap<>();
-    private static GamesRepository ourInstance = new GamesRepository();
+    private final static GamesRepository ourInstance = new GamesRepository();
 
     public static GamesRepository getInstance() {
         return ourInstance;
@@ -33,10 +33,10 @@ public class GamesRepository {
     }
 
     public void createGame(Player player, GameRules rules) {
-        Random random = new Random();
-        char[] alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz".toCharArray();
-        String invitationKey = NanoIdUtils.randomNanoId(random, alphabet, 10);
-        ChicagoGame game = new ChicagoGame(invitationKey, player, rules);
+        var random = new Random();
+        var alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz".toCharArray();
+        var invitationKey = NanoIdUtils.randomNanoId(random, alphabet, 10);
+        var game = new ChicagoGame(invitationKey, player, rules);
         player.setGame(game);
         addGame(invitationKey, game);
     }
@@ -44,7 +44,7 @@ public class GamesRepository {
     public void joinGame(Player player, String invitationKey)
             throws UnknownInvitationKeyException, NicknameException, AlreadyStartedException {
 
-        ChicagoGame game = games.get(invitationKey);
+        var game = games.get(invitationKey);
         if (game == null) {
             throw new UnknownInvitationKeyException(UNKNOWN_KEY);
         }
@@ -66,7 +66,7 @@ public class GamesRepository {
         }
     }
 
-    public ChicagoGame findGame(String key) throws UnknownInvitationKeyException {
+    public ChicagoGame findGame(String key) {
         return games.get(key);
     }
 

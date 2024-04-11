@@ -7,11 +7,10 @@ import io.smartin.id1212.model.components.PlayingCard;
 import io.smartin.id1212.model.components.pokerhands.abstracts.PokerHand;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Flush extends PokerHand {
-    private Hand hand;
+    private final Hand hand;
 
     public Flush(Hand hand) {
         this.hand = hand;
@@ -28,12 +27,11 @@ public class Flush extends PokerHand {
 
     @Override
     public boolean beats(PokerHand pokerHand) throws HandsAreEqualException {
-        if (pokerHand instanceof Flush) {
-            Flush other = (Flush) pokerHand;
+        if (pokerHand instanceof Flush other) {
             List<PlayingCard> myCards = new ArrayList<>(hand.getAllFive());
             List<PlayingCard> otherCards = new ArrayList<>(other.getHand().getAllFive());
-            Collections.sort(myCards, new SortByValue(false));
-            Collections.sort(otherCards, new SortByValue(false));
+            myCards.sort(new SortByValue(false));
+            otherCards.sort(new SortByValue(false));
             for (int i = 0; i < myCards.size(); i++) {
                 if (!myCards.get(i).getValue().equals(otherCards.get(i).getValue())) {
                     return myCards.get(i).getValue().ordinal() > otherCards.get(i).getValue().ordinal();

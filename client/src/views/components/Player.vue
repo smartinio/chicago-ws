@@ -1,12 +1,12 @@
 <template>
-  <div class="media" :style="player.connected ? '' : 'opacity: 0.2'">
+  <div class="media" :style="player.connected ? '' : 'opacity: 0.2'" style="min-height: 105px">
     <div class="media-left">
       <figure class="image" :class="figureClass">
-        <img :src="getAvatarUrl(player)" alt="Placeholder image" class="avatar">
+        <img ref="avatarRef" :src="getAvatarUrl(player)" alt="Placeholder image" class="avatar">
       </figure>
     </div>
     <div class="media-content">
-      <div class="columns">
+      <div class="columns is-flex">
         <div class="column is-narrow">
           <p class="title is-4"
             style="text-overflow: ellipsis; width: 150px !important; overflow: hidden; white-space: nowrap;">
@@ -40,6 +40,9 @@
 </template>
 
 <script lang="ts">
+import confetti from 'canvas-confetti'
+import { ref } from 'vue'
+
 import PlayerStatus from '@/views/components/PlayerStatus.vue'
 import { SEND_ACTION } from '@/store/modules/socket/action_types'
 import { KICK_PLAYER } from '@/dto/action/types'
@@ -47,11 +50,20 @@ import Action from '@/dto/action/Action'
 
 export default {
   name: 'Player',
-  props: ['player', 'baseMove', 'currentPlayer', 'dealer', 'chicagoTaker', 'fallbackName', 'variant', 'isMe'],
+  props: ['player', 'baseMove', 'currentPlayer', 'dealer', 'chicagoTaker', 'roundWinner', 'fallbackName', 'variant', 'isMe'],
+  setup() {
+    const avatarRef = ref<HTMLImageElement>()
+    const wintervalRef = ref<number>()
+
+    return { avatarRef, wintervalRef }
+  },
   components: {
     PlayerStatus
   },
   computed: {
+    isRoundWinner() {
+      return this.roundWinner && this.player.id === this.roundWinner.id;
+    },
     imHost() {
       return this.$store.state.me.id === this.$store.state.game.host.id
     },
@@ -60,7 +72,34 @@ export default {
       return `is-${size}x${size}`
     }
   },
+  watch: {
+    isRoundWinner(is) {
+      if (is) {
+        this.celebratePlayer()
+      }
+    },
+    player(is, was) {
+      if (is.winner && !was.winner) {
+        const offset = Math.ceil(Math.random() * 30) - 15
+
+        this.wintervalRef = setInterval(() => this.celebratePlayer(offset), 1500)
+      }
+
+      if (!is.winner) {
+        clearInterval(this.wintervalRef)
+      }
+    }
+  },
   methods: {
+    celebratePlayer(offset = 0) {
+      const position = this.avatarRef?.getBoundingClientRect();
+      if (position) {
+        const { clientWidth, clientHeight } = document.documentElement
+        const x = (position.x + 35 + offset) / clientWidth
+        const y = (position.y + 110 + offset) / clientHeight
+        confetti({ origin: { x, y }, startVelocity: 20, ticks: 75 })
+      }
+    },
     kickPlayer(player) {
       const actionDTO = new Action(KICK_PLAYER, player.id)
       this.$store.dispatch(SEND_ACTION, actionDTO)
@@ -68,7 +107,10 @@ export default {
     isOldNews(card, idx) {
       if (!this.baseMove) return idx < this.player.hand.played.length - 1;
 
-      return !this.isBaseCard(card);
+      const maybeBaseIdx = this.player.hand.played.findIndex(this.isBaseCard);
+      const baseIdx = maybeBaseIdx === -1 ? Infinity : maybeBaseIdx;
+
+      return !this.isBaseCard(card) && idx < baseIdx;
     },
     isBaseCard(card) {
       if (!this.baseMove) return false
@@ -76,7 +118,7 @@ export default {
     },
     isChicagoTaker(player) {
       return this.chicagoTaker && player.id === this.chicagoTaker.id
-    }
+    },
   }
 }
 </script>

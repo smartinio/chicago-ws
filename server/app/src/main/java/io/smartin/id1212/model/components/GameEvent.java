@@ -9,7 +9,7 @@ public class GameEvent {
   private static final Player server = new Player("server");
 
   private GameEvent() {
-    this.timestamp = System.currentTimeMillis();;
+    this.timestamp = System.currentTimeMillis();
   }
 
   public static GameEvent bestHand(Player winner, int points) {
@@ -199,7 +199,7 @@ public class GameEvent {
   }
 
   @Expose
-  public long timestamp;
+  public final long timestamp;
 
   @Expose
   public Player actor;

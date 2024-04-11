@@ -1,22 +1,26 @@
 <template>
-  <section class="section pb-0 pt-0 is-flex is-flex-direction-column">
-    <div class="is-flex is-flex-direction-row" style="flex: 1">
+  <section class="smooth-slide section pb-0 pt-0 is-flex is-flex-direction-column">
+    <div class="is-flex is-flex-direction-row" style="flex: 1; overflow-x: hidden">
       <div class="is-flex is-flex-direction-column is-justify-content-space-between" style="height: 100vh">
-        <div class="is-flex" style="flex: 1; overflow: hidden; padding-top: 30px; padding-bottom: 30px">
-          <Chat :game="game" :connected="connected" @leave="leave" />
+        <div v-if="!isChatHidden" class="is-flex" style="flex: 1; overflow: hidden; padding-top: 30px; padding-bottom: 30px">
+          <Chat :game="game" :connected="connected" @leave="leave" @hide="isChatHidden = true" @show="isChatHidden = false" />
         </div>
       </div>
+      <button v-if="isChatHidden" class="button is-small is-rounded is-info is-light" @click="isChatHidden = false" style="margin-top: 30px">
+          <span class="icon is-small"><i class="fa fa-comments"></i></span>
+          <span>Chat</span>
+        </button>
       <div style="width: 30px" />
       <div class="container is-flex is-flex-direction-column">
         <div style="padding-top: 30px">
           <div class="is-flex is-flex-direction-row is-justify-content-space-between">
             <Player :isMe="true" variant="large" fallbackName="You" :player="controlPlayer" :baseMove="baseMove"
-              :currentPlayer="currentPlayer" :dealer="dealer" :chicagoTaker="chicagoTaker" />
+              :currentPlayer="currentPlayer" :dealer="dealer" :chicagoTaker="chicagoTaker" :round-winner="roundWinner" />
             <Controls :game="game" :me="me" :controlPlayer="controlPlayer" :currentPlayer="currentPlayer" :dealer="dealer"
               :baseMove="baseMove" :markedCards="markedCards" @action="unmarkAll" />
           </div>
           <Players v-if="otherPlayers" :players="otherPlayers" :baseMove="baseMove" :currentPlayer="currentPlayer"
-            :dealer="dealer" :chicagoTaker="chicagoTaker" />
+            :dealer="dealer" :chicagoTaker="chicagoTaker" :round-winner="roundWinner" />
         </div>
         <div class="is-flex is-justify-content-flex-end" style="flex: 1">
           <MyHand v-if="game.started" :me="me" :markedCards="markedCards" :phase="game.round.phase" :game="game"
@@ -74,6 +78,7 @@ export default {
   },
   data() {
     return {
+      isChatHidden: false,
       markedCards: []
     }
   },
@@ -118,7 +123,7 @@ export default {
     },
     isPhase(phase) {
       return this.game.round.phase === phase
-    }
+    },
   },
   computed: {
     baseMove() {
@@ -135,6 +140,9 @@ export default {
     },
     chicagoTaker() {
       return this.game.round && this.game.round.chicagoTaker
+    },
+    roundWinner() {
+      return this.game.round && this.game.round.winner
     },
     currentPlayer() {
       return this.game.round && this.game.round.currentPlayer
@@ -157,6 +165,15 @@ export default {
 }
 </script>
 <style lang="scss">
+.smooth-slide {
+  transition: transform 0.3s ease;
+  transform: translateX(0);
+}
+
+.hide-chat {
+  transform: translateX(-415px);
+}
+
 .is-size-7 img.emoji {
   width: 0.75rem;
   height: 0.75rem;

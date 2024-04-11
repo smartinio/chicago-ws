@@ -8,7 +8,7 @@ public class PlayingCard {
     @Expose
     private Value value;
     @Expose
-    private String shortValue;
+    private final String shortValue;
 
     public PlayingCard(Suit suit, Value value) {
         this.suit = suit;

@@ -16,7 +16,7 @@ import static io.smartin.id1212.net.dto.Message.MessageType.*;
 
 public class SessionHandler {
     private final Map<String,Session> sessions = new HashMap<>();
-    private static SessionHandler ourInstance = new SessionHandler();
+    private final static SessionHandler ourInstance = new SessionHandler();
 
     public static SessionHandler getInstance() {
         return ourInstance;
@@ -31,19 +31,19 @@ public class SessionHandler {
 
     public void broadcastSnapshots(ChicagoGame game) {
         if (game == null) {
+            System.out.println("game is null, skipping snapshot");
             return;
         }
 
         List<Player> players = game.getPlayers();
 
-        synchronized (players) {
-            for (Player player : players) {
-                Message msg = new Message(SNAPSHOT, Converter.toJson(game.snapshot(player)));
-                Session session = sessions.get(player.getId());
-                System.out.println("Attempting message to player ID: " + player.getId());
-                System.out.println("Exists in sessions: " + sessions.containsKey(player.getId()));
-                sendMsg(session, msg);
-            }
+        for (Player player : players) {
+            var msg = new Message(SNAPSHOT, Converter.toJson(game.snapshot(player)));
+            var sessionId = player.getSessionId();
+            var session = sessions.get(sessionId);
+            System.out.println("Attempting message to player ID: " + sessionId);
+            System.out.println("Exists in sessions: " + sessions.containsKey(sessionId));
+            sendMsg(session, msg);
         }
     }
 

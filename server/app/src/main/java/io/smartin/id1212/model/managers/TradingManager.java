@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Set;
 
 public class TradingManager {
-    private Round round;
-    private List<TradingCycle> tradingCycles = new ArrayList<>();
-    private int MAX_TRADES_PER_ROUND;
+    private final Round round;
+    private final List<TradingCycle> tradingCycles = new ArrayList<>();
+    private final int MAX_TRADES_PER_ROUND;
 
     public TradingManager(Round round) {
         this.round = round;
@@ -20,7 +20,7 @@ public class TradingManager {
         this.MAX_TRADES_PER_ROUND = round.getGame().getRules().numTrades;
     }
 
-    public void throwCards(Player player, Set<PlayingCard> cards) throws OutOfCardsException {
+    public void throwCards(Player player, Set<PlayingCard> cards) {
         synchronized (round) {
             if (cards.size() > 0) {
                 CardDeck deck = round.getDeck();

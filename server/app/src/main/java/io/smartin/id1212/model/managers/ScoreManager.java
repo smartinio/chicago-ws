@@ -12,27 +12,19 @@ import io.smartin.id1212.model.components.pokerhands.abstracts.PokerHand;
 import java.util.*;
 
 public class ScoreManager {
-    private List<Player> players;
+    private final List<Player> players;
 
     public ScoreManager(List<Player> players) {
         this.players = players;
     }
 
-    public class BestHandResult {
-        public Player player;
-        public int points;
-
-        public BestHandResult(Player player, int points) {
-            this.player = player;
-            this.points = points;
-        }
-    }
+    public record BestHandResult(Player player, int points) { }
 
     public List<BestHandResult> givePointsForBestHand() {
         var finalCandidates = getFinalCandidates();
 
         if (finalCandidates.isEmpty()) {
-            return new ArrayList<BestHandResult>();
+            return new ArrayList<>();
         }
 
         return finalizeWinners(finalCandidates);
@@ -65,7 +57,7 @@ public class ScoreManager {
             }
         }
         if (bestType != null && bestType.equals(Hand.HandType.NOTHING))
-            return new ArrayList<Player>();
+            return new ArrayList<>();
 
         return countMap.get(bestType);
     }

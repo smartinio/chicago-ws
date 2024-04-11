@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Converter {
-    private static Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+    private static final Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
     public static String toJson(Object object) {
         return gson.toJson(object);

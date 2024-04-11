@@ -6,7 +6,7 @@ import io.smartin.id1212.model.components.PlayingCard;
 import io.smartin.id1212.model.components.pokerhands.abstracts.PokerHand;
 
 public class Straight extends PokerHand {
-    private PlayingCard.Value highest;
+    private final PlayingCard.Value highest;
 
     public Straight(PlayingCard.Value highest) {
         this.highest = highest;
@@ -23,8 +23,7 @@ public class Straight extends PokerHand {
 
     @Override
     public boolean beats(PokerHand pokerHand) throws HandsAreEqualException {
-        if (pokerHand instanceof Straight) {
-            Straight other = (Straight) pokerHand;
+        if (pokerHand instanceof Straight other) {
             if (highest.ordinal() > other.getHighest().ordinal()) return true;
             if (highest.ordinal() < other.getHighest().ordinal()) return false;
             throw new HandsAreEqualException();

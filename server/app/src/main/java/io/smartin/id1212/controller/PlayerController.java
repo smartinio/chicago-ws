@@ -8,15 +8,10 @@ import io.smartin.id1212.exceptions.GameException;
 import io.smartin.id1212.exceptions.KeyException;
 import io.smartin.id1212.exceptions.NicknameException;
 import io.smartin.id1212.model.store.GamesRepository;
-import io.smartin.id1212.model.components.ChicagoGame;
 import io.smartin.id1212.model.components.Player;
-import io.smartin.id1212.model.components.PlayingCard;
 import io.smartin.id1212.net.communication.SessionHandler;
 import io.smartin.id1212.net.dto.Action;
-import io.smartin.id1212.net.dto.JoinRequest;
-import io.smartin.id1212.net.dto.LeaveRequest;
 import io.smartin.id1212.net.dto.Message;
-import io.smartin.id1212.net.dto.RejoinRequest;
 import io.smartin.id1212.net.dto.Message.MessageType;
 import io.smartin.id1212.net.services.Converter;
 
@@ -33,8 +28,8 @@ import static io.smartin.id1212.net.dto.Action.ActionType.PING;
 public class PlayerController {
     private Player player;
 
-    public PlayerController(String id) {
-        player = new Player(id);
+    public PlayerController(String sessionId) {
+        player = new Player(sessionId);
     }
 
     public void handleAction(Action action, String sessionId) throws GameException, NicknameException, KeyException, FatalException {
@@ -77,23 +72,23 @@ public class PlayerController {
     }
 
     private void handleRespondOneOpen(Action action) throws GameException {
-        boolean accepted = Converter.toBoolean(action.getValue());
+        var accepted = Converter.toBoolean(action.getValue());
         player.respondToOneOpen(accepted);
     }
 
     private void handleThrowOneOpen(Action action) throws GameException {
-        PlayingCard cardToThrow = Converter.toCard(action.getValue());
+        var cardToThrow = Converter.toCard(action.getValue());
         player.throwOneOpen(cardToThrow);
     }
 
     private void rejoin(Action action, String sessionId) throws FatalException {
         try {
-            RejoinRequest request = Converter.toRejoinRequest(action.getValue());
-            String key = request.getKey();
-            String oldPlayerId = request.getPlayerId();
-            ChicagoGame game = GamesRepository.getInstance().findGameForPlayer(key, oldPlayerId);
-            player = game.getPlayer(oldPlayerId);
-            player.setId(sessionId);
+            var request = Converter.toRejoinRequest(action.getValue());
+            var key = request.getKey();
+            var playerId = request.getPlayerId();
+            var game = GamesRepository.getInstance().findGameForPlayer(key, playerId);
+            player = game.getPlayer(playerId);
+            player.setSessionId(sessionId);
             player.setConnected(true);
         } catch (UnknownInvitationKeyException | NotInGameException e) {
             throw new FatalException(e.getMessage());
@@ -102,16 +97,17 @@ public class PlayerController {
 
     private void leaveGame(Action action, String sessionId) throws FatalException {
         try {
-            LeaveRequest request = Converter.toLeaveRequest(action.getValue());
-            String key = request.getKey();
-            String oldPlayerId = request.getPlayerId();
-            ChicagoGame game = GamesRepository.getInstance().findGameForPlayer(key, oldPlayerId);
+            var request = Converter.toLeaveRequest(action.getValue());
+            var key = request.getKey();
+            var oldPlayerId = request.getPlayerId();
+            var game = GamesRepository.getInstance().findGameForPlayer(key, oldPlayerId);
             player = game.getPlayer(oldPlayerId);
             player.leaveGame();
 
-            if (oldPlayerId != sessionId) {
-                System.out.println("killing old (" + oldPlayerId + ") " + " because its not same as new: " + sessionId);
-                SessionHandler.getInstance().kill(oldPlayerId);
+            if (!player.getSessionId().equals(sessionId)) {
+                System.out.println("killing old session (" + player.getSessionId() + ") " + " because its not same as new: " + sessionId);
+                SessionHandler.getInstance().kill(player.getSessionId());
+                player.setSessionId(sessionId);
 
                 List<Player> players = game.getPlayers();
                 for (Player p : players) {
@@ -124,10 +120,10 @@ public class PlayerController {
     }
 
     private void kickPlayer(Action action) throws NotInGameException, UnauthorizedKickException {
-        String playerIdToKick = action.getValue();
-        player.kickPlayer(playerIdToKick);
-        Message message = new Message(MessageType.KICKED, "");
-        SessionHandler.getInstance().sendMsgToSessionId(playerIdToKick, message);
+        var playerIdToKick = action.getValue();
+        var kickedPlayer = player.kickPlayer(playerIdToKick);
+        var message = new Message(MessageType.KICKED, "");
+        SessionHandler.getInstance().sendMsgToSessionId(kickedPlayer.getSessionId(), message);
     }
 
     private void sendChatMessage(Action action) throws NotInGameException {
@@ -153,7 +149,7 @@ public class PlayerController {
     }
 
     private void joinGame(Action action) throws UnknownInvitationKeyException, NicknameException, AlreadyStartedException {
-        JoinRequest request = Converter.toJoinRequest(action.getValue());
+        var request = Converter.toJoinRequest(action.getValue());
         player.reset();
         player.setName(request.getNickname());
         GamesRepository.getInstance().joinGame(player, request.getKey());
@@ -164,16 +160,16 @@ public class PlayerController {
     }
 
     private void handleThrowAction(Action action) throws TradeBannedException, OutOfCardsException, WaitYourTurnException, InappropriateActionException, TooManyCardsException, UnauthorizedTradeException {
-        List<PlayingCard> cards = Converter.toCards(action.getValue());
+        var cards = Converter.toCards(action.getValue());
         player.throwCards(cards);
     }
 
     private void handleChicagoAction(Action action) throws ChicagoAlreadyCalledException, WaitYourTurnException, InappropriateActionException {
-        player.respondToChicago(Boolean.valueOf(action.getValue()));
+        player.respondToChicago(Boolean.parseBoolean(action.getValue()));
     }
 
     private void handleMoveAction(Action action) throws IllegalCardException, WaitYourTurnException, InappropriateActionException, IllegalMoveException {
-        PlayingCard card = Converter.toCard(action.getValue());
+        var card = Converter.toCard(action.getValue());
         player.playCard(card);
     }
 
@@ -196,14 +192,14 @@ public class PlayerController {
         player.setConnected(connected);
     }
 
-    public void updateId(String id) {
-        player.setId(id);
+    public void updateSessionId(String sessionId) {
+        player.setSessionId(sessionId);
     }
 
     public void markAsConnected() {
         System.out.println("Marking player " + player.getId() + " aka " + player.getName() + " as connected");
         if (player.getGame() != null) {
-            System.out.println("-- The are in game " + player.getGame().getInvitationKey());
+            System.out.println("-- They are in game " + player.getGame().getInvitationKey());
         }
 
         player.setConnected(true);

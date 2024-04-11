@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  canvas-confetti:
+    specifier: ^1.9.2
+    version: 1.9.2
   date-fns:
     specifier: ^3.0.0
     version: 3.6.0
@@ -22,6 +25,9 @@ dependencies:
     version: 4.1.0(vue@3.4.21)
 
 devDependencies:
+  '@types/canvas-confetti':
+    specifier: ^1.6.4
+    version: 1.6.4
   '@types/emoji-js':
     specifier: ^3.5.2
     version: 3.5.2
@@ -396,6 +402,10 @@ packages:
     dev: true
     optional: true
 
+  /@types/canvas-confetti@1.6.4:
+    resolution: {integrity: sha512-fNyZ/Fdw/Y92X0vv7B+BD6ysHL4xVU5dJcgzgxLdGbn8O3PezZNIJpml44lKM0nsGur+o/6+NZbZeNTt00U1uA==}
+    dev: true
+
   /@types/emoji-js@3.5.2:
     resolution: {integrity: sha512-qPR85yjSPk2UEbdjYYNHfcOjVod7DCARSrJlPcL+cwaDFwdnmOFhPyYUvP5GaW0YZEy8mU93ZjTNgsVWz1zzlg==}
     dev: true
@@ -553,6 +563,10 @@ packages:
     dependencies:
       fill-range: 7.0.1
     dev: true
+
+  /canvas-confetti@1.9.2:
+    resolution: {integrity: sha512-6Xi7aHHzKwxZsem4mCKoqP6YwUG3HamaHHAlz1hTNQPCqXhARFpSXnkC9TWlahHY5CG6hSL5XexNjxK8irVErg==}
+    dev: false
 
   /chokidar@3.6.0:
     resolution: {integrity: sha512-7VT13fmjotKpGipCW9JEQAusEPE+Ei8nl6/g4FBAmIm0GOOLMua9NDDo/DWp0ZAxCr3cPq5ZpBqmPAQgDda2Pw==}

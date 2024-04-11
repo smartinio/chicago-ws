@@ -1,6 +1,5 @@
 package io.smartin.id1212.model.components.pokerhands;
 
-import io.smartin.id1212.exceptions.game.HandsAreEqualException;
 import io.smartin.id1212.model.components.Hand;
 import io.smartin.id1212.model.components.PlayingCard;
 
@@ -15,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class StraightTest {
     @Test
-    void correctlyDeterminesStraight() throws HandsAreEqualException {
+    void correctlyDeterminesStraight() {
         Set<PlayingCard> straightCards = new HashSet<>();
         straightCards.add(new PlayingCard(SPADES, JACK));
         straightCards.add(new PlayingCard(CLUBS, TEN));
@@ -29,7 +28,7 @@ class StraightTest {
     }
 
     @Test
-    void correctlyDeterminesStraightWithHighAce() throws HandsAreEqualException {
+    void correctlyDeterminesStraightWithHighAce() {
         Set<PlayingCard> straightCards = new HashSet<>();
         straightCards.add(new PlayingCard(SPADES, ACE));
         straightCards.add(new PlayingCard(CLUBS, KING));
@@ -43,7 +42,7 @@ class StraightTest {
     }
 
     @Test
-    void correctlyDeterminesStraightWithLowAce() throws HandsAreEqualException {
+    void correctlyDeterminesStraightWithLowAce() {
         Set<PlayingCard> straightCards = new HashSet<>();
         straightCards.add(new PlayingCard(SPADES, ACE));
         straightCards.add(new PlayingCard(CLUBS, FIVE));

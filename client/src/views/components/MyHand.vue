@@ -1,71 +1,73 @@
 <template>
-  <div style="transform: translateY(100px); overflow-y: hidden"
-    class="is-flex is-flex-direction-column is-justify-content-flex-end is-align-items-center">
-    <div v-if="phase === 'CHICAGO' && me.isMyTurn" class="is-flex is-flex-direction-column is-align-items-center">
-      <span class="control-text" style="margin-bottom: 15px; margin-right: 0px;">
-        Want Chicago?
-      </span>
-      <div class="is-flex">
-        <button @click="respondToChicago(true)" class="control-button button is-success is-small is-rounded"
+  <div class="is-flex" style="overflow-y: hidden">
+    <div style="transform: translateY(100px)"
+      class="is-flex is-flex-direction-column is-justify-content-flex-end is-align-items-center">
+      <div v-if="phase === 'CHICAGO' && me.isMyTurn" class="is-flex is-flex-direction-column is-align-items-center">
+        <span class="control-text" style="margin-bottom: 15px; margin-right: 0px;">
+          Want Chicago?
+        </span>
+        <div class="is-flex">
+          <button @click="respondToChicago(true)" class="control-button button is-success is-small is-rounded"
+            :disabled="!me.isMyTurn">
+            YES
+          </button>
+          <div style="width: 10px"></div>
+          <button @click="respondToChicago(false)" class="control-button button is-danger is-small is-rounded"
+            style="margin-bottom: 15px;" :disabled="!me.isMyTurn">
+            NO
+          </button>
+        </div>
+      </div>
+      <div v-if="phase === 'TRADING' && canSeeOpenCard" class="is-flex is-flex-direction-column is-align-items-center">
+        <div class="control-text" style="margin-bottom: 15px; margin-right: 0px; overflow: visible">
+          <img :src="getCardUrl(game.oneOpen.card)" style="maxWidth: 64px" class="open-card" />
+        </div>
+        <div class="is-flex" v-if="canRespondToOpenCard">
+          <button @click="respondToOneOpen(true)" class="control-button button is-success is-small is-rounded"
+            :disabled="!me.isMyTurn">
+            ACCEPT
+          </button>
+          <div style="width: 10px"></div>
+          <button @click="respondToOneOpen(false)" class="control-button button is-danger is-small is-rounded"
+            style="margin-bottom: 15px;" :disabled="!me.isMyTurn">
+            DECLINE
+          </button>
+        </div>
+        <div v-else class="control-text">
+          Open offer for <strong>{{ game.oneOpen.player.name }}</strong>
+        </div>
+      </div>
+      <div v-else-if="phase === 'TRADING' && canTradeOpenly">
+        <button @click="trade" class="control-button button is-success is-small is-rounded" style="margin-bottom: 15px;"
           :disabled="!me.isMyTurn">
-          YES
+          TRADE (1)
         </button>
-        <div style="width: 10px"></div>
-        <button @click="respondToChicago(false)" class="control-button button is-danger is-small is-rounded"
-          style="margin-bottom: 15px;" :disabled="!me.isMyTurn">
-          NO
-        </button>
-      </div>
-    </div>
-    <div v-if="phase === 'TRADING' && canSeeOpenCard" class="is-flex is-flex-direction-column is-align-items-center">
-      <div class="control-text" style="margin-bottom: 15px; margin-right: 0px; overflow: visible">
-        <img :src="getCardUrl(game.oneOpen.card)" style="maxWidth: 64px" class="open-card" />
-      </div>
-      <div class="is-flex" v-if="canRespondToOpenCard">
-        <button @click="respondToOneOpen(true)" class="control-button button is-success is-small is-rounded"
+        <span style="width: 5px; display: inline-block" />
+        <button @click="tradeOpenly" class="control-button button is-info is-small is-rounded" style="margin-bottom: 15px;"
           :disabled="!me.isMyTurn">
-          ACCEPT
-        </button>
-        <div style="width: 10px"></div>
-        <button @click="respondToOneOpen(false)" class="control-button button is-danger is-small is-rounded"
-          style="margin-bottom: 15px;" :disabled="!me.isMyTurn">
-          DECLINE
+          OPEN (1)
         </button>
       </div>
-      <div v-else class="control-text">
-        Open offer for <strong>{{ game.oneOpen.player.name }}</strong>
-      </div>
-    </div>
-    <div v-else-if="phase === 'TRADING' && canTradeOpenly">
-      <button @click="trade" class="control-button button is-success is-small is-rounded" style="margin-bottom: 15px;"
-        :disabled="!me.isMyTurn">
-        TRADE (1)
-      </button>
-      <span style="width: 5px; display: inline-block" />
-      <button @click="tradeOpenly" class="control-button button is-info is-small is-rounded" style="margin-bottom: 15px;"
-        :disabled="!me.isMyTurn">
-        OPEN (1)
-      </button>
-    </div>
-    <div v-else-if="phase === 'TRADING' && markedCards.length">
-      <button class="control-button button is-small is-rounded is-success" style="margin-bottom: 15px;"
-        :disabled="!me.isMyTurn" @click="trade">
-        TRADE ({{ markedCards.length }})
-      </button>
-    </div>
-    <div v-else-if="phase === 'TRADING'">
-      <button class="control-button button is-small is-rounded is-info" style="margin-bottom: 15px;"
-        :disabled="!me.isMyTurn" @click="trade">
-        PASS
-      </button>
-    </div>
-    <div :style="canReleaseCards ? 'opacity: 1' : 'opacity: 0.4'" class="is-flex">
-      <div v-for="card in me.hand" class="is-flex is-flex-direction-column is-align-items-center">
-        <button v-if="phase === 'PLAYING'" class="button is-small is-rounded is-success control-button"
-          :class="getCardButtonClass(card)" style="margin-bottom: 15px;" @click="play(card)" :disabled="!me.isMyTurn">
-          PLAY
+      <div v-else-if="phase === 'TRADING' && markedCards.length">
+        <button class="control-button button is-small is-rounded is-success" style="margin-bottom: 15px;"
+          :disabled="!me.isMyTurn" @click="trade">
+          TRADE ({{ markedCards.length }})
         </button>
-        <img @click="toggleMark(card)" class="playingCard" :class="getCardClass(card)" :src="getCardUrl(card)" />
+      </div>
+      <div v-else-if="phase === 'TRADING'">
+        <button class="control-button button is-small is-rounded is-info" style="margin-bottom: 15px;"
+          :disabled="!me.isMyTurn" @click="trade">
+          PASS
+        </button>
+      </div>
+      <div :style="canReleaseCards ? 'opacity: 1' : 'opacity: 0.4'" class="is-flex">
+        <div v-for="card in me.hand" class="is-flex is-flex-direction-column is-align-items-center">
+          <button v-if="phase === 'PLAYING'" class="button is-small is-rounded is-success control-button"
+            :class="getCardButtonClass(card)" style="margin-bottom: 15px;" @click="play(card)" :disabled="!me.isMyTurn">
+            PLAY
+          </button>
+          <img @mousedown="toggleMark(card)" class="playingCard" :class="getCardClass(card)" :src="getCardUrl(card)" :draggable="false" />
+        </div>
       </div>
     </div>
   </div>

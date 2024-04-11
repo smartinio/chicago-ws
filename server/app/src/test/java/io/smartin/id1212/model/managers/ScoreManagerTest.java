@@ -1,6 +1,5 @@
 package io.smartin.id1212.model.managers;
 
-import io.smartin.id1212.exceptions.game.HandsAreEqualException;
 import io.smartin.id1212.model.components.*;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ScoreManagerTest {
 
     @Test
-    void correctlyGivesPointsToCompetingHands() throws HandsAreEqualException {
+    void correctlyGivesPointsToCompetingHands() {
         Player winningPlayer = new Player("1");
         winningPlayer.setName("Winner");
         Set<PlayingCard> strongerCards = new HashSet<>();

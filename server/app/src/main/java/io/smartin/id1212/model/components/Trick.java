@@ -12,8 +12,8 @@ import static io.smartin.id1212.config.Strings.MUST_FOLLOW_SUIT;
 
 public class Trick {
     @Expose
-    private List<Move> moves = new ArrayList<>();
-    private transient Round round;
+    private final List<Move> moves = new ArrayList<>();
+    private final transient Round round;
 
     public Trick(Round round) {
         this.round = round;

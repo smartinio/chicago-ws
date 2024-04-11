@@ -7,7 +7,7 @@ import java.util.*;
 import static io.smartin.id1212.config.Strings.EMPTY_DECK;
 
 public class CardDeck {
-    private List<PlayingCard> shuffledCards = new ArrayList<>();
+    private final List<PlayingCard> shuffledCards = new ArrayList<>();
 
     public CardDeck () {
         for (PlayingCard.Suit suit : PlayingCard.Suit.values()) {

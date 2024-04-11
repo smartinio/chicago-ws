@@ -79,8 +79,8 @@ const store = useStore()
               <div class="control block">
                 <div class="select is-rounded">
                   <select v-model="rules.roundWinScore" :disabled="isAlreadyInAGame || checkingGame">
-                    <option :value="2">Trick win: 2p</option>
-                    <option :value="5">Trick win: 5p</option>
+                    <option :value="2">Round win: 2p</option>
+                    <option :value="5">Round win: 5p</option>
                   </select>
                 </div>
               </div>

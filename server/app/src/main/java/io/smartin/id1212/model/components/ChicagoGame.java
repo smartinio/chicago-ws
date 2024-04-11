@@ -8,7 +8,6 @@ import io.smartin.id1212.exceptions.game.*;
 import io.smartin.id1212.exceptions.key.AlreadyStartedException;
 import io.smartin.id1212.model.components.Round.RoundMoveResult;
 import io.smartin.id1212.model.managers.ScoreManager;
-import io.smartin.id1212.model.managers.ScoreManager.BestHandResult;
 import io.smartin.id1212.model.store.GamesRepository;
 import io.smartin.id1212.net.communication.SessionHandler;
 import io.smartin.id1212.net.dto.Snapshot;
@@ -30,11 +29,9 @@ public class ChicagoGame {
     @Expose
     private Player dealer;
     @Expose
-    private String invitationKey;
+    private final String invitationKey;
     @Expose
     private boolean started;
-    @Expose
-    private boolean alive = true;
     @Expose
     private boolean hasWinners = false;
     @Expose
@@ -48,13 +45,13 @@ public class ChicagoGame {
     @Expose
     private final GameRules rules;
 
-    private ScoreManager scoreManager = new ScoreManager(players);
+    private final ScoreManager scoreManager = new ScoreManager(players);
     private final Logger logger = LogManager.getLogger("ChicagoGame");
 
     private static void setTimeout(Runnable runnable, int delaySeconds) {
         new Thread(() -> {
             try {
-                Thread.sleep(delaySeconds * 1000);
+                Thread.sleep(delaySeconds * 1000L);
                 runnable.run();
             } catch (Exception e) {
                 System.err.println(e);
@@ -65,7 +62,7 @@ public class ChicagoGame {
     private void scheduleActivityChecker() {
         var latestEvent = events.get(events.size() - 1);
         var idleTimeMillis = new Date().getTime() - latestEvent.timestamp;
-        var idleTimeSeconds = Math.round(idleTimeMillis / 1000);
+        var idleTimeSeconds = idleTimeMillis / 1000;
         var delaySeconds = 60;
 
         if (idleTimeSeconds >= MAX_GAME_IDLE_TIME_SECONDS) {
@@ -163,18 +160,18 @@ public class ChicagoGame {
         }
 
         if (isOneOpen) {
-            PlayingCard openCard = currentRound.getCardForOneOpen(player);
+            var openCard = currentRound.getCardForOneOpen(player);
             currentRound.throwCards(player, cards);
             oneOpen.start(player, openCard);
             logEvent(GameEvent.requestedOneOpen(player, openCard));
             return;
         }
 
-        List<BestHandResult> playersWithBestHand = currentRound.tradeCards(player, cards);
+        var playersWithBestHand = currentRound.tradeCards(player, cards);
         logEvent(GameEvent.tradedCards(player, cards.size()));
 
-        for (BestHandResult result : playersWithBestHand) {
-            logEvent(GameEvent.bestHand(result.player, result.points));
+        for (var result : playersWithBestHand) {
+            logEvent(GameEvent.bestHand(result.player(), result.points()));
         }
     }
 
@@ -186,12 +183,12 @@ public class ChicagoGame {
 
         RoundMoveResult moveResult = currentRound.addMove(new Move(player, card));
 
-        Player chicagoTaker = moveResult.chicagoTaker;
-        Move winningMove = moveResult.winningMove;
-        List<PlayingCard> finalCards = moveResult.finalCards;
-        boolean isTrickDone = moveResult.isTrickDone;
-        boolean isGuaranteedWin = moveResult.isGuaranteedWin;
-        boolean isRoundOver = moveResult.isRoundOver;
+        var chicagoTaker = moveResult.chicagoTaker();
+        var winningMove = moveResult.winningMove();
+        var finalCards = moveResult.finalCards();
+        var isTrickDone = moveResult.isTrickDone();
+        var isGuaranteedWin = moveResult.isGuaranteedWin();
+        var isRoundOver = moveResult.isRoundOver();
 
         if (isGuaranteedWin) {
             logEvent(GameEvent.wonRoundGuaranteed(player, finalCards));
@@ -218,6 +215,8 @@ public class ChicagoGame {
     }
 
     private void finishRound(Player chicagoTaker, Move winningMove) {
+        currentRound.setWinner(winningMove.getPlayer());
+
         if (chicagoTaker != null) {
             finishChicagoCalledRound(winningMove, chicagoTaker);
         } else {
@@ -227,19 +226,18 @@ public class ChicagoGame {
     }
 
     private void checkIfGameWasWon() {
-        List<Player> winners = createWinnersIfPossible();
+        var winners = createWinnersIfPossible();
         if (winners.size() > 0) {
             hasWinners = true;
-            for (Player winner : winners) {
+            for (var winner : winners) {
                 logEvent(GameEvent.wonGame(winner));
             }
             stopGame();
-            return;
         }
     }
 
     private void showEveryonesCards() {
-        for (Player player : players) {
+        for (var player : players) {
             player.getHand().moveAllToPlayed(false);
         }
     }
@@ -254,7 +252,7 @@ public class ChicagoGame {
             throw new InappropriateActionException(CANNOT_CALL_CHICAGO);
         }
 
-        boolean isDoneAsking = currentRound.respondToChicago(player, isCallingChicago);
+        var isDoneAsking = currentRound.respondToChicago(player, isCallingChicago);
 
         if (isCallingChicago) {
             logEvent(GameEvent.calledChicago(player));
@@ -268,7 +266,7 @@ public class ChicagoGame {
     }
 
     public void finishNormalRound(Move winningMove) {
-        Player winner = winningMove.getPlayer();
+        var winner = winningMove.getPlayer();
         if (winningMove.getCard().getValue().equals(PlayingCard.Value.TWO)) {
             winner.addPoints(rules.winWithTwoScore);
             logEvent(GameEvent.wonRound(winningMove, rules.winWithTwoScore));
@@ -277,10 +275,10 @@ public class ChicagoGame {
             logEvent(GameEvent.wonRound(winningMove, rules.roundWinScore));
         }
 
-        List<BestHandResult> playersWithBestHand = scoreManager.givePointsForBestHand();
+        var playersWithBestHand = scoreManager.givePointsForBestHand();
 
-        for (BestHandResult result : playersWithBestHand) {
-            logEvent(GameEvent.bestHand(result.player, result.points));
+        for (var result : playersWithBestHand) {
+            logEvent(GameEvent.bestHand(result.player(), result.points()));
         }
     }
 
@@ -316,7 +314,7 @@ public class ChicagoGame {
     }
 
     public String getInvitationKey() {
-        return invitationKey.toString();
+        return invitationKey;
     }
 
     public List<Player> getPlayers() {
@@ -443,16 +441,17 @@ public class ChicagoGame {
         logEvent(GameEvent.chatMessage(player, message));
     }
 
-    public void kickPlayer(Player player, String playerIdToKick) throws NotInGameException, UnauthorizedKickException {
+    public Player kickPlayer(Player player, String playerIdToKick) throws NotInGameException, UnauthorizedKickException {
         if (player != host) {
             throw new UnauthorizedKickException(UNAUTHORIZED_KICK);
         }
-        Player playerToRemove = getPlayer(playerIdToKick);
+        var playerToRemove = getPlayer(playerIdToKick);
         removePlayer(playerToRemove, true);
+        return playerToRemove;
     }
 
     public Player getPlayer(String playerId) throws NotInGameException {
-        for (Player player : players) {
+        for (var player : players) {
             if (player.getId().equals(playerId)) {
                 return player;
             }
@@ -470,15 +469,15 @@ public class ChicagoGame {
             throw new UnauthorizedTradeException(WAIT_YOUR_TURN);
         }
 
-        PlayingCard openCard = oneOpen.getCard();
+        var openCard = oneOpen.getCard();
 
-        List<BestHandResult> playersWithBestHand = currentRound.completeOnOpen(player, openCard, accepted);
+        var playersWithBestHand = currentRound.completeOnOpen(player, openCard, accepted);
 
         oneOpen.stop();
         logEvent(GameEvent.respondedToOneOpen(player, openCard, accepted));
 
-        for (BestHandResult result : playersWithBestHand) {
-            logEvent(GameEvent.bestHand(result.player, result.points));
+        for (var result : playersWithBestHand) {
+            logEvent(GameEvent.bestHand(result.player(), result.points()));
         }
     }
 

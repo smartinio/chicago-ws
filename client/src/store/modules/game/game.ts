@@ -41,6 +41,7 @@ const state = {
   round: {
     currentPlayer: '',
     chicagoTaker: '',
+    winner: '',
     phase: '',
     tricks: [] as any[],
     isFinalTrade: false,
@@ -82,6 +83,7 @@ const mutations = {
     }
 
     state.round.chicagoTaker = game.currentRound.chicagoTaker
+    state.round.winner = game.currentRound.winner
     state.round.currentPlayer = game.currentRound.currentPlayer
     state.round.phase = game.currentRound.phase
     state.round.tricks = game.currentRound.tricks

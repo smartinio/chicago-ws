@@ -5,7 +5,7 @@ import io.smartin.id1212.model.components.PlayingCard;
 import java.util.Comparator;
 
 public class SortByValue implements Comparator<PlayingCard> {
-    private boolean ascending;
+    private final boolean ascending;
 
     public SortByValue(boolean ascending) {
         this.ascending = ascending;

@@ -25,22 +25,12 @@ import static io.smartin.id1212.config.Rules.MAX_CARDS_PER_PLAYER;
 public class TrickingManager {
     private static final Logger logger = LogManager.getLogger(TrickingManager.class);
 
-    public class MoveResult {
-        public final Move winningMove;
-        public final boolean hasMoreTricks;
-        public final boolean isTrickDone;
+    public record MoveResult(Move winningMove, boolean hasMoreTricks, boolean isTrickDone) { }
 
-        public MoveResult(Move winningMove, boolean hasMoreTricks, boolean isTrickDone) {
-            this.winningMove = winningMove;
-            this.hasMoreTricks = hasMoreTricks;
-            this.isTrickDone = isTrickDone;
-        }
-    }
-
-    private Round round;
+    private final Round round;
     @Expose
-    private List<Trick> tricks = new ArrayList<>();
-    private Map<Suit, Set<Player>> playersWithSuit = new HashMap<>();
+    private final List<Trick> tricks = new ArrayList<>();
+    private final Map<Suit, Set<Player>> playersWithSuit = new HashMap<>();
 
     public TrickingManager(Round round) {
         this.round = round;
@@ -48,8 +38,7 @@ public class TrickingManager {
 
         // Assume everyone can follow suit until proven otherwise
         for (Suit suit : Suit.values()) {
-            Set<Player> players = new HashSet<>();
-            players.addAll(round.getGame().getPlayers());
+            Set<Player> players = new HashSet<>(round.getGame().getPlayers());
             playersWithSuit.put(suit, players);
         }
     }

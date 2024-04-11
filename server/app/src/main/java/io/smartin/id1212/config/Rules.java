@@ -10,7 +10,7 @@ public class Rules {
     public static final int    MAX_CARDS_PER_PLAYER = 5;
     public static final int    CHICAGO_POINTS = 15;
     public static final int    MAX_GAME_SCORE = 52;
-    public static final Map<HandType, Integer> HAND_SCORES = new HashMap<HandType, Integer>() {{
+    public static final Map<HandType, Integer> HAND_SCORES = new HashMap<>() {{
         put(HandType.NOTHING, 0);
         put(HandType.PAIR, 1);
         put(HandType.TWO_PAIR, 2);

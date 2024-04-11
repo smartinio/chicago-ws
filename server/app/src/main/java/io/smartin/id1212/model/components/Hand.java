@@ -10,9 +10,9 @@ import io.smartin.id1212.model.components.pokerhands.abstracts.PokerHand;
 import java.util.*;
 
 public class Hand {
-    private Set<PlayingCard> cards = new HashSet<>();
+    private final Set<PlayingCard> cards;
     @Expose
-    private List<PlayingCard> played = new ArrayList<>();
+    private final List<PlayingCard> played = new ArrayList<>();
 
     public Hand(Set<PlayingCard> cards) {
         this.cards = cards;
@@ -126,7 +126,7 @@ public class Hand {
                 return new NOfAKindResult(true, v.getKey());
             }
         }
-        return new NOfAKindResult(false, PlayingCard.Value.TWO);
+        return new NOfAKindResult(false, Value.TWO);
     }
 
     private boolean isFlush() {
@@ -189,14 +189,7 @@ public class Hand {
         ROYAL_STRAIGHT_FLUSH,
     }
 
-    private class NOfAKindResult {
-        boolean isTrue;
-        PlayingCard.Value of;
-
-        NOfAKindResult(boolean isTrue, PlayingCard.Value of) {
-            this.isTrue = isTrue;
-            this.of = of;
-        }
+    private record NOfAKindResult(boolean isTrue, Value of) {
     }
 
     public void moveAllToPlayed(boolean highestFirst) {
