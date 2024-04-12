@@ -185,6 +185,10 @@ public class Player {
         winner = false;
     }
 
+    public void resetScore() {
+        score = 0;
+    }
+
     public void dealCards() throws GameOverException, RoundNotFinishedException, UnauthorizedDealerException {
         game.dealCards(this);
     }
@@ -212,6 +216,10 @@ public class Player {
 
     public void respondToOneOpen(boolean accepted) throws GameException {
         game.respondToOneOpen(this, accepted);
+    }
+
+    public void respondToResetOtherScore(boolean accepted) throws GameException {
+        game.respondToResetOthersScore(this, accepted);
     }
 
     public boolean isConnected() {

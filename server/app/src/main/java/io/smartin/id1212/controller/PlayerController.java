@@ -36,23 +36,24 @@ public class PlayerController {
         validateAuthority(action);
         System.out.println(action + " -> handling for player: " + player.getId() + ". session: " + sessionId);
         switch (action.getType()) {
-            case NEW_GAME:          createNewGame(action);          break;
-            case JOIN_GAME:         joinGame(action);               break;
-            case START_GAME:        startGame();                    break;
-            case DEAL_CARDS:        dealCards();                    break;
-            case THROW:             handleThrowAction(action);      break;
-            case THROW_ONE_OPEN:    handleThrowOneOpen(action);     break;
-            case RESPOND_ONE_OPEN:  handleRespondOneOpen(action);   break;
-            case CHICAGO:           handleChicagoAction(action);    break;
-            case MOVE:              handleMoveAction(action);       break;
-            case RESTART_GAME:      restartGame();                  break;
-            case SEND_CHAT_MESSAGE: sendChatMessage(action);        break;
-            case RECONNECT:         rejoin(action, sessionId);      break;
-            case KICK_PLAYER:       kickPlayer(action);             break;
-            case LEAVE_GAME:        leaveGame(action, sessionId);   break;
-            case CHECK_GAME:        checkGame(action, sessionId);   break;
-            case PING:                                              return;
-            default:                throw new UnknownActionException(UNKNOWN_ACTION);
+            case NEW_GAME:                      createNewGame(action);                  break;
+            case JOIN_GAME:                     joinGame(action);                       break;
+            case START_GAME:                    startGame();                            break;
+            case DEAL_CARDS:                    dealCards();                            break;
+            case THROW:                         handleThrowAction(action);              break;
+            case THROW_ONE_OPEN:                handleThrowOneOpen(action);             break;
+            case RESPOND_ONE_OPEN:              handleRespondOneOpen(action);           break;
+            case RESPOND_RESET_OTHERS_SCORE:    handleRespondResetOtherScore(action);   break;
+            case CHICAGO:                       handleChicagoAction(action);            break;
+            case MOVE:                          handleMoveAction(action);               break;
+            case RESTART_GAME:                  restartGame();                          break;
+            case SEND_CHAT_MESSAGE:             sendChatMessage(action);                break;
+            case RECONNECT:                     rejoin(action, sessionId);              break;
+            case KICK_PLAYER:                   kickPlayer(action);                     break;
+            case LEAVE_GAME:                    leaveGame(action, sessionId);           break;
+            case CHECK_GAME:                    checkGame(action, sessionId);           break;
+            case PING:                                                                  return;
+            default:                            throw new UnknownActionException(UNKNOWN_ACTION);
         }
     }
 
@@ -74,6 +75,11 @@ public class PlayerController {
     private void handleRespondOneOpen(Action action) throws GameException {
         var accepted = Converter.toBoolean(action.getValue());
         player.respondToOneOpen(accepted);
+    }
+
+    private void handleRespondResetOtherScore(Action action) throws GameException {
+        var accepted = Converter.toBoolean(action.getValue());
+        player.respondToResetOtherScore(accepted);
     }
 
     private void handleThrowOneOpen(Action action) throws GameException {

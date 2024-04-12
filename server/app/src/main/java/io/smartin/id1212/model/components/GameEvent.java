@@ -198,6 +198,26 @@ public class GameEvent {
     return event;
   }
 
+  public static GameEvent decidingResetOthersScore(Player player, int pointsIfDecidingNotTo) {
+    var event = new GameEvent();
+
+    event.actor = player;
+    event.action = EventAction.DECIDING_RESET_OTHERS_SCORE;
+    event.points = pointsIfDecidingNotTo;
+
+    return event;
+  }
+
+  public static GameEvent respondedToResetOthersScore(Player player, boolean accepted) {
+    var event = new GameEvent();
+
+    event.actor = player;
+    event.action = EventAction.RESPONDED_TO_RESET_OTHERS_SCORE;
+    event.accepted = accepted;
+
+    return event;
+  }
+
   @Expose
   public final long timestamp;
 
@@ -257,6 +277,8 @@ public class GameEvent {
     BECAME_HOST,
     REQUESTED_ONE_OPEN,
     RESPONDED_TO_ONE_OPEN,
+    DECIDING_RESET_OTHERS_SCORE,
+    RESPONDED_TO_RESET_OTHERS_SCORE,
     // server events
     NEW_ROUND,
     TRICK_DONE,

@@ -43,6 +43,8 @@ public class ChicagoGame {
     @Expose
     private final OneOpen oneOpen = new OneOpen();
     @Expose
+    private final ResetOthersScore resetOthersScore = new ResetOthersScore();
+    @Expose
     private final GameRules rules;
 
     private final ScoreManager scoreManager = new ScoreManager(players);
@@ -54,7 +56,8 @@ public class ChicagoGame {
                 Thread.sleep(delaySeconds * 1000L);
                 runnable.run();
             } catch (Exception e) {
-                System.err.println(e);
+                System.err.println(e.getMessage());
+                e.printStackTrace();
             }
         }).start();
     }
@@ -170,6 +173,14 @@ public class ChicagoGame {
         var playersWithBestHand = currentRound.tradeCards(player, cards);
         logEvent(GameEvent.tradedCards(player, cards.size()));
 
+        if (playersWithBestHand.stream().anyMatch(ScoreManager.BestHandResult::isFourOfAKindPending)) {
+            // only 1 player can have the best four of a kind at one time
+            var deciding = playersWithBestHand.getFirst();
+            resetOthersScore.start(deciding.player(), deciding.points());
+            logEvent(GameEvent.decidingResetOthersScore(deciding.player(), deciding.points()));
+            return;
+        }
+
         for (var result : playersWithBestHand) {
             logEvent(GameEvent.bestHand(result.player(), result.points()));
         }
@@ -220,7 +231,8 @@ public class ChicagoGame {
         if (chicagoTaker != null) {
             finishChicagoCalledRound(winningMove, chicagoTaker);
         } else {
-            finishNormalRound(winningMove);
+            var result = finishNormalRound(winningMove);
+            if (result.isFourOfAKindPending()) return;
         }
         checkIfGameWasWon();
     }
@@ -265,7 +277,9 @@ public class ChicagoGame {
         }
     }
 
-    public void finishNormalRound(Move winningMove) {
+    public record FinishRoundResult(boolean isFourOfAKindPending) {}
+
+    public FinishRoundResult finishNormalRound(Move winningMove) {
         var winner = winningMove.getPlayer();
         if (winningMove.getCard().getValue().equals(PlayingCard.Value.TWO)) {
             winner.addPoints(rules.winWithTwoScore);
@@ -275,11 +289,23 @@ public class ChicagoGame {
             logEvent(GameEvent.wonRound(winningMove, rules.roundWinScore));
         }
 
+        var preview = scoreManager.previewBestHandResults();
+
+        if (preview.stream().anyMatch(ScoreManager.BestHandResult::isFourOfAKindPending)) {
+            var deciding = preview.getFirst();
+            resetOthersScore.start(deciding.player(), deciding.points());
+            currentRound.overrideCurrentPlayer(deciding.player());
+            logEvent(GameEvent.decidingResetOthersScore(deciding.player(), deciding.points()));
+            return new FinishRoundResult(true);
+        }
+
         var playersWithBestHand = scoreManager.givePointsForBestHand();
 
         for (var result : playersWithBestHand) {
             logEvent(GameEvent.bestHand(result.player(), result.points()));
         }
+
+        return new FinishRoundResult(false);
     }
 
     public void finishChicagoCalledRound(Move winningMove, Player player) {
@@ -424,7 +450,7 @@ public class ChicagoGame {
         if (!player.equals(dealer)) {
             throw new UnauthorizedDealerException(UNAUTHORIZED_DEALER);
         }
-        if (currentRound != null && !currentRound.isOver()) {
+        if (currentRound != null && !currentRound.isOver() || resetOthersScore.isPending()) {
             throw new RoundNotFinishedException(ROUND_NOT_FINISHED);
         }
         if (hasWinners) {
@@ -476,9 +502,40 @@ public class ChicagoGame {
         oneOpen.stop();
         logEvent(GameEvent.respondedToOneOpen(player, openCard, accepted));
 
+        if (playersWithBestHand.stream().anyMatch(ScoreManager.BestHandResult::isFourOfAKindPending)) {
+            // only 1 player can have the best four of a kind at one time
+            var deciding = playersWithBestHand.getFirst();
+            resetOthersScore.start(deciding.player(), deciding.points());
+            logEvent(GameEvent.decidingResetOthersScore(deciding.player(), deciding.points()));
+            return;
+        }
+
         for (var result : playersWithBestHand) {
             logEvent(GameEvent.bestHand(result.player(), result.points()));
         }
+    }
+
+    public void respondToResetOthersScore(Player player, boolean accepted) throws InappropriateActionException {
+        if (!resetOthersScore.isPendingFor(player)) {
+            throw new InappropriateActionException(INAPPROPRIATE_ACTION);
+        }
+
+        resetOthersScore.stop();
+        logEvent(GameEvent.respondedToResetOthersScore(player, accepted));
+
+        if (accepted) {
+            scoreManager.resetOthersScore(player);
+        } else {
+            var points = HAND_SCORES.get(Hand.HandType.FOUR_OF_A_KIND);
+            player.addPoints(points);
+            logEvent(GameEvent.bestHand(player, points));
+
+            if (currentRound.isOver()) {
+                checkIfGameWasWon();
+            }
+        }
+
+        currentRound.completeResetOthersScoreDecision();
     }
 
     public GameRules getRules() {

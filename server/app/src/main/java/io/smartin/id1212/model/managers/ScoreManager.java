@@ -10,6 +10,7 @@ import io.smartin.id1212.model.components.Hand.HandType;
 import io.smartin.id1212.model.components.pokerhands.abstracts.PokerHand;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ScoreManager {
     private final List<Player> players;
@@ -18,7 +19,29 @@ public class ScoreManager {
         this.players = players;
     }
 
-    public record BestHandResult(Player player, int points) { }
+    public List<BestHandResult> previewBestHandResults() {
+        var candidates = getFinalCandidates();
+        var winners = getWinners(candidates);
+
+        return winners.stream().map(player -> {
+            HandType winnerHandType = player.getHand().getPokerHand().getType();
+            int points = Rules.HAND_SCORES.get(winnerHandType);
+
+            return new BestHandResult(
+                player,
+                points,
+                winnerHandType == HandType.FOUR_OF_A_KIND
+            );
+        }).collect(Collectors.toList());
+    }
+
+    public record BestHandResult(Player player, int points, boolean isFourOfAKindPending) { }
+
+    public void resetOthersScore(Player actor) {
+        for (var player : players)
+            if (!player.equals(actor))
+                player.resetScore();
+    }
 
     public List<BestHandResult> givePointsForBestHand() {
         var finalCandidates = getFinalCandidates();
@@ -72,7 +95,7 @@ public class ScoreManager {
             int points = Rules.HAND_SCORES.get(winnerHandType);
             winner.addPoints(points);
             System.out.println("Added " + points + " points to player " + winner.getName());
-            results.add(new BestHandResult(winner, points));
+            results.add(new BestHandResult(winner, points, false));
         }
 
         return results;

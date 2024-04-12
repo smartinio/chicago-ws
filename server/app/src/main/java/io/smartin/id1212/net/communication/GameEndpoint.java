@@ -47,7 +47,6 @@ public class GameEndpoint {
     @OnError
     public void onError(Session session, Throwable thr) {
         System.out.println("!!!!!!! onError called: ");
-        System.out.println(thr);
         System.out.println(thr.getMessage());
         thr.printStackTrace();
     }
@@ -85,7 +84,6 @@ public class GameEndpoint {
             SessionHandler.sendMsg(session, new Message(FATAL_ERROR, e.getMessage()));
         } catch (Exception e) {
             System.out.println("Unexpected error:");
-            System.out.println(e);
             System.out.println(e.getMessage());
             e.printStackTrace();
         }

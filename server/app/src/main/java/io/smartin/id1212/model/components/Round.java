@@ -43,6 +43,7 @@ public class Round {
     private int numAskedAboutChicago = 0;
 
     private final Set<PlayingCard> allCards = new CardDeck().getCards();
+    private Player overriddenCurrentPlayer;
 
     public ChicagoGame getGame() {
         return game;
@@ -277,8 +278,20 @@ public class Round {
         tradingManager.throwCards(player, cards);
         tradingManager.drawCards(player, cards);
         var result =  tradingManager.completeTrade();
-        nextTurn();
+
+        if (result.stream().anyMatch(BestHandResult::isFourOfAKindPending)) {
+            System.out.println("overriding current player with " + result.getFirst().player());
+            overrideCurrentPlayer(result.getFirst().player());  // can only be 1 best 4 of a kind
+        } else {
+            nextTurn();
+        }
+
         return result;
+    }
+
+    public void overrideCurrentPlayer(Player player) {
+        overriddenCurrentPlayer = currentPlayer;
+        currentPlayer = player;
     }
 
     public void throwCards(Player player, Set<PlayingCard> cards) throws WaitYourTurnException, InappropriateActionException {
@@ -312,6 +325,13 @@ public class Round {
     }
 
     private void nextTurn() {
+        // used for 4 of a kind decision so the asked player can respond
+        // should be discarded as soon as it's the next persons turn
+        if (overriddenCurrentPlayer != null) {
+            currentPlayer = overriddenCurrentPlayer;
+            overriddenCurrentPlayer = null;
+        }
+
         // hack to make sure isFinalTrade is updated before each turn
         isFinalTrade = tradingManager.maxTradingCyclesReached();
         var p = game.getPlayers();
@@ -382,7 +402,17 @@ public class Round {
         var finalCard = accepted ? openCard : getCardForOneOpen(player);
         player.giveCards(Set.of(finalCard));
         var result =  tradingManager.completeTrade();
-        nextTurn();
+
+        if (result.stream().anyMatch(BestHandResult::isFourOfAKindPending)) {
+            overrideCurrentPlayer(result.getFirst().player()); // can only be 1 best 4 of a kind
+        } else {
+            nextTurn();
+        }
+
         return result;
+    }
+
+    public void completeResetOthersScoreDecision() {
+        nextTurn();
     }
 }

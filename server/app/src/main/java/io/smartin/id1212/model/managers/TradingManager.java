@@ -43,13 +43,24 @@ public class TradingManager {
         List<Player> tradeEligiblePlayers = round.getGame().getTradeEligiblePlayers();
 
         if (currentCycle().isFinished(tradeEligiblePlayers)) {
+            var previewResult = round.getGame().getScoreManager().previewBestHandResults();
+
             if (maxTradingCyclesReached()) {
                 round.endTradingPhase();
+            } else if (previewResult.stream().anyMatch(BestHandResult::isFourOfAKindPending)) {
+                result = previewResult;
+                tradingCycles.add(new TradingCycle());
             } else {
                 result = round.getGame().getScoreManager().givePointsForBestHand();
                 tradingCycles.add(new TradingCycle());
             }
         }
+
+        System.out.println("result:");
+        for (var r : result) {
+            System.out.println("player: " + r.player() + ", points: " + r.points() + ", pending: " + r.isFourOfAKindPending());
+        }
+
 
         return result;
     }

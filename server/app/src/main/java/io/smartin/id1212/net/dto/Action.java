@@ -70,5 +70,6 @@ public class Action {
         KICK_PLAYER,
         RECONNECT,
         CHECK_GAME,
+        RESPOND_RESET_OTHERS_SCORE,
     }
 }
