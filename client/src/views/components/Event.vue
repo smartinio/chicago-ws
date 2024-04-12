@@ -114,6 +114,12 @@ export default {
         case 'RESPONDED_TO_ONE_OPEN': {
           return event.accepted ? 'accepted 👍' : 'declined 👎'
         }
+        case 'DECIDING_RESET_OTHERS_SCORE': {
+          return `is deciding what to do 😬`
+        }
+        case 'RESPONDED_TO_RESET_OTHERS_SCORE': {
+          return event.accepted ? 'reset others to zero 😈' : undefined;
+        }
       }
     }),
   }

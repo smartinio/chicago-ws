@@ -37,6 +37,22 @@
           Open offer for <strong>{{ game.oneOpen.player.name }}</strong>
         </div>
       </div>
+      <div v-else-if="canSeeResetDecision" class="is-flex is-flex-direction-column is-align-items-center">
+        <div class="is-flex" v-if="canRespondToResetOthersScore">
+          <button @click="respondToResetOthersScore(false)" class="control-button button is-success is-small is-rounded"
+            :disabled="!me.isMyTurn">
+            GET {{ game.resetOthersScore.points }} POINTS
+          </button>
+          <div style="width: 10px"></div>
+          <button @click="respondToResetOthersScore(true)" class="control-button button is-danger is-small is-rounded"
+            style="margin-bottom: 15px;" :disabled="!me.isMyTurn">
+            RESET OTHERS
+          </button>
+        </div>
+        <div v-else class="control-text">
+          <strong>{{ game.resetOthersScore.player.name }}</strong> has four of a kind. What will they do?
+        </div>
+      </div>
       <div v-else-if="phase === 'TRADING' && canTradeOpenly">
         <button @click="trade" class="control-button button is-success is-small is-rounded" style="margin-bottom: 15px;"
           :disabled="!me.isMyTurn">
@@ -68,12 +84,15 @@
           </button>
           <img @mousedown="toggleMark(card)" class="playingCard" :class="getCardClass(card)" :src="getCardUrl(card)" :draggable="false" />
         </div>
+        <div v-for="invis in Array.from(Array(5 - me.hand.length))" class="is-flex is-flex-direction-column is-align-items-center">
+          <img class="playingCard" style="opacity: 0" :src="getCardUrl({ suit: 'CLUBS', value: 'ACE' })" />
+        </div>
       </div>
     </div>
   </div>
 </template>
 <script lang="ts">
-import { MOVE, THROW, THROW_ONE_OPEN, RESPOND_ONE_OPEN, CHICAGO } from '@/dto/action/types'
+import { MOVE, THROW, THROW_ONE_OPEN, RESPOND_ONE_OPEN, CHICAGO, RESPOND_RESET_OTHERS_SCORE } from '@/dto/action/types'
 import { SEND_ACTION } from '@/store/modules/socket/action_types'
 import Action from '@/dto/action/Action'
 
@@ -100,8 +119,14 @@ export default {
     canSeeOpenCard() {
       return this.game.oneOpen.isOpen
     },
+    canSeeResetDecision() {
+      return this.game.resetOthersScore.isPending
+    },
     canRespondToOpenCard() {
       return this.canSeeOpenCard && this.game.oneOpen.player.id === this.me.id
+    },
+    canRespondToResetOthersScore() {
+      return this.canSeeResetDecision && this.game.resetOthersScore.player.id === this.me.id;
     },
   },
   methods: {
@@ -137,10 +162,13 @@ export default {
       if (!this.me.isMyTurn || this.markedCards.length !== 1) return;
       this.doAction(new Action(THROW_ONE_OPEN, this.markedCards[0]));
     },
-    respondToOneOpen(accepted) {
+    respondToOneOpen(accepted: boolean) {
       this.doAction(new Action(RESPOND_ONE_OPEN, accepted))
     },
-    respondToChicago(accepted) {
+    respondToResetOthersScore(accepted: boolean) {
+      this.doAction(new Action(RESPOND_RESET_OTHERS_SCORE, accepted))
+    },
+    respondToChicago(accepted: boolean) {
       this.doAction(new Action(CHICAGO, accepted))
     },
   }

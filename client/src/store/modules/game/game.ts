@@ -27,6 +27,13 @@ const state = {
       shortValue: '',
     }
   },
+  resetOthersScore: {
+    player: {
+      id: '',
+    },
+    isPending: false,
+    points: 0,
+  },
   host: {
     id: ''
   },
@@ -92,6 +99,10 @@ const mutations = {
     state.oneOpen.player = game.oneOpen.player
     state.oneOpen.card = game.oneOpen.card
     state.oneOpen.isOpen = game.oneOpen.isOpen
+
+    state.resetOthersScore.player = game.resetOthersScore.player
+    state.resetOthersScore.isPending = game.resetOthersScore.isPending
+    state.resetOthersScore.points = game.resetOthersScore.points
   }
 }
 

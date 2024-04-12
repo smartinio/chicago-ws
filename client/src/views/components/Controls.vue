@@ -94,7 +94,7 @@ export default {
   },
   computed: {
     canDeal() {
-      return this.me.imDealing && !this.isMidGame
+      return this.me.imDealing && !this.isMidGame && !this.isPendingReset
     },
     canAct() {
       return this.me.isMyTurn && this.isMidGame
@@ -102,11 +102,8 @@ export default {
     isMidGame() {
       return !this.isPhase(phaseTypes.BEFORE) && !this.isPhase(phaseTypes.AFTER)
     },
-    canTradeOpenly() {
-      return this.markedCards.length == 1
-    },
-    canRespondToOpenCard() {
-      return this.game.oneOpen.isOpen
+    isPendingReset() {
+      return this.game?.resetOthersScore?.isPending === true
     },
     checkOrKey() {
       return this.copiedKey ? 'fa fa-check' : 'fa fa-key'

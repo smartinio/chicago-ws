@@ -2,7 +2,7 @@ import GameCreation from "../gamecreation/GameCreation"
 import JoinRequest from "../joinrequest/JoinRequest"
 import RejoinRequest from "../rejoinrequest/RejoinRequest"
 
-type Value = JoinRequest | RejoinRequest | GameCreation | string
+type Value = JoinRequest | RejoinRequest | GameCreation | string | boolean
 
 export default class Action {
   value: string
