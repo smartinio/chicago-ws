@@ -3,6 +3,9 @@
   "extends": [
     "config:recommended"
   ],
+  "automergeSchedule": [
+    "after 5am and before 6am"
+  ],
   "packageRules": [
     {
       "matchUpdateTypes": ["minor", "patch", "pin", "digest"],

@@ -110,7 +110,7 @@ export default {
       const maybeBaseIdx = this.player.hand.played.findIndex(this.isBaseCard);
       const baseIdx = maybeBaseIdx === -1 ? Infinity : maybeBaseIdx;
 
-      return !this.isBaseCard(card) && idx < baseIdx;
+      return !this.isBaseCard(card) && idx <= baseIdx;
     },
     isBaseCard(card) {
       if (!this.baseMove) return false
