@@ -3,8 +3,8 @@
   "extends": [
     "config:recommended"
   ],
-  "automergeSchedule": [
-    "after 5am and before 6am"
+  "schedule": [
+    "after 4am and before 6am"
   ],
   "packageRules": [
     {
