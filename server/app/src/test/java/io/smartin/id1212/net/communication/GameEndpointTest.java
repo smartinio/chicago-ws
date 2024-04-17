@@ -119,20 +119,6 @@ public class GameEndpointTest {
         actors[0] = owner;
         System.arraycopy(otherActors, 0, actors, 1, otherActors.length);
 
-/*        for (var actor : actors) {
-            new Thread(() -> {
-                while (true) {
-                    try {
-                        Thread.sleep(1000);
-                        var ping = Converter.toJson(new Action(PING, null));
-                        actor.ref.tell(ping, actor.kit.getRef());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
-        }*/
-
         // Create new game
         var rules = new GameCreation.GameRules(
             true,
@@ -190,18 +176,6 @@ public class GameEndpointTest {
                     sendReceiveAll(currentActor, RESPOND_RESET_OTHERS_SCORE, accept, actors);
                     continue;
                 }
-
-/*                // P2 will do one open and later accept
-                if (currentActor.snapshot.me.getName().equals("P2") && currentActor.snapshot.isOneOpenAvailable) {
-                    sendReceiveAll(currentActor, THROW_ONE_OPEN, currentActor.snapshot.myHand.getFirst(), actors);
-                    continue;
-                }
-
-                // P3 will test one open and later decline
-                if (currentActor.snapshot.me.getName().equals("P3") && currentActor.snapshot.isOneOpenAvailable) {
-                    sendReceiveAll(currentActor, THROW_ONE_OPEN, currentActor.snapshot.myHand.getFirst(), actors);
-                    continue;
-                }*/
 
                 var hand = new Hand(new HashSet<>(currentActor.snapshot.myHand));
 
