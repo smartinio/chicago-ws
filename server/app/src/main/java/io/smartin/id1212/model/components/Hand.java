@@ -10,16 +10,22 @@ import io.smartin.id1212.model.components.pokerhands.abstracts.PokerHand;
 import java.util.*;
 
 public class Hand {
-    private final Set<PlayingCard> cards;
+    private Set<PlayingCard> cards = new HashSet<>();
     @Expose
-    private final List<PlayingCard> played = new ArrayList<>();
+    private List<PlayingCard> played = new ArrayList<>();
 
     public Hand(Set<PlayingCard> cards) {
         this.cards = cards;
     }
 
+    public Hand() {}
+
     public Set<PlayingCard> getCards() {
         return cards;
+    }
+
+    public void setPlayed(List<PlayingCard> played) {
+        this.played = played;
     }
 
     public Set<PlayingCard> getAllFive() {
@@ -36,6 +42,15 @@ public class Hand {
 
     public boolean contains(PlayingCard card) {
         return cards.contains(card);
+    }
+
+    public boolean containsValue(PlayingCard.Value value) {
+        for (PlayingCard card : cards) {
+            if (card.getValue() == value) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void remove(PlayingCard card) {

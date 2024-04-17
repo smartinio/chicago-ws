@@ -32,7 +32,7 @@ public class Round {
     @Expose
     private Player winner;
     @Expose
-    private final List<Trick> tricks;
+    public final List<Trick> tricks;
     @Expose
     private boolean isFinalTrade = false;
 
@@ -82,6 +82,10 @@ public class Round {
 
     public void setWinner(Player player) {
         winner = player;
+    }
+
+    public GamePhase getPhase() {
+        return phase;
     }
 
     public record RoundMoveResult(
@@ -304,12 +308,16 @@ public class Round {
         checkPhase(GamePhase.TRADING);
         checkTurn(player);
 
-        var isFinalTrade = tradingManager.maxTradingCyclesReached();
-        if (game.getRules().oneOpen == OneOpenMode.FINAL && !isFinalTrade) {
+        if (!isOneOpenAvailable()) {
             throw new UnauthorizedTradeException(NOT_FINAL_TRADE);
         }
 
         return deck.draw(1).iterator().next();
+    }
+
+    public boolean isOneOpenAvailable() {
+        var isFinalTrade = tradingManager.maxTradingCyclesReached();
+        return game.getRules().oneOpen() != OneOpenMode.FINAL || isFinalTrade;
     }
 
     private void checkPhase(GamePhase gamePhase) throws InappropriateActionException {

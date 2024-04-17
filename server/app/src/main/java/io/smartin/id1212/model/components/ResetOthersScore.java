@@ -13,7 +13,7 @@ public class ResetOthersScore {
   private Player player;
 
   public boolean isPendingFor(Player player) {
-    return isPending && this.player == player;
+    return isPending && this.player.equals(player);
   }
 
   public void start(Player player, int points) {

@@ -48,7 +48,10 @@ public class PlayerController {
             case KICK_PLAYER -> kickPlayer(action);
             case LEAVE_GAME -> leaveGame(action, sessionId);
             case CHECK_GAME -> checkGame(action, sessionId);
-            case PING -> SessionHandler.getInstance().sendMsgToSessionId(sessionId, new Message(PONG, "pong"));
+            case PING -> {
+                if (action.value() != null)
+                    SessionHandler.getInstance().sendMsgToSessionId(sessionId, new Message(PONG, action.value()));
+            }
             default -> throw new UnknownActionException(UNKNOWN_ACTION);
         }
     }

@@ -62,7 +62,7 @@ public class Trick {
     }
 
     public Move getStartingMove() {
-        return moves.get(0);
+        return moves.size() > 0 ? moves.get(0) : null;
     }
 
     public Set<Player> getRemainingPlayers() {

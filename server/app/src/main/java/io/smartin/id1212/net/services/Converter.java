@@ -4,11 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import io.smartin.id1212.model.components.PlayingCard;
-import io.smartin.id1212.net.dto.Action;
-import io.smartin.id1212.net.dto.GameCreation;
-import io.smartin.id1212.net.dto.JoinRequest;
-import io.smartin.id1212.net.dto.LeaveRequest;
-import io.smartin.id1212.net.dto.RejoinRequest;
+import io.smartin.id1212.net.dto.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -51,5 +47,11 @@ public class Converter {
 
     public static boolean toBoolean(String json) {
       return gson.fromJson(json, Boolean.class);
+    }
+
+    // For testing
+    public static Snapshot messageToSnapshot(String json) {
+        var message = gson.fromJson(json, Message.class);
+        return gson.fromJson(message.body(), Snapshot.class);
     }
 }

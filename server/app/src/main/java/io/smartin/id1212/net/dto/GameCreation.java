@@ -10,22 +10,22 @@ public record GameCreation(@Expose String nickname, @Expose GameRules rules) {
         FINAL,
     }
 
-    public static class GameRules {
+    public record GameRules (
         @Expose
-        public boolean chicagoBestHand;
+         boolean chicagoBestHand,
         @Expose
-        public boolean chicagoBefore15;
+         boolean chicagoBefore15,
         @Expose
-        public int numTrades;
+         int numTrades,
         @Expose
-        public int tradeBanScore;
+         int tradeBanScore,
         @Expose
-        public OneOpenMode oneOpen;
+         OneOpenMode oneOpen,
         @Expose
-        public int roundWinScore;
+         int roundWinScore,
         @Expose
-        public int winWithTwoScore;
-    }
+         int winWithTwoScore
+    ) { }
 
     @Override
     public String toString() {

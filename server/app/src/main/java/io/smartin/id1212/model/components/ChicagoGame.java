@@ -40,9 +40,9 @@ public class ChicagoGame {
     @Expose
     private final List<GameEvent> events = new ArrayList<>();
     @Expose
-    private final OneOpen oneOpen = new OneOpen();
+    public final OneOpen oneOpen = new OneOpen();
     @Expose
-    private final ResetOthersScore resetOthersScore = new ResetOthersScore();
+    public final ResetOthersScore resetOthersScore = new ResetOthersScore();
     @Expose
     private final GameRules rules;
 
@@ -276,11 +276,11 @@ public class ChicagoGame {
     public FinishRoundResult finishNormalRound(Move winningMove) {
         var winner = winningMove.getPlayer();
         if (winningMove.getCard().getValue().equals(PlayingCard.Value.TWO)) {
-            winner.addPoints(rules.winWithTwoScore);
-            logEvent(GameEvent.wonRound(winningMove, rules.winWithTwoScore));
+            winner.addPoints(rules.winWithTwoScore());
+            logEvent(GameEvent.wonRound(winningMove, rules.winWithTwoScore()));
         } else {
-            winner.addPoints(rules.roundWinScore);
-            logEvent(GameEvent.wonRound(winningMove, rules.roundWinScore));
+            winner.addPoints(rules.roundWinScore());
+            logEvent(GameEvent.wonRound(winningMove, rules.roundWinScore()));
         }
 
         var preview = scoreManager.previewBestHandResults();
@@ -305,7 +305,7 @@ public class ChicagoGame {
     public void finishChicagoCalledRound(Move winningMove, Player player) {
         var wonAllTricks = player.equals(winningMove.getPlayer());
         var hasBestHand = scoreManager.hasBestHand(player);
-        var success = rules.chicagoBestHand ? wonAllTricks && hasBestHand : wonAllTricks;
+        var success = rules.chicagoBestHand() ? wonAllTricks && hasBestHand : wonAllTricks;
 
         if (success) {
             logEvent(GameEvent.wonChicago(player));
@@ -367,7 +367,7 @@ public class ChicagoGame {
 
     public void removePlayer(Player player, boolean kicked) {
         synchronized (players) {
-            if (player == dealer) {
+            if (player.equals(dealer)) {
                 newDealer();
             }
 

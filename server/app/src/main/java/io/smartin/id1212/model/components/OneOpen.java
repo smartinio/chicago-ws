@@ -13,7 +13,25 @@ public class OneOpen {
   private Player player;
 
   public boolean isOpenFor(Player player) {
-    return isOpen && this.player == player;
+    return isOpen && this.player.equals(player);
+  }
+
+  public OneOpen() {}
+
+  public void setOpen(boolean open) {
+    isOpen = open;
+  }
+
+  public void setIsOpen(boolean open) {
+    isOpen = open;
+  }
+
+  public void setPlayer(Player player) {
+    this.player = player;
+  }
+
+  public void setCard(PlayingCard card) {
+    this.card = card;
   }
 
   public PlayingCard getCard() {
@@ -30,5 +48,9 @@ public class OneOpen {
     this.player = null;
     this.isOpen = false;
     this.card = null;
+  }
+
+  public Player getPlayer() {
+    return player;
   }
 }

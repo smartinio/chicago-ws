@@ -68,7 +68,7 @@ public class SessionHandler {
         }
     }
 
-    static void sendMsg(Session session, Message msg) {
+    synchronized static void sendMsg(Session session, Message msg) {
         if (session == null || !session.isOpen()) {
             log("Cannot send message to closed session");
             return;

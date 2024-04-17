@@ -17,7 +17,7 @@ public class TradingManager {
     public TradingManager(Round round) {
         this.round = round;
         this.tradingCycles.add(new TradingCycle());
-        this.MAX_TRADES_PER_ROUND = round.getGame().getRules().numTrades;
+        this.MAX_TRADES_PER_ROUND = round.getGame().getRules().numTrades();
     }
 
     public void throwCards(Player player, Set<PlayingCard> cards) {

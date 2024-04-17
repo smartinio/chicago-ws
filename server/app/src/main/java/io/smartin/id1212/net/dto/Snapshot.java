@@ -10,17 +10,19 @@ import java.util.*;
 
 public class Snapshot {
     @Expose
-    private final Player me;
+    public final Player me;
     @Expose
-    private final ChicagoGame game;
+    public final ChicagoGame game;
     @Expose
-    private boolean myTurn = false;
+    public boolean myTurn = false;
     @Expose
-    private boolean imDealing = false;
+    public boolean imDealing = false;
     @Expose
-    private List<PlayingCard> myHand = new ArrayList<>();
+    public boolean isOneOpenAvailable = false;
     @Expose
-    private List<PlayingCard> myPlayed = new ArrayList<>();
+    public List<PlayingCard> myHand = new ArrayList<>();
+    @Expose
+    public List<PlayingCard> myPlayed = new ArrayList<>();
 
     public Snapshot(Player me, ChicagoGame game) {
         this.game = game;
@@ -32,5 +34,6 @@ public class Snapshot {
         this.myPlayed = me.getHand().getPlayed();
         this.myTurn = me.equals(game.getCurrentRound().getCurrentPlayer());
         this.imDealing = me.equals(game.getDealer());
+        this.isOneOpenAvailable = game.getCurrentRound().isOneOpenAvailable();
     }
 }
