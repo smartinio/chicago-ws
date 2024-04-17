@@ -18,12 +18,7 @@ import io.smartin.id1212.net.services.Converter;
 import java.util.List;
 
 import static io.smartin.id1212.config.Strings.*;
-import static io.smartin.id1212.net.dto.Action.ActionType.JOIN_GAME;
-import static io.smartin.id1212.net.dto.Action.ActionType.NEW_GAME;
-import static io.smartin.id1212.net.dto.Action.ActionType.RECONNECT;
-import static io.smartin.id1212.net.dto.Action.ActionType.CHECK_GAME;
-import static io.smartin.id1212.net.dto.Action.ActionType.LEAVE_GAME;
-import static io.smartin.id1212.net.dto.Action.ActionType.PING;
+import static io.smartin.id1212.net.dto.Message.MessageType.*;
 
 public class PlayerController {
     private Player player;
@@ -53,7 +48,7 @@ public class PlayerController {
             case KICK_PLAYER -> kickPlayer(action);
             case LEAVE_GAME -> leaveGame(action, sessionId);
             case CHECK_GAME -> checkGame(action, sessionId);
-            case PING -> {}
+            case PING -> SessionHandler.getInstance().sendMsgToSessionId(sessionId, new Message(PONG, "pong"));
             default -> throw new UnknownActionException(UNKNOWN_ACTION);
         }
     }
