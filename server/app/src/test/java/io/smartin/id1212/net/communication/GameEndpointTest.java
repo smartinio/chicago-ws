@@ -55,16 +55,6 @@ public class GameEndpointTest {
         tomcat.start();
     }
 
-    public class DeterministicRandom extends java.util.Random {
-        @Serial
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        public int nextInt(int bound) {
-            return 1; // always return the same number
-        }
-    }
-
     public static class Actor {
         public ActorRef ref;
         public TestKit kit;
@@ -358,6 +348,12 @@ public class GameEndpointTest {
     }
 
     private static void awaitAllSnapshots(Actor[] actors) {
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         for (var player : actors) {
             awaitLatestSnapshot(player);
         }
