@@ -50,7 +50,7 @@ import Action from '@/dto/action/Action'
 
 export default {
   name: 'Player',
-  props: ['player', 'baseMove', 'currentPlayer', 'dealer', 'chicagoTaker', 'roundWinner', 'fallbackName', 'variant', 'isMe'],
+  props: ['player', 'baseMove', 'currentPlayer', 'dealer', 'chicagoTaker', 'roundWinner', 'fallbackName', 'variant', 'isMe', 'currentTrick'],
   setup() {
     const avatarRef = ref<HTMLImageElement>()
     const wintervalRef = ref<number>()
@@ -104,17 +104,19 @@ export default {
       const actionDTO = new Action(KICK_PLAYER, player.id)
       this.$store.dispatch(SEND_ACTION, actionDTO)
     },
-    isOldNews(card, idx) {
-      if (!this.baseMove) return idx < this.player.hand.played.length - 1;
+    isOldNews(card: any, idx: number) {
+      if (!this.currentTrick?.moves.length) {
+        return idx < this.player.hand.played.length - 1;
+      }
 
-      const maybeBaseIdx = this.player.hand.played.findIndex(this.isBaseCard);
-      const baseIdx = maybeBaseIdx === -1 ? Infinity : maybeBaseIdx;
-
-      return !this.isBaseCard(card) && idx <= baseIdx;
+      return !this.currentTrick.moves.some(m => this.isCard(card, m.card))
+    },
+    isCard(cardA, cardB) {
+      return cardA.suit === cardB.suit && cardA.value === cardB.value
     },
     isBaseCard(card) {
       if (!this.baseMove) return false
-      return (card.suit === this.baseMove.card.suit && card.value === this.baseMove.card.value)
+      return this.isCard(card, this.baseMove.card)
     },
     isChicagoTaker(player) {
       return this.chicagoTaker && player.id === this.chicagoTaker.id

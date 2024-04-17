@@ -14,13 +14,31 @@
       <div class="container is-flex is-flex-direction-column">
         <div style="padding-top: 30px">
           <div class="is-flex is-flex-direction-row is-justify-content-space-between">
-            <Player :isMe="true" variant="large" fallbackName="You" :player="controlPlayer" :baseMove="baseMove"
-              :currentPlayer="currentPlayer" :dealer="dealer" :chicagoTaker="chicagoTaker" :round-winner="roundWinner" />
+            <Player
+              :isMe="true"
+              variant="large"
+              fallbackName="You"
+              :player="controlPlayer"
+              :baseMove="baseMove"
+              :currentPlayer="currentPlayer"
+              :dealer="dealer"
+              :chicagoTaker="chicagoTaker"
+              :roundWinner="roundWinner"
+              :currentTrick="currentTrick"
+            />
             <Controls :game="game" :me="me" :controlPlayer="controlPlayer" :currentPlayer="currentPlayer" :dealer="dealer"
               :baseMove="baseMove" :markedCards="markedCards" @action="unmarkAll" />
           </div>
-          <Players v-if="otherPlayers" :players="otherPlayers" :baseMove="baseMove" :currentPlayer="currentPlayer"
-            :dealer="dealer" :chicagoTaker="chicagoTaker" :round-winner="roundWinner" />
+          <Players
+            v-if="otherPlayers"
+            :players="otherPlayers"
+            :baseMove="baseMove"
+            :currentPlayer="currentPlayer"
+            :dealer="dealer"
+            :chicagoTaker="chicagoTaker"
+            :roundWinner="roundWinner"
+            :currentTrick="currentTrick"
+          />
         </div>
         <div class="is-flex is-justify-content-flex-end" style="flex: 1">
           <MyHand v-if="game.started" :me="me" :markedCards="markedCards" :phase="game.round.phase" :game="game"

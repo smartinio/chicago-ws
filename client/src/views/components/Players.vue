@@ -11,6 +11,7 @@
         :dealer="dealer"
         :chicagoTaker="chicagoTaker"
         :roundWinner="roundWinner"
+        :currentTrick="currentTrick"
       />
     </div>
   </div>
@@ -19,7 +20,7 @@
 import Player from '@/views/components/Player.vue'
 export default {
   name: 'Players',
-  props: ['players', 'baseMove', 'currentPlayer', 'dealer', 'chicagoTaker', 'roundWinner'],
+  props: ['players', 'baseMove', 'currentPlayer', 'dealer', 'chicagoTaker', 'roundWinner', 'currentTrick'],
   components: {
     Player
   }
