@@ -1,11 +1,15 @@
-name: Build and test
+name: CI (Client)
 
 on:
+  push:
+    branches: [main]
+    paths: ['client/**']
   pull_request:
     branches: [main]
+    paths: ['client/**']
 
 jobs:
-  build:
+  ci:
     concurrency: ci-${{ github.ref }} # Recommended if you intend to make multiple deployments in quick succession.
     runs-on: ubuntu-latest
     steps:

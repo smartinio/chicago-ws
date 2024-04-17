@@ -12,7 +12,7 @@ public record Message(@Expose MessageType type, @Expose String body) {
         GAME_ERROR,
         GAME_WINNER,
         SNAPSHOT,
-        KEEP_ALIVE,
+        PONG,
         CURRENTLY_IN_GAME,
     }
 }

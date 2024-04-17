@@ -1,0 +1,30 @@
+name: CI (Server)
+
+on:
+  push:
+    branches: [main]
+    paths: ['server/**']
+  pull_request:
+    branches: [main]
+    paths: ['server/**']
+
+jobs:
+  ci:
+    concurrency: ci-${{ github.ref }} # Recommended if you intend to make multiple deployments in quick succession.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🐱
+        uses: actions/checkout@v4
+
+      - name: Install Java ☕️
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '21'      # See 'Options' section below for all supported versions
+          distribution: 'graalvm' # See 'Options' section below for all available distributions
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Stage & Test 🔧
+        run: |
+          cd server
+          ./gradlew stage
+          ./gradlew test
