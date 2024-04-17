@@ -15,7 +15,9 @@ public class CardDeck {
                 shuffledCards.add(new PlayingCard(suit, value));
             }
         }
-        Collections.shuffle(shuffledCards);
+        var isTest = "test".equals(System.getProperty("env"));
+        Random random = isTest ? new Random(1337) : new Random();
+        Collections.shuffle(shuffledCards, random);
     }
 
     public Set<PlayingCard> getCards() {

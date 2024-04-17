@@ -16,7 +16,9 @@ public class WebSocketClientActor extends UntypedAbstractActor {
     private ActorRef senderRef;
 
     /** Creates the web socket client as an actor.*/
-    public WebSocketClientActor() throws URISyntaxException, IOException, DeploymentException {
+    public WebSocketClientActor(ActorRef actor) throws URISyntaxException, IOException, DeploymentException {
+        this.senderRef = actor;
+
         this.webSocketClientEndpoint =
                 new WebSocketClientEndpoint(new URI(getWebSocketURI()));
 

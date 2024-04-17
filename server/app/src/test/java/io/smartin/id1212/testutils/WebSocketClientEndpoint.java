@@ -1,5 +1,7 @@
 package io.smartin.id1212.testutils;
 
+import io.smartin.id1212.net.communication.GameEndpoint;
+
 import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
@@ -17,6 +19,8 @@ public class WebSocketClientEndpoint {
      */
     public WebSocketClientEndpoint(URI serverEndpointURI) throws IOException, DeploymentException {
         this.session = ContainerProvider.getWebSocketContainer().connectToServer(this, serverEndpointURI);
+        this.session.setMaxIdleTimeout(0);
+        this.session.setMaxTextMessageBufferSize(1024 * 1024);
     }
 
     /** The onMessage method annotated with @OnMessage is called each time a message is 	 *  received from server.

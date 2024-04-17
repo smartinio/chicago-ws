@@ -110,7 +110,7 @@ public class Player {
     }
 
     public boolean canTrade() {
-        return score < game.getRules().tradeBanScore;
+        return score < game.getRules().tradeBanScore();
     }
 
     public void removeCards(Set<PlayingCard> cards) {
@@ -227,7 +227,7 @@ public class Player {
     }
 
     public boolean canCallChicago() {
-        return game.getRules().chicagoBefore15 || score >= CHICAGO_POINTS;
+        return game.getRules().chicagoBefore15() || score >= CHICAGO_POINTS;
     }
 
     public void setSessionId(String sessionId) {

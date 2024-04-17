@@ -36,7 +36,8 @@ public class GameEndpoint {
     }
 
     @OnClose
-    public void onClose(Session session) {
+    public void onClose(Session session, CloseReason reason) {
+        logger.info("Closing (code {}) because: {}", reason.getCloseCode(), reason.getReasonPhrase());
         logger.info("onClose. marking as disconnected and unregistering session. should fail broadcast to 1 player. on session {}", session.getId());
         ChicagoGame game = playerController.getPlayer().getGame();
         playerController.setConnected(false);
@@ -73,14 +74,24 @@ public class GameEndpoint {
                 sessionHandler.broadcastSnapshots(game);
             }
         } catch (JsonSyntaxException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
             SessionHandler.sendMsg(session, new Message(JSON_ERROR, e.getMessage()));
         } catch (GameException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
             SessionHandler.sendMsg(session, new Message(GAME_ERROR, e.getMessage()));
         } catch (NicknameException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
             SessionHandler.sendMsg(session, new Message(NICKNAME_ERROR, e.getMessage()));
         } catch (KeyException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
             SessionHandler.sendMsg(session, new Message(KEY_ERROR, e.getMessage()));
         } catch (FatalException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
             SessionHandler.sendMsg(session, new Message(FATAL_ERROR, e.getMessage()));
         } catch (Exception e) {
             System.out.println("Unexpected error:");

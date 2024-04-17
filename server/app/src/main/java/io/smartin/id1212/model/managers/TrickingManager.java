@@ -50,7 +50,7 @@ public class TrickingManager {
         var trick = currentTrick();
         trick.addMove(move);
 
-        var startingSuit = trick.getStartingMove().getCard().getSuit();
+        var startingSuit = getStartingSuit(trick);
         var player = move.getPlayer();
         var playedCard = move.getCard();
         var playedSuit = playedCard.getSuit();
@@ -71,6 +71,10 @@ public class TrickingManager {
         }
 
         return result;
+    }
+
+    public static Suit getStartingSuit(Trick trick) {
+        return trick.getStartingMove().getCard().getSuit();
     }
 
     private boolean thisWasLastTrick() {
