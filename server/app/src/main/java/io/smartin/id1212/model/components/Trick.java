@@ -50,9 +50,9 @@ public class Trick {
     }
 
     public Move getWinningMove() {
-        Move bestMove = getStartingMove();
+        var bestMove = getStartingMove();
 
-        for (Move move : moves) {
+        for (var move : moves) {
             if (move.beats(bestMove)) {
                 bestMove = move;
             }
@@ -66,10 +66,10 @@ public class Trick {
     }
 
     public Set<Player> getRemainingPlayers() {
-        List<Player> allPlayers = round.getGame().getPlayers();
+        var allPlayers = round.getGame().getPlayers();
         Set<Player> remainingPlayers = new HashSet<>(allPlayers);
 
-        for (Move move : moves) {
+        for (var move : moves) {
             remainingPlayers.remove(move.getPlayer());
         }
 
@@ -79,7 +79,7 @@ public class Trick {
     public Set<Player> getAlreadyPlayedPlayers() {
         Set<Player> alreadyPlayed = new HashSet<>();
 
-        for (Move move : moves) {
+        for (var move : moves) {
             alreadyPlayed.add(move.getPlayer());
         }
 

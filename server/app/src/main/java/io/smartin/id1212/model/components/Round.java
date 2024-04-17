@@ -235,7 +235,7 @@ public class Round {
     private Set<PlayingCard> getBetterCards(PlayingCard card) {
         var betterCards = new HashSet<PlayingCard>();
 
-        for (PlayingCard otherCard : allCards) {
+        for (var otherCard : allCards) {
             if (otherCard.beats(card)) {
                 betterCards.add(otherCard);
             }
@@ -247,7 +247,7 @@ public class Round {
     private Set<PlayingCard> getPlayedCards() {
         var playedCards = new HashSet<PlayingCard>();
 
-        for (Player player : game.getPlayers()) {
+        for (var player : game.getPlayers()) {
             playedCards.addAll(player.getHand().getPlayed());
         }
 
@@ -335,8 +335,8 @@ public class Round {
         // hack to make sure isFinalTrade is updated before each turn
         isFinalTrade = tradingManager.maxTradingCyclesReached();
         var p = game.getPlayers();
-        int currentPlayerIndex = p.indexOf(currentPlayer);
-        int offset = 1;
+        var currentPlayerIndex = p.indexOf(currentPlayer);
+        var offset = 1;
 
         while (offset <= p.size()) {
             var candidate = p.get((currentPlayerIndex + offset) % p.size());

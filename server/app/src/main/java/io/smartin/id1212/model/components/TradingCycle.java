@@ -15,7 +15,7 @@ public class TradingCycle {
 
     public List<PlayingCard> getCards() {
         List<PlayingCard> cards = new ArrayList<>();
-        for (Set<PlayingCard> playingCards : thrown.values()) {
+        for (var playingCards : thrown.values()) {
             cards.addAll(playingCards);
         }
         return cards;

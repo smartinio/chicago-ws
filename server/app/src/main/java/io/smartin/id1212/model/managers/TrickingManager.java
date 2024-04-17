@@ -8,7 +8,6 @@ import com.google.gson.annotations.Expose;
 import io.smartin.id1212.exceptions.game.IllegalMoveException;
 import io.smartin.id1212.model.components.Move;
 import io.smartin.id1212.model.components.Player;
-import io.smartin.id1212.model.components.PlayingCard;
 import io.smartin.id1212.model.components.Round;
 import io.smartin.id1212.model.components.Trick;
 import io.smartin.id1212.model.components.PlayingCard.Suit;
@@ -38,7 +37,7 @@ public class TrickingManager {
 
         // Assume everyone can follow suit until proven otherwise
         for (Suit suit : Suit.values()) {
-            Set<Player> players = new HashSet<>(round.getGame().getPlayers());
+            var players = new HashSet<>(round.getGame().getPlayers());
             playersWithSuit.put(suit, players);
         }
     }
@@ -48,13 +47,13 @@ public class TrickingManager {
     }
 
     public MoveResult handle(Move move) throws IllegalMoveException {
-        Trick trick = currentTrick();
+        var trick = currentTrick();
         trick.addMove(move);
 
-        Suit startingSuit = trick.getStartingMove().getCard().getSuit();
-        Player player = move.getPlayer();
-        PlayingCard playedCard = move.getCard();
-        Suit playedSuit = playedCard.getSuit();
+        var startingSuit = trick.getStartingMove().getCard().getSuit();
+        var player = move.getPlayer();
+        var playedCard = move.getCard();
+        var playedSuit = playedCard.getSuit();
 
         if (playedSuit != startingSuit) {
             logger.info("Player '{}' can not follow {} (played {} instead)", player, startingSuit, playedSuit);
@@ -62,10 +61,10 @@ public class TrickingManager {
         }
 
         player.getHand().moveToPlayed(playedCard);
-        Move winningMove = trick.getWinningMove();
-        boolean hasMoreTricks = !thisWasLastTrick();
-        boolean isTrickDone = trick.isDone();
-        MoveResult result = new MoveResult(winningMove, hasMoreTricks, isTrickDone);
+        var winningMove = trick.getWinningMove();
+        var hasMoreTricks = !thisWasLastTrick();
+        var isTrickDone = trick.isDone();
+        var result = new MoveResult(winningMove, hasMoreTricks, isTrickDone);
 
         if (isTrickDone) {
             this.tricks.add(new Trick(round));

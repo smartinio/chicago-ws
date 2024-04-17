@@ -2,37 +2,7 @@ package io.smartin.id1212.net.dto;
 
 import com.google.gson.annotations.Expose;
 
-public class Message {
-    @Expose
-    private MessageType type;
-    @Expose
-    private String body;
-
-    public Message(MessageType type, String body) {
-        this.type = type;
-        this.body = body;
-    }
-
-    public Message () {
-
-    }
-
-    public MessageType getType() {
-        return type;
-    }
-
-    public void setType(MessageType type) {
-        this.type = type;
-    }
-
-    public String getBody() {
-        return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
-    }
-
+public record Message(@Expose MessageType type, @Expose String body) {
     public enum MessageType {
         FATAL_ERROR,
         KICKED,

@@ -1,13 +1,11 @@
 package io.smartin.id1212.model.managers;
 
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import io.smartin.id1212.config.Rules;
 import io.smartin.id1212.exceptions.game.HandsAreEqualException;
 import io.smartin.id1212.model.components.*;
 import io.smartin.id1212.model.components.Hand.HandType;
-import io.smartin.id1212.model.components.pokerhands.abstracts.PokerHand;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -24,8 +22,8 @@ public class ScoreManager {
         var winners = getWinners(candidates);
 
         return winners.stream().map(player -> {
-            HandType winnerHandType = player.getHand().getPokerHand().getType();
-            int points = Rules.HAND_SCORES.get(winnerHandType);
+            var winnerHandType = player.getHand().getPokerHand().getType();
+            var points = Rules.HAND_SCORES.get(winnerHandType);
 
             return new BestHandResult(
                 player,
@@ -54,14 +52,14 @@ public class ScoreManager {
     }
 
     private List<Player> getFinalCandidates() {
-        Map<Hand.HandType,List<Player>> countMap = new HashMap<>();
+        var countMap = new HashMap<Hand.HandType,List<Player>>();
         Hand.HandType bestType = null;
 
         for (Player player : players) {
-            Logger playerLogger = LogManager.getLogger(player.getName());
-            Hand hand = player.getHand();
-            PokerHand currentPokerHand = hand.getPokerHand();
-            Hand.HandType type = currentPokerHand.getType();
+            var playerLogger = LogManager.getLogger(player.getName());
+            var hand = player.getHand();
+            var currentPokerHand = hand.getPokerHand();
+            var type = currentPokerHand.getType();
 
             playerLogger.info("hand: {}", type);
 
@@ -74,7 +72,7 @@ public class ScoreManager {
             if (!countMap.containsKey(type)) countMap.put(type, new ArrayList<>());
             countMap.get(type).add(player);
         }
-        for (Map.Entry<Hand.HandType, List<Player>> entry : countMap.entrySet()) {
+        for (var entry : countMap.entrySet()) {
             if (bestType == null || entry.getKey().ordinal() > bestType.ordinal()) {
                 bestType = entry.getKey();
             }
@@ -86,13 +84,13 @@ public class ScoreManager {
     }
 
     private List<BestHandResult> finalizeWinners(List<Player> finalCandidates) {
-        List<Player> winners = getWinners(finalCandidates);
+        var winners = getWinners(finalCandidates);
 
         List<BestHandResult> results = new ArrayList<>();
 
         for (Player winner : winners) {
-            HandType winnerHandType = winner.getHand().getPokerHand().getType();
-            int points = Rules.HAND_SCORES.get(winnerHandType);
+            var winnerHandType = winner.getHand().getPokerHand().getType();
+            var points = Rules.HAND_SCORES.get(winnerHandType);
             winner.addPoints(points);
             System.out.println("Added " + points + " points to player " + winner.getName());
             results.add(new BestHandResult(winner, points, false));
@@ -104,7 +102,7 @@ public class ScoreManager {
     private List<Player> getWinners(List<Player> finalCandidates) {
         List<Player> winners = new ArrayList<>();
 
-        for (Player candidate : finalCandidates) {
+        for (var candidate : finalCandidates) {
             try {
                 if (winners.size() == 0) {
                     winners.add(candidate);

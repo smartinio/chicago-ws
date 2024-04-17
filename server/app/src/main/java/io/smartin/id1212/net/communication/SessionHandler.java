@@ -15,7 +15,7 @@ import java.util.Map;
 import static io.smartin.id1212.net.dto.Message.MessageType.*;
 
 public class SessionHandler {
-    private final Map<String,Session> sessions = new HashMap<>();
+    private final Map<String, Session> sessions = new HashMap<>();
     private final static SessionHandler ourInstance = new SessionHandler();
 
     public static SessionHandler getInstance() {

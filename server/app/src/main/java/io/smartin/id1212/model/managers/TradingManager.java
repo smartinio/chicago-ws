@@ -23,7 +23,7 @@ public class TradingManager {
     public void throwCards(Player player, Set<PlayingCard> cards) {
         synchronized (round) {
             if (cards.size() > 0) {
-                CardDeck deck = round.getDeck();
+                var deck = round.getDeck();
                 player.removeCards(cards);
                 deck.addCards(cards);
                 currentCycle().addPlayerThrow(player, cards);
@@ -34,13 +34,13 @@ public class TradingManager {
     }
 
     public void drawCards(Player player, Set<PlayingCard> cards) throws OutOfCardsException {
-        CardDeck deck = round.getDeck();
+        var deck = round.getDeck();
         player.giveCards(deck.draw(cards.size()));
     }
 
     public List<BestHandResult> completeTrade() {
         List<BestHandResult> result = new ArrayList<>();
-        List<Player> tradeEligiblePlayers = round.getGame().getTradeEligiblePlayers();
+        var tradeEligiblePlayers = round.getGame().getTradeEligiblePlayers();
 
         if (currentCycle().isFinished(tradeEligiblePlayers)) {
             var previewResult = round.getGame().getScoreManager().previewBestHandResults();

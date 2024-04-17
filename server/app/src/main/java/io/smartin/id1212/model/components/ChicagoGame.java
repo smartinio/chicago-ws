@@ -9,7 +9,6 @@ import io.smartin.id1212.exceptions.key.AlreadyStartedException;
 import io.smartin.id1212.model.components.Round.RoundMoveResult;
 import io.smartin.id1212.model.managers.ScoreManager;
 import io.smartin.id1212.model.store.GamesRepository;
-import io.smartin.id1212.net.communication.SessionHandler;
 import io.smartin.id1212.net.dto.Snapshot;
 import io.smartin.id1212.net.dto.GameCreation.GameRules;
 
@@ -220,11 +219,6 @@ public class ChicagoGame {
         }
     }
 
-    // Only use for server driven updates
-    private void broadcastSnapshotsAsync() {
-        SessionHandler.getInstance().broadcastSnapshots(this);
-    }
-
     private void finishRound(Player chicagoTaker, Move winningMove) {
         currentRound.setWinner(winningMove.getPlayer());
 
@@ -345,10 +339,6 @@ public class ChicagoGame {
 
     public List<Player> getPlayers() {
         return players;
-    }
-
-    public Player getHost() {
-        return host;
     }
 
     public Player getDealer() {

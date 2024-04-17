@@ -49,8 +49,4 @@ public class CardDeck {
             return cards;
         }
     }
-
-    public int size() {
-        return shuffledCards.size();
-    }
 }

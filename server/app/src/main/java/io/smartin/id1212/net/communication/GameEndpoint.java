@@ -52,7 +52,7 @@ public class GameEndpoint {
     }
 
     private boolean requiresSnapshot(Action action) {
-        return switch (action.getType()) {
+        return switch (action.type()) {
             case PING, CHECK_GAME -> false;
             default -> true;
         };
