@@ -1,4 +1,4 @@
-lockfileVersion: '6.0'
+lockfileVersion: '9.0'
 
 settings:
   autoInstallPeers: true
@@ -22,10 +22,10 @@ importers:
         version: 3.4.23(typescript@5.4.5)
       vue-router:
         specifier: ^4.3.0
-        version: 4.3.0(vue@3.4.23)
+        version: 4.3.1(vue@3.4.23(typescript@5.4.5))
       vuex:
         specifier: ^4.1.0
-        version: 4.1.0(vue@3.4.23)
+        version: 4.1.0(vue@3.4.23(typescript@5.4.5))
     devDependencies:
       '@types/canvas-confetti':
         specifier: ^1.6.4
@@ -35,7 +35,7 @@ importers:
         version: 3.5.2
       '@vitejs/plugin-vue':
         specifier: ^5.0.0
-        version: 5.0.4(vite@5.2.9)(vue@3.4.23)
+        version: 5.0.4(vite@5.2.9(sass@1.75.0))(vue@3.4.23(typescript@5.4.5))
       sass:
         specifier: ^1.71.1
         version: 1.75.0
@@ -564,8 +564,8 @@ packages:
       terser:
         optional: true
 
-  vue-router@4.3.0:
-    resolution: {integrity: sha512-dqUcs8tUeG+ssgWhcPbjHvazML16Oga5w34uCUmsk7i0BcnskoLGwjpa15fqMr2Fa5JgVBrdL2MEgqz6XZ/6IQ==}
+  vue-router@4.3.1:
+    resolution: {integrity: sha512-D0h3oyP6vp28BOvxv2hVpiqFTjTJizCf1BuMmCibc8UW0Ll/N80SWqDd/hqPMaZfzW1j+s2s+aTRyBIP9ElzOw==}
     peerDependencies:
       vue: ^3.2.0
 
@@ -739,7 +739,7 @@ snapshots:
 
   '@types/estree@1.0.5': {}
 
-  '@vitejs/plugin-vue@5.0.4(vite@5.2.9)(vue@3.4.23)':
+  '@vitejs/plugin-vue@5.0.4(vite@5.2.9(sass@1.75.0))(vue@3.4.23(typescript@5.4.5))':
     dependencies:
       vite: 5.2.9(sass@1.75.0)
       vue: 3.4.23(typescript@5.4.5)
@@ -812,8 +812,9 @@ snapshots:
       computeds: 0.0.1
       minimatch: 9.0.4
       path-browserify: 1.0.1
-      typescript: 5.4.5
       vue-template-compiler: 2.7.16
+    optionalDependencies:
+      typescript: 5.4.5
 
   '@vue/reactivity@3.4.23':
     dependencies:
@@ -830,7 +831,7 @@ snapshots:
       '@vue/shared': 3.4.23
       csstype: 3.1.3
 
-  '@vue/server-renderer@3.4.23(vue@3.4.23)':
+  '@vue/server-renderer@3.4.23(vue@3.4.23(typescript@5.4.5))':
     dependencies:
       '@vue/compiler-ssr': 3.4.23
       '@vue/shared': 3.4.23
@@ -1023,11 +1024,11 @@ snapshots:
       esbuild: 0.20.2
       postcss: 8.4.38
       rollup: 4.14.3
-      sass: 1.75.0
     optionalDependencies:
       fsevents: 2.3.3
+      sass: 1.75.0
 
-  vue-router@4.3.0(vue@3.4.23):
+  vue-router@4.3.1(vue@3.4.23(typescript@5.4.5)):
     dependencies:
       '@vue/devtools-api': 6.6.1
       vue: 3.4.23(typescript@5.4.5)
@@ -1049,11 +1050,12 @@ snapshots:
       '@vue/compiler-dom': 3.4.23
       '@vue/compiler-sfc': 3.4.23
       '@vue/runtime-dom': 3.4.23
-      '@vue/server-renderer': 3.4.23(vue@3.4.23)
+      '@vue/server-renderer': 3.4.23(vue@3.4.23(typescript@5.4.5))
       '@vue/shared': 3.4.23
+    optionalDependencies:
       typescript: 5.4.5
 
-  vuex@4.1.0(vue@3.4.23):
+  vuex@4.1.0(vue@3.4.23(typescript@5.4.5)):
     dependencies:
       '@vue/devtools-api': 6.5.0
       vue: 3.4.23(typescript@5.4.5)
