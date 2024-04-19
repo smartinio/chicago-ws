@@ -1,7 +1,6 @@
 package io.smartin.id1212.model.components;
 
 import com.google.gson.annotations.Expose;
-
 import io.smartin.id1212.config.Rules;
 import io.smartin.id1212.exceptions.GameException;
 import io.smartin.id1212.exceptions.game.*;
@@ -9,17 +8,20 @@ import io.smartin.id1212.exceptions.key.AlreadyStartedException;
 import io.smartin.id1212.model.components.Round.RoundMoveResult;
 import io.smartin.id1212.model.managers.ScoreManager;
 import io.smartin.id1212.model.store.GamesRepository;
-import io.smartin.id1212.net.dto.Snapshot;
 import io.smartin.id1212.net.dto.GameCreation.GameRules;
-
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
+import io.smartin.id1212.net.dto.Snapshot;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static io.smartin.id1212.config.Rules.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import static io.smartin.id1212.config.Rules.HAND_SCORES;
+import static io.smartin.id1212.config.Rules.MAX_GAME_IDLE_TIME_SECONDS;
 import static io.smartin.id1212.config.Strings.*;
 
 public class ChicagoGame {
@@ -134,12 +136,6 @@ public class ChicagoGame {
         started = true;
     }
 
-    private <T> void logSet(String title, Set<T> set) {
-        logger.info(title);
-        set.forEach(logger::info);
-        logger.info("-------------------------------");
-    }
-
     public void throwCards(Player player, Set<PlayingCard> cards, boolean isOneOpen)
             throws TradeBannedException, WaitYourTurnException, OutOfCardsException, InappropriateActionException,
             TooManyCardsException, UnauthorizedTradeException {
@@ -153,7 +149,6 @@ public class ChicagoGame {
 
         if (!player.getHand().getCards().containsAll(cards)) {
             logger.warn("Received erroneous trade from player '{}'", player);
-            logSet("Invalid trade", cards);
             throw new UnauthorizedTradeException(UNAUTHORIZED_TRADE);
         }
 

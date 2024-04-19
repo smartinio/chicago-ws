@@ -1,7 +1,5 @@
 package io.smartin.id1212.testutils;
 
-import io.smartin.id1212.net.communication.GameEndpoint;
-
 import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;

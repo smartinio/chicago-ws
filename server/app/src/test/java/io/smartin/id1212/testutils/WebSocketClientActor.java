@@ -17,10 +17,11 @@ public class WebSocketClientActor extends UntypedAbstractActor {
 
     /** Creates the web socket client as an actor.*/
     public WebSocketClientActor(ActorRef actor) throws URISyntaxException, IOException, DeploymentException {
-        this.senderRef = actor;
+        var webSocketURI = new URI("ws://localhost:8080/game");
 
-        this.webSocketClientEndpoint =
-                new WebSocketClientEndpoint(new URI(getWebSocketURI()));
+        this.webSocketClientEndpoint = new WebSocketClientEndpoint(webSocketURI);
+
+        this.senderRef = actor;
 
         this.webSocketClientEndpoint.setOnMessageHandler(
                 message -> this.senderRef.tell( message, getSelf() )
@@ -35,9 +36,5 @@ public class WebSocketClientActor extends UntypedAbstractActor {
     public void onReceive(Object message) throws IOException {
         this.senderRef = getSender();
         this.webSocketClientEndpoint.sendMessage( (String) message );
-    }
-
-    private static String getWebSocketURI() {
-        return "ws://localhost:8080/game";
     }
 }

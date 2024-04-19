@@ -19,6 +19,10 @@ tasks:
     cmd: ./gradlew stage -t
     interactive: true
 
+  server.test:
+    dir: server
+    cmd: ./gradlew test --rerun
+
   # health checks:
 
   server.war.exists:

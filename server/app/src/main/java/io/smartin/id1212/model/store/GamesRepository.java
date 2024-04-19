@@ -34,8 +34,8 @@ public class GamesRepository {
 
     public void createGame(Player player, GameRules rules) {
         var random = new Random();
-        var alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz".toCharArray();
-        var invitationKey = NanoIdUtils.randomNanoId(random, alphabet, 10);
+        var alphabet = "123456789abcdefghijkmnopqrstuvwxyz".toCharArray();
+        var invitationKey = NanoIdUtils.randomNanoId(random, alphabet, 8);
         var game = new ChicagoGame(invitationKey, player, rules);
         player.setGame(game);
         addGame(invitationKey, game);

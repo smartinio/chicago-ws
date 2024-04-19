@@ -31,7 +31,7 @@ public class SessionHandler {
 
     public void broadcastSnapshots(ChicagoGame game) {
         if (game == null) {
-            System.out.println("game is null, skipping snapshot");
+            log("game is null, skipping snapshot");
             return;
         }
 
@@ -41,15 +41,15 @@ public class SessionHandler {
             var msg = new Message(SNAPSHOT, Converter.toJson(game.snapshot(player)));
             var sessionId = player.getSessionId();
             var session = sessions.get(sessionId);
-            System.out.println("Attempting message to player ID: " + sessionId);
-            System.out.println("Exists in sessions: " + sessions.containsKey(sessionId));
+            log("Attempting message to player ID: " + sessionId);
+            log("Exists in sessions: " + sessions.containsKey(sessionId));
             sendMsg(session, msg);
         }
     }
 
     void register(Session session) {
         sessions.put(session.getId(), session);
-        System.out.println(sessions.size() + " clients connected");
+        log(sessions.size() + " clients connected");
     }
 
     void unregister(Session session) {
@@ -58,7 +58,7 @@ public class SessionHandler {
 
     public void kill(String sessionId) {
         sessions.remove(sessionId);
-        System.out.println(sessions.size() + " clients connected");
+        log(sessions.size() + " clients connected");
     }
 
     public void sendMsgToSessionId(String sessionId, Message message) {
@@ -77,8 +77,8 @@ public class SessionHandler {
         try {
             session.getBasicRemote().sendText(Converter.toJson(msg));
         } catch (IOException e) {
-            System.out.println("Failed to send text with basic remote, falling back to async:");
-            System.out.println("->" + e.getMessage());
+            log("Failed to send text with basic remote, falling back to async:");
+            log("->" + e.getMessage());
             session.getAsyncRemote().sendText(Converter.toJson(msg));
         }
     }

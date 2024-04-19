@@ -4,37 +4,31 @@ import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.testkit.javadsl.TestKit;
-
-import io.smartin.id1212.model.components.*;
+import io.smartin.id1212.model.components.Hand;
+import io.smartin.id1212.model.components.Player;
+import io.smartin.id1212.model.components.PlayingCard;
+import io.smartin.id1212.model.components.Round;
 import io.smartin.id1212.net.dto.*;
 import io.smartin.id1212.net.services.Converter;
-
+import io.smartin.id1212.testutils.WebSocketClientActor;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.tomcat.websocket.server.WsSci;
-
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
-import io.smartin.id1212.testutils.WebSocketClientActor;
-
-import javax.websocket.Session;
 import java.io.File;
-import java.io.Serial;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
-import java.util.function.Predicate;
-import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 import static io.smartin.id1212.net.dto.Action.ActionType.*;
 import static io.smartin.id1212.net.dto.Message.MessageType.PONG;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GameEndpointTest {
     private static ActorSystem actorSystem;
@@ -237,7 +231,7 @@ public class GameEndpointTest {
                 var startingMove = currentTrick.getStartingMove();
                 var startingSuit = startingMove != null ? startingMove.getCard().getSuit() : null;
 
-                PlayingCard card = null;
+                PlayingCard card;
 
                 if (startingSuit == null) {
                     card = currentActor.snapshot.myHand
@@ -294,10 +288,6 @@ public class GameEndpointTest {
 
     private static List<PlayingCard> nOfKind(List<PlayingCard> cards, int n) {
         return cards.stream().filter(c -> cards.stream().filter(c2 -> c2.getValue() == c.getValue()).count() == n).toList();
-    }
-
-    private static List<PlayingCard> nOfSuit(List<PlayingCard> cards, int n) {
-        return cards.stream().filter(c -> cards.stream().filter(c2 -> c2.getSuit() == c.getSuit()).count() == n).toList();
     }
 
     private static Actor getCurrentActor(Actor[] actors) {
