@@ -22,7 +22,7 @@ importers:
         version: 3.4.23(typescript@5.4.5)
       vue-router:
         specifier: ^4.3.0
-        version: 4.3.1(vue@3.4.23(typescript@5.4.5))
+        version: 4.3.2(vue@3.4.23(typescript@5.4.5))
       vuex:
         specifier: ^4.1.0
         version: 4.1.0(vue@3.4.23(typescript@5.4.5))
@@ -564,8 +564,8 @@ packages:
       terser:
         optional: true
 
-  vue-router@4.3.1:
-    resolution: {integrity: sha512-D0h3oyP6vp28BOvxv2hVpiqFTjTJizCf1BuMmCibc8UW0Ll/N80SWqDd/hqPMaZfzW1j+s2s+aTRyBIP9ElzOw==}
+  vue-router@4.3.2:
+    resolution: {integrity: sha512-hKQJ1vDAZ5LVkKEnHhmm1f9pMiWIBNGF5AwU67PdH7TyXCj/a4hTccuUuYCAMgJK6rO/NVYtQIEN3yL8CECa7Q==}
     peerDependencies:
       vue: ^3.2.0
 
@@ -1028,7 +1028,7 @@ snapshots:
       fsevents: 2.3.3
       sass: 1.75.0
 
-  vue-router@4.3.1(vue@3.4.23(typescript@5.4.5)):
+  vue-router@4.3.2(vue@3.4.23(typescript@5.4.5)):
     dependencies:
       '@vue/devtools-api': 6.6.1
       vue: 3.4.23(typescript@5.4.5)
