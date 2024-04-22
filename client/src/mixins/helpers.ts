@@ -1,15 +1,6 @@
 import EmojiConvertor from 'emoji-js'
 
-type Card = {
-  value: string
-  shortValue: string
-  suit: 'CLUBS' | 'HEARTS' | 'DIAMONDS' | 'SPADES'
-}
-
-type Player = {
-  id: string
-  name: string
-}
+import { PlayingCard, Player } from '@/server-types'
 
 const suits = {
   CLUBS: '♣️',
@@ -18,14 +9,14 @@ const suits = {
   SPADES: '♠️'
 }
 
-const isRed = (card: Card) => ['HEARTS', 'DIAMONDS'].includes(card.suit)
+const isRed = (card: PlayingCard) => ['HEARTS', 'DIAMONDS'].includes(card.suit)
 
 const capitalize = (word: string) => {
   const [first, ...rest] = word.split('')
   return first.toUpperCase() + rest.join('').toLowerCase()
 }
 
-const niceCard = (card: Card) => {
+const niceCard = (card: PlayingCard) => {
   const color = isRed(card) ? ' style="color:red"' : ''
   return `<b${color}>${suits[card.suit]} ${card.shortValue}</b>`
 }
@@ -41,7 +32,7 @@ const withEmojis = (callback: (...args: any[]) => string | undefined) => (...arg
 
 export default {
   methods: {
-    getCardUrl (card: Card) {
+    getCardUrl (card: Pick<PlayingCard, 'suit' | 'value'>) {
       return `cards/${card.value}_${card.suit}.svg`
     },
     getAvatarUrl (player: Player) {

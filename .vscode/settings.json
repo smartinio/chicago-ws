@@ -9,5 +9,6 @@
     "https://taskfile.dev/schema.json": [
       "**/taskfile.yml",
     ]
-  }
+  },
+  "typescript.tsdk": "./client/node_modules/typescript/lib"
 }

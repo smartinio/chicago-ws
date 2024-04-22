@@ -105,4 +105,4 @@ const actions = {
   }
 }
 
-export default { state, actions, mutations }
+export const socket = { state, actions, mutations }

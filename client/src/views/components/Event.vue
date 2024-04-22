@@ -26,13 +26,12 @@ const props = defineProps<{
 
 <script lang="ts">
 import helpers from '@/mixins/helpers'
+import { GameEvent } from '@/server-types'
 import { format } from 'date-fns'
-
-type Event = any
 
 const { withEmojis, capitalize, niceCard } = helpers.methods
 
-const points = (event: Event) => {
+const points = (event: GameEvent) => {
   const numerus = event.points === 1 ? 'point' : 'points'
   return `${event.points} ${numerus}`
 }
@@ -46,7 +45,7 @@ const sanitize = (string: string) => {
 
 export default {
   methods: {
-    formatServerEvent: withEmojis((event: Event) => {
+    formatServerEvent: withEmojis((event: GameEvent) => {
       switch (event.action) {
         case 'NEW_ROUND':
           return '✨ A new round begins ✨'
@@ -54,7 +53,7 @@ export default {
           return '👀'
       }
     }),
-    formatPlayerEvent: withEmojis((event: Event, rules: any) => {
+    formatPlayerEvent: withEmojis((event: GameEvent, rules: any) => {
       switch (event.action) {
         case 'CHAT_MESSAGE':
           const message = sanitize(event.message)

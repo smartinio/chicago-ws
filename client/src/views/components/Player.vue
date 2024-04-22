@@ -47,10 +47,11 @@ import PlayerStatus from '@/views/components/PlayerStatus.vue'
 import { SEND_ACTION } from '@/store/modules/socket/action_types'
 import { KICK_PLAYER } from '@/dto/action/types'
 import Action from '@/dto/action/Action'
+import { Player, PlayingCard } from '@/server-types'
 
 export default {
   name: 'Player',
-  props: ['player', 'baseMove', 'currentPlayer', 'dealer', 'chicagoTaker', 'roundWinner', 'fallbackName', 'variant', 'isMe', 'currentTrick'],
+  props: ['player', 'currentPlayer', 'dealer', 'chicagoTaker', 'roundWinner', 'fallbackName', 'variant', 'isMe'],
   setup() {
     const avatarRef = ref<HTMLImageElement>()
     const wintervalRef = ref<number>()
@@ -61,6 +62,19 @@ export default {
     PlayerStatus
   },
   computed: {
+    game() {
+      return this.$store.state.game
+    },
+    baseMove() {
+      if (!this.currentTrick) return
+      return this.currentTrick.moves &&
+        this.currentTrick.moves.length > 0 &&
+        this.currentTrick.moves[0]
+    },
+    currentTrick() {
+      const { tricks } = this.game.round
+      return tricks.length > 0 ? tricks[tricks.length - 1] : null
+    },
     isRoundWinner() {
       return this.roundWinner && this.player.id === this.roundWinner.id;
     },
@@ -73,12 +87,12 @@ export default {
     }
   },
   watch: {
-    isRoundWinner(is) {
+    isRoundWinner(is: boolean) {
       if (is) {
         this.celebratePlayer()
       }
     },
-    player(is, was) {
+    player(is: Player, was: Player) {
       if (is.winner && !was.winner) {
         const offset = Math.ceil(Math.random() * 30) - 15
 
@@ -100,25 +114,25 @@ export default {
         confetti({ origin: { x, y }, startVelocity: 20, ticks: 75 })
       }
     },
-    kickPlayer(player) {
+    kickPlayer(player: Player) {
       const actionDTO = new Action(KICK_PLAYER, player.id)
       this.$store.dispatch(SEND_ACTION, actionDTO)
     },
-    isOldNews(card: any, idx: number) {
+    isOldNews(card: PlayingCard, idx: number) {
       if (!this.currentTrick?.moves.length) {
         return idx < this.player.hand.played.length - 1;
       }
 
       return !this.currentTrick.moves.some(m => this.isCard(card, m.card))
     },
-    isCard(cardA, cardB) {
+    isCard(cardA: PlayingCard, cardB: PlayingCard) {
       return cardA.suit === cardB.suit && cardA.value === cardB.value
     },
-    isBaseCard(card) {
+    isBaseCard(card: PlayingCard) {
       if (!this.baseMove) return false
       return this.isCard(card, this.baseMove.card)
     },
-    isChicagoTaker(player) {
+    isChicagoTaker(player: Player) {
       return this.chicagoTaker && player.id === this.chicagoTaker.id
     },
   }

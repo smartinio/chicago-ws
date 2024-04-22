@@ -19,6 +19,12 @@ tasks:
     cmd: ./gradlew stage -t
     interactive: true
 
+  server.generate.ts:
+    dir: server
+    cmd: |
+      ./gradlew generateTypescript
+      mv ../client/src/server-types.d.ts ../client/src/server-types.ts
+
   server.test:
     dir: server
     cmd: ./gradlew test --rerun

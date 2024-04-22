@@ -10,6 +10,15 @@ plugins {
     id 'com.adarshr.test-logger' version '4.0.0'
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
+    id 'cz.habarta.typescript-generator' version '3.2.1263'
+}
+
+generateTypeScript {
+    jsonLibrary = 'gson'
+    classes = ['io.smartin.id1212.net.dto.Snapshot']
+    outputKind = 'module'
+    outputFile = file('../../client/src/server-types.d.ts')
+    includePropertyAnnotations = ['com.google.gson.annotations.Expose']
 }
 
 java {

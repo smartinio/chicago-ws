@@ -19,25 +19,21 @@
               variant="large"
               fallbackName="You"
               :player="controlPlayer"
-              :baseMove="baseMove"
               :currentPlayer="currentPlayer"
               :dealer="dealer"
               :chicagoTaker="chicagoTaker"
               :roundWinner="roundWinner"
-              :currentTrick="currentTrick"
             />
             <Controls :game="game" :me="me" :controlPlayer="controlPlayer" :currentPlayer="currentPlayer" :dealer="dealer"
-              :baseMove="baseMove" :markedCards="markedCards" @action="unmarkAll" />
+               :markedCards="markedCards" @action="unmarkAll" />
           </div>
           <Players
             v-if="otherPlayers"
             :players="otherPlayers"
-            :baseMove="baseMove"
             :currentPlayer="currentPlayer"
             :dealer="dealer"
             :chicagoTaker="chicagoTaker"
             :roundWinner="roundWinner"
-            :currentTrick="currentTrick"
           />
         </div>
         <div class="is-flex is-justify-content-flex-end" style="flex: 1">
@@ -55,9 +51,10 @@ import Players from '@/views/components/Players.vue'
 import MyHand from '@/views/components/MyHand.vue'
 import Chat from '@/views/components/Chat.vue'
 import Player from '@/views/components/Player.vue'
+import { GamePhase, PlayingCard } from '@/server-types'
 
-const isCard = (a) => (b) => a.suit === b.suit && a.value === b.value
-const isNotCard = (a) => (b) => !isCard(a)(b)
+const isCard = (a: PlayingCard) => (b: PlayingCard) => a.suit === b.suit && a.value === b.value
+const isNotCard = (a: PlayingCard) => (b: PlayingCard) => !isCard(a)(b)
 
 export default {
   name: 'Game',
@@ -66,14 +63,6 @@ export default {
       type: Boolean,
       required: true,
     },
-    game: {
-      type: Object,
-      required: true
-    },
-    me: {
-      type: Object,
-      required: true
-    }
   },
   watch: {
     ['game.round.phase'](phase) {
@@ -97,7 +86,7 @@ export default {
   data() {
     return {
       isChatHidden: false,
-      markedCards: []
+      markedCards: [] as PlayingCard[]
     }
   },
   methods: {
@@ -107,7 +96,7 @@ export default {
         window.location.href = '/'
       }, 0)
     },
-    toggleMark(card) {
+    toggleMark(card: PlayingCard) {
       if (this.isPhase(CHICAGO)) {
         this.unmarkAll()
         return
@@ -122,39 +111,33 @@ export default {
         this.mark(card)
       }
     },
-    unmark(card) {
+    unmark(card: PlayingCard) {
       this.markedCards = this.markedCards.filter(isNotCard(card))
     },
     unmarkAll() {
       this.markedCards = []
     },
-    mark(card) {
+    mark(card: PlayingCard) {
       if (!this.isMarked(card)) {
         this.markedCards.push(card)
       }
     },
-    markSingle(card) {
+    markSingle(card: PlayingCard) {
       this.markedCards = [card]
     },
-    isMarked(card) {
+    isMarked(card: PlayingCard) {
       return this.markedCards.some(isCard(card))
     },
-    isPhase(phase) {
+    isPhase(phase: GamePhase) {
       return this.game.round.phase === phase
     },
   },
   computed: {
-    baseMove() {
-      if (!this.currentTrick) return
-      return this.currentTrick.moves &&
-        this.currentTrick.moves.length > 0 &&
-        this.currentTrick.moves[0]
+    game() {
+      return this.$store.state.game
     },
-    currentTrick() {
-      const round = this.game.round
-      const tricks = round && round.tricks
-      if (!tricks) return
-      return tricks.length > 0 && tricks[tricks.length - 1]
+    me() {
+      return this.$store.state.me
     },
     chicagoTaker() {
       return this.game.round && this.game.round.chicagoTaker
@@ -175,7 +158,8 @@ export default {
       const everyone = [...this.game.players]
       const myIndex = everyone.findIndex(p => p.id === this.me.id)
       for (let i = 0; i < myIndex; i++) {
-        everyone.push(everyone.shift())
+        const player = everyone.shift()
+        player && everyone.push(player)
       }
       return everyone.slice(1)
     }

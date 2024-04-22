@@ -20,7 +20,7 @@
       </div>
       <div v-if="phase === 'TRADING' && canSeeOpenCard" class="is-flex is-flex-direction-column is-align-items-center">
         <div class="control-text" style="margin-bottom: 15px; margin-right: 0px; overflow: visible">
-          <img :src="getCardUrl(game.oneOpen.card)" style="maxWidth: 64px" class="open-card" />
+          <img :src="getCardUrl(game.oneOpen.card)" style="max-width: 64px" class="open-card" />
         </div>
         <div class="is-flex" v-if="canRespondToOpenCard">
           <button @click="respondToOneOpen(true)" class="control-button button is-success is-small is-rounded"
@@ -84,7 +84,7 @@
           </button>
           <img @mousedown="toggleMark(card)" class="playingCard" :class="getCardClass(card)" :src="getCardUrl(card)" :draggable="false" />
         </div>
-        <div v-for="invis in Array.from(Array(5 - me.hand.length))" class="is-flex is-flex-direction-column is-align-items-center">
+        <div v-for="_ in Array.from(Array(5 - me.hand.length))" class="is-flex is-flex-direction-column is-align-items-center">
           <img class="playingCard" style="opacity: 0" :src="getCardUrl({ suit: 'CLUBS', value: 'ACE' })" />
         </div>
       </div>
@@ -95,13 +95,20 @@
 import { MOVE, THROW, THROW_ONE_OPEN, RESPOND_ONE_OPEN, CHICAGO, RESPOND_RESET_OTHERS_SCORE } from '@/dto/action/types'
 import { SEND_ACTION } from '@/store/modules/socket/action_types'
 import Action from '@/dto/action/Action'
+import { PlayingCard } from '@/server-types'
 
-const isCard = (a) => (b) => a.suit === b.suit && a.value === b.value
+const isCard = (a: PlayingCard) => (b: PlayingCard) => a.suit === b.suit && a.value === b.value
 
 export default {
-  props: ['me', 'game', 'phase', 'markedCards'],
+  props: ['phase', 'markedCards'],
   name: 'MyHand',
   computed: {
+    me() {
+      return this.$store.state.me
+    },
+    game() {
+      return this.$store.state.game
+    },
     canReleaseCards() {
       return this.canSelectCards && this.me.isMyTurn
     },
@@ -130,27 +137,27 @@ export default {
     },
   },
   methods: {
-    toggleMark(card) {
+    toggleMark(card: PlayingCard) {
       if (!this.canSelectCards) return;
       this.$emit('toggleMark', card)
     },
-    isMarked(card) {
+    isMarked(card: PlayingCard) {
       return this.markedCards.some(isCard(card))
     },
-    getCardClass(card) {
+    getCardClass(card: PlayingCard) {
       return this.isMarked(card) ? 'markedCard' : ''
     },
-    getCardButtonClass(card) {
+    getCardButtonClass(card: PlayingCard) {
       return this.isMarked(card) ? 'markedCard' : 'invis'
     },
     getTradeButtonClass() {
       return this.markedCards.length ? 'markedCard' : 'invis'
     },
-    doAction(actionDTO) {
+    doAction(actionDTO: Action) {
       this.$store.dispatch(SEND_ACTION, actionDTO)
       this.$emit('action')
     },
-    play(card) {
+    play(card: PlayingCard) {
       if (!this.me.isMyTurn) return;
       this.doAction(new Action(MOVE, card));
     },

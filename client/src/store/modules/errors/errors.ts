@@ -32,4 +32,4 @@ const actions = {
   }
 }
 
-export default { state, mutations, actions }
+export const errors = { state, mutations, actions }

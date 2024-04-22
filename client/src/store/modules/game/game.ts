@@ -3,6 +3,7 @@ import { HANDLE_SNAPSHOT, HANDLE_CURRENTLY_IN_GAME } from './action_types'
 import { SET_MY_TURN, SET_MY_HAND, SET_MY_PLAYER, SET_IM_DEALING } from './../me/mutation_types'
 import router from '@/router'
 import { DISCONNECTED } from '../socket/action_types'
+import { GameEvent, GamePhase, Player, Suit, Trick, Value } from '@/server-types'
 
 const state = {
   currentlyInGame: undefined as boolean | undefined,
@@ -19,17 +20,19 @@ const state = {
   oneOpen: {
     player: {
       id: '',
+      name: '',
     },
     isOpen: false,
     card: {
-      suit: '',
-      value: '',
+      suit: '' as Suit,
+      value: '' as Value,
       shortValue: '',
     }
   },
   resetOthersScore: {
     player: {
       id: '',
+      name: '',
     },
     isPending: false,
     points: 0,
@@ -41,16 +44,16 @@ const state = {
     id: ''
   },
   invKey: '',
-  players: [] as any[],
-  events: [] as any[],
+  players: [] as Player[],
+  events: [] as GameEvent[],
   started: false,
   hasWinners: false,
   round: {
-    currentPlayer: '',
-    chicagoTaker: '',
-    winner: '',
-    phase: '',
-    tricks: [] as any[],
+    currentPlayer: null as Player | null,
+    chicagoTaker: null as Player | null,
+    winner: null as Player | null,
+    phase: 'BEFORE' as GamePhase,
+    tricks: [] as Trick[],
     isFinalTrade: false,
   }
 }
@@ -130,4 +133,9 @@ const actions = {
   }
 }
 
-export default { state, mutations, actions }
+
+export const game = {
+  state,
+  mutations,
+  actions,
+};

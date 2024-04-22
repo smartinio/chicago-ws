@@ -32,4 +32,4 @@ const mutations = {
   }
 }
 
-export default { state, mutations }
+export const me = { state, mutations }

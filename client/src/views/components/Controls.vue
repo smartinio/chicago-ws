@@ -32,10 +32,11 @@ import Action from '@/dto/action/Action'
 import { SEND_ACTION } from '@/store/modules/socket/action_types'
 import * as phaseTypes from '@/store/modules/game/phase_types'
 import PlayerStatus from '@/views/components/PlayerStatus.vue'
+import { GamePhase } from '@/server-types'
 const yourTurn = new Audio('audio/yourturn.ogg');
 
 export default {
-  props: ['game', 'me', 'dealer', 'controlPlayer', 'markedCards', 'currentPlayer', 'baseMove'],
+  props: ['dealer', 'controlPlayer', 'markedCards', 'currentPlayer'],
   name: 'Controls',
   components: {
     PlayerStatus,
@@ -78,21 +79,26 @@ export default {
     restartGame() {
       this.doAction(new Action(RESTART_GAME))
     },
-    doAction(actionDTO) {
+    doAction(actionDTO: Action) {
       this.$store.dispatch(SEND_ACTION, actionDTO)
       this.$emit('action')
     },
-    isPhase(phase) {
+    isPhase(phase: GamePhase) {
       return this.game.round.phase === phase
     },
     async copyLink() {
-      this.tmpKey = this.game.invKey
       await navigator.clipboard.writeText(window.location.href)
       this.copiedKey = true
       this.inviteText = 'Link copied to clipboard!'
     },
   },
   computed: {
+    game() {
+      return this.$store.state.game
+    },
+    me() {
+      return this.$store.state.me
+    },
     canDeal() {
       return this.me.imDealing && !this.isMidGame && !this.isPendingReset
     },

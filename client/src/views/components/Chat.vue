@@ -44,10 +44,11 @@
 import ConnectionStatus from './ConnectionStatus.vue'
 import ChatSender from './ChatSender.vue'
 import EventLog from './EventLog.vue'
+import { game } from '@/store/modules/game/game'
 
 export default {
   name: 'Chat',
-  props: ['game', 'connected'],
+  props: ['connected'],
   data() {
     return {
       showRules: true,
@@ -61,6 +62,9 @@ export default {
     }
   },
   computed: {
+    game() {
+      return this.$store.state.game
+    },
     numTrades() {
       return this.game.rules.numTrades
     },

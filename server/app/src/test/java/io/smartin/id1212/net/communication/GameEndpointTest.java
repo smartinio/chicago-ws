@@ -42,7 +42,6 @@ public class GameEndpointTest {
 
         // Create a standard context and set the WebSocket initializer
         var path = new File("").getAbsolutePath();
-        System.out.println(path);
         StandardContext ctx = (StandardContext) tomcat.addWebapp("", path);
         ctx.addServletContainerInitializer(new WsSci(), null);
 

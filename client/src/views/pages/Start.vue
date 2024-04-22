@@ -298,7 +298,7 @@ export default defineComponent({
       return this.nickname.length > 0
     },
     hasKeySet() {
-      return this.invKey.length >= 10
+      return this.invKey.length >= 8
     },
     hasErrors() {
       return this.errors.invKey.length > 0 ||

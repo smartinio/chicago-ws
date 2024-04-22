@@ -35,7 +35,7 @@ export default {
       this.doAction(new Action(SEND_CHAT_MESSAGE, this.message))
       this.message = ''
     },
-    doAction(actionDTO) {
+    doAction(actionDTO: Action) {
       this.$store.dispatch(SEND_ACTION, actionDTO)
     },
   }

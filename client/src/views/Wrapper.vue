@@ -4,7 +4,7 @@
       @rejoin="rejoin" @leave="leave" :connected="socket.connected" :errors="errors" :urlKey="$route.params.key"
       :currentlyInGame="game.currentlyInGame" />
 
-    <Game v-else @rejoin="rejoin" @leave="leave" :connected="socket.connected" :me="me" :game="game" />
+    <Game v-else @rejoin="rejoin" @leave="leave" :connected="socket.connected" />
   </div>
 </template>
 <script>

@@ -16,14 +16,16 @@
 </template>
 
 <script lang="ts">
+import { Player } from '@/server-types';
+
 export default {
   name: 'PlayerStatus',
   props: ['player', 'currentPlayer', 'dealer', 'isMe'],
   methods: {
-    isCurrentPlayer(player) {
+    isCurrentPlayer(player: Player) {
       return this.currentPlayer && (this.currentPlayer.id === player.id)
     },
-    isDealer(player) {
+    isDealer(player: Player) {
       return this.dealer && (this.dealer.id === player.id)
     }
   }

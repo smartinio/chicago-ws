@@ -7,11 +7,9 @@
         :fallbackName="'Player ' + index + 1"
         :player="player"
         :currentPlayer="currentPlayer"
-        :baseMove="baseMove"
         :dealer="dealer"
         :chicagoTaker="chicagoTaker"
         :roundWinner="roundWinner"
-        :currentTrick="currentTrick"
       />
     </div>
   </div>
@@ -20,7 +18,7 @@
 import Player from '@/views/components/Player.vue'
 export default {
   name: 'Players',
-  props: ['players', 'baseMove', 'currentPlayer', 'dealer', 'chicagoTaker', 'roundWinner', 'currentTrick'],
+  props: ['players', 'currentPlayer', 'dealer', 'chicagoTaker', 'roundWinner'],
   components: {
     Player
   }
