@@ -1,20 +1,31 @@
 <template>
   <div>
-    <Start v-if="!game.invKey" @action="dispatchAction" @changeKey="clearKeyError" @changeNick="clearNickError"
-      @rejoin="rejoin" @leave="leave" :connected="socket.connected" :errors="errors" :urlKey="$route.params.key"
-      :currentlyInGame="game.currentlyInGame" />
+    <Start
+      v-if="!game.invKey"
+      @action="dispatchAction"
+      @changeKey="clearKeyError"
+      @changeNick="clearNickError"
+      @rejoin="rejoin"
+      @leave="leave"
+      :connected="socket.connected"
+      :errors="errors"
+      :urlKey="$route.params.key.toString()"
+      :currentlyInGame="game.currentlyInGame"
+    />
 
-    <Game v-else @rejoin="rejoin" @leave="leave" :connected="socket.connected" />
+    <Game
+      v-else
+      @rejoin="rejoin"
+      @leave="leave"
+      :connected="socket.connected"
+    />
   </div>
 </template>
-<script>
+<script lang="ts">
 import Start from './pages/Start.vue'
 import Game from './pages/Game.vue'
 import ConnectionStatus from './components/ConnectionStatus.vue'
-import RejoinRequest from '@/dto/rejoinrequest/RejoinRequest'
-import LeaveRequest from '@/dto/leaverequest/LeaveRequest'
 import Action from '@/dto/action/Action'
-import { RECONNECT, LEAVE_GAME } from '@/dto/action/types'
 import { SOCKET, GAME, ME, ERRORS } from '@/store/state_mappings'
 import { CONNECT, SEND_ACTION } from '@/store/modules/socket/action_types'
 import { SET_KEY_ERROR, SET_NICKNAME_ERROR } from '@/store/modules/errors/mutation_types'
@@ -41,7 +52,7 @@ export default {
     }
   },
   methods: {
-    dispatchAction(actionDTO) {
+    dispatchAction(actionDTO: Action) {
       this.$store.dispatch(SEND_ACTION, actionDTO)
     },
     clearKeyError() {
@@ -65,8 +76,8 @@ export default {
         return
       }
 
-      const request = new RejoinRequest(storedPlayerId, storedInvitationKey)
-      const actionDTO = new Action(RECONNECT, request)
+      const request = { playerId: storedPlayerId, key: storedInvitationKey }
+      const actionDTO = new Action('RECONNECT', request)
       this.dispatchAction(actionDTO)
     },
     leave() {
@@ -74,8 +85,8 @@ export default {
       const storedPlayerId = this.me.id || localStorage.getItem('playerId')
 
       if (storedInvitationKey && storedPlayerId) {
-        const request = new LeaveRequest(storedPlayerId, storedInvitationKey)
-        const actionDTO = new Action(LEAVE_GAME, request)
+        const request = { playerId: storedPlayerId, key: storedInvitationKey }
+        const actionDTO = new Action('LEAVE_GAME', request)
         this.dispatchAction(actionDTO)
       }
 

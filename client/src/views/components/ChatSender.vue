@@ -19,7 +19,6 @@
 
 <script lang="ts">
 import { SEND_ACTION } from '@/store/modules/socket/action_types'
-import { SEND_CHAT_MESSAGE } from '@/dto/action/types'
 import Action from '@/dto/action/Action'
 
 export default {
@@ -32,7 +31,7 @@ export default {
   methods: {
     sendChatMessage() {
       if (!this.message) return
-      this.doAction(new Action(SEND_CHAT_MESSAGE, this.message))
+      this.doAction(new Action('SEND_CHAT_MESSAGE', this.message))
       this.message = ''
     },
     doAction(actionDTO: Action) {

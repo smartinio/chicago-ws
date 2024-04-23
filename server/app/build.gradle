@@ -15,7 +15,15 @@ plugins {
 
 generateTypeScript {
     jsonLibrary = 'gson'
-    classes = ['io.smartin.id1212.net.dto.Snapshot']
+    classes = [
+        'io.smartin.id1212.net.dto.Action',
+        'io.smartin.id1212.net.dto.GameCreation',
+        'io.smartin.id1212.net.dto.JoinRequest',
+        'io.smartin.id1212.net.dto.LeaveRequest',
+        'io.smartin.id1212.net.dto.Message',
+        'io.smartin.id1212.net.dto.RejoinRequest',
+        'io.smartin.id1212.net.dto.Snapshot',
+    ]
     outputKind = 'module'
     outputFile = file('../../client/src/server-types.d.ts')
     includePropertyAnnotations = ['com.google.gson.annotations.Expose']

@@ -45,7 +45,6 @@ import { ref } from 'vue'
 
 import PlayerStatus from '@/views/components/PlayerStatus.vue'
 import { SEND_ACTION } from '@/store/modules/socket/action_types'
-import { KICK_PLAYER } from '@/dto/action/types'
 import Action from '@/dto/action/Action'
 import { Player, PlayingCard } from '@/server-types'
 
@@ -115,7 +114,7 @@ export default {
       }
     },
     kickPlayer(player: Player) {
-      const actionDTO = new Action(KICK_PLAYER, player.id)
+      const actionDTO = new Action('KICK_PLAYER', player.id)
       this.$store.dispatch(SEND_ACTION, actionDTO)
     },
     isOldNews(card: PlayingCard, idx: number) {

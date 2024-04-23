@@ -1,14 +1,11 @@
-import { PlayingCard } from "@/server-types"
-import GameCreation from "../gamecreation/GameCreation"
-import JoinRequest from "../joinrequest/JoinRequest"
-import RejoinRequest from "../rejoinrequest/RejoinRequest"
+import { ActionType, GameCreation, JoinRequest, PlayingCard, RejoinRequest } from "@/server-types"
 
-type Value = JoinRequest | RejoinRequest | GameCreation | PlayingCard | string | boolean
+type ActionValue = JoinRequest | RejoinRequest | GameCreation | PlayingCard | PlayingCard[] | string | boolean
 
 export default class Action {
   value: string
 
-  constructor (public type: string, value: Value | null = null) {
+  constructor (public type: ActionType, value: ActionValue | null = null) {
     if (typeof value !== 'string') {
       value = JSON.stringify(value)
     }

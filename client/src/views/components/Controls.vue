@@ -27,7 +27,6 @@
   </div>
 </template>
 <script lang="ts">
-import { START_GAME, DEAL_CARDS, RESTART_GAME } from '@/dto/action/types'
 import Action from '@/dto/action/Action'
 import { SEND_ACTION } from '@/store/modules/socket/action_types'
 import * as phaseTypes from '@/store/modules/game/phase_types'
@@ -71,13 +70,13 @@ export default {
   },
   methods: {
     startGame() {
-      this.doAction(new Action(START_GAME))
+      this.doAction(new Action('START_GAME'))
     },
     deal() {
-      this.doAction(new Action(DEAL_CARDS))
+      this.doAction(new Action('DEAL_CARDS'))
     },
     restartGame() {
-      this.doAction(new Action(RESTART_GAME))
+      this.doAction(new Action('RESTART_GAME'))
     },
     doAction(actionDTO: Action) {
       this.$store.dispatch(SEND_ACTION, actionDTO)

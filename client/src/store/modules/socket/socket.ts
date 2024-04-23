@@ -6,7 +6,6 @@ import { HANDLE_GAME_ERROR, HANDLE_JSON_ERROR, HANDLE_FATAL_ERROR } from './../e
 import { HANDLE_CURRENTLY_IN_GAME, HANDLE_SNAPSHOT } from './../game/action_types'
 import Message from '@/dto/message/Message'
 import Action from '@/dto/action/Action'
-import { PING } from '@/dto/action/types'
 
 const state = {
   connected: false,
@@ -46,7 +45,7 @@ const actions = {
     let keepalive: number
 
     socket.onopen = () => {
-      const ping = JSON.stringify(new Action(PING, 'pong'))
+      const ping = JSON.stringify(new Action('PING', 'pong'))
       keepalive = setInterval(() => socket.send(ping), 10000)
       commit(SET_STATUS_CONNECTED)
     }

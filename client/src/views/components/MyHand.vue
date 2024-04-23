@@ -92,15 +92,19 @@
   </div>
 </template>
 <script lang="ts">
-import { MOVE, THROW, THROW_ONE_OPEN, RESPOND_ONE_OPEN, CHICAGO, RESPOND_RESET_OTHERS_SCORE } from '@/dto/action/types'
 import { SEND_ACTION } from '@/store/modules/socket/action_types'
 import Action from '@/dto/action/Action'
-import { PlayingCard } from '@/server-types'
+import { GamePhase, PlayingCard } from '@/server-types'
+import { defineComponent } from 'vue'
+import { PropType } from 'vue'
 
 const isCard = (a: PlayingCard) => (b: PlayingCard) => a.suit === b.suit && a.value === b.value
 
-export default {
-  props: ['phase', 'markedCards'],
+export default defineComponent({
+  props: {
+    markedCards: { type: Array as PropType<PlayingCard[]>, required: true },
+    phase: { type: String as PropType<GamePhase>, required: true },
+  },
   name: 'MyHand',
   computed: {
     me() {
@@ -159,27 +163,27 @@ export default {
     },
     play(card: PlayingCard) {
       if (!this.me.isMyTurn) return;
-      this.doAction(new Action(MOVE, card));
+      this.doAction(new Action('MOVE', card));
     },
     trade() {
       if (!this.me.isMyTurn) return;
-      this.doAction(new Action(THROW, this.markedCards));
+      this.doAction(new Action('THROW', this.markedCards));
     },
     tradeOpenly() {
       if (!this.me.isMyTurn || this.markedCards.length !== 1) return;
-      this.doAction(new Action(THROW_ONE_OPEN, this.markedCards[0]));
+      this.doAction(new Action('THROW_ONE_OPEN', this.markedCards[0]));
     },
     respondToOneOpen(accepted: boolean) {
-      this.doAction(new Action(RESPOND_ONE_OPEN, accepted))
+      this.doAction(new Action('RESPOND_ONE_OPEN', accepted))
     },
     respondToResetOthersScore(accepted: boolean) {
-      this.doAction(new Action(RESPOND_RESET_OTHERS_SCORE, accepted))
+      this.doAction(new Action('RESPOND_RESET_OTHERS_SCORE', accepted))
     },
     respondToChicago(accepted: boolean) {
-      this.doAction(new Action(CHICAGO, accepted))
+      this.doAction(new Action('CHICAGO', accepted))
     },
   }
-}
+})
 </script>
 <style lang="scss" scoped>
 .control-button {

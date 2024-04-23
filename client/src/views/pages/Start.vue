@@ -178,13 +178,10 @@ const store = useStore()
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { JOIN_GAME, NEW_GAME, CHECK_GAME } from '@/dto/action/types'
 import { SEND_ACTION } from '@/store/modules/socket/action_types'
-import JoinRequest from '@/dto/joinrequest/JoinRequest'
-import GameCreation from '@/dto/gamecreation/GameCreation'
-import RejoinRequest from '@/dto/rejoinrequest/RejoinRequest'
 import Action from '@/dto/action/Action'
 import ConnectionStatus from '@/views/components/ConnectionStatus.vue'
+import { OneOpenMode } from '@/server-types'
 
 export default defineComponent({
   name: 'Start',
@@ -222,7 +219,7 @@ export default defineComponent({
         tradeBanScore: 45,
         winWithTwoScore: 10,
         numTrades: 2,
-        oneOpen: 'ALL',
+        oneOpen: 'ALL' as OneOpenMode,
       }
     }
   },
@@ -247,16 +244,16 @@ export default defineComponent({
     },
     createGame() {
       if (!this.hasNicknameSet) return
-      const gameCreation = new GameCreation(this.nickname, this.rules)
-      const actionDTO = new Action(NEW_GAME, gameCreation)
+      const gameCreation = { nickname: this.nickname, rules: this.rules }
+      const actionDTO = new Action('NEW_GAME', gameCreation)
       this.$emit('action', actionDTO)
       this.rememberNickname()
       this.rememberRules()
     },
     joinGame() {
       if (!this.fieldsAreValid) return
-      const request = new JoinRequest(this.nickname, this.invKey)
-      const actionDTO = new Action(JOIN_GAME, request)
+      const request =  { nickname: this.nickname, key: this.invKey }
+      const actionDTO = new Action('JOIN_GAME', request)
       this.$emit('action', actionDTO)
       this.rememberNickname()
     },
@@ -265,8 +262,8 @@ export default defineComponent({
       const storedPlayerId = localStorage.getItem('playerId')
 
       if (storedInvitationKey && storedPlayerId) {
-        const details = new RejoinRequest(storedPlayerId, storedInvitationKey)
-        const actionDTO = new Action(CHECK_GAME, details)
+        const details = { playerId: storedPlayerId, key: storedInvitationKey }
+        const actionDTO = new Action('CHECK_GAME', details)
         // @ts-ignore
         this.$store.dispatch(SEND_ACTION, actionDTO)
       } else {

@@ -1,6 +1,36 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 3.2.1263 on 2024-04-22 16:45:03.
+// Generated using typescript-generator version 3.2.1263 on 2024-04-23 17:55:28.
+
+export interface Action {
+    type: ActionType;
+    value: string;
+}
+
+export interface GameCreation {
+    nickname: string;
+    rules: GameRules;
+}
+
+export interface JoinRequest {
+    nickname: string;
+    key: string;
+}
+
+export interface LeaveRequest {
+    playerId: string;
+    key: string;
+}
+
+export interface Message {
+    type: MessageType;
+    body: string;
+}
+
+export interface RejoinRequest {
+    playerId: string;
+    key: string;
+}
 
 export interface Snapshot {
     me: Player;
@@ -10,6 +40,16 @@ export interface Snapshot {
     isOneOpenAvailable: boolean;
     myHand: PlayingCard[];
     myPlayed: PlayingCard[];
+}
+
+export interface GameRules {
+    chicagoBestHand: boolean;
+    chicagoBefore15: boolean;
+    numTrades: number;
+    tradeBanScore: number;
+    oneOpen: OneOpenMode;
+    roundWinScore: number;
+    winWithTwoScore: number;
 }
 
 export interface Player {
@@ -62,16 +102,6 @@ export interface ResetOthersScore {
     player: Player;
 }
 
-export interface GameRules {
-    chicagoBestHand: boolean;
-    chicagoBefore15: boolean;
-    numTrades: number;
-    tradeBanScore: number;
-    oneOpen: OneOpenMode;
-    roundWinScore: number;
-    winWithTwoScore: number;
-}
-
 export interface PlayingCard {
     suit: Suit;
     value: Value;
@@ -104,9 +134,13 @@ export interface Move {
     card: PlayingCard;
 }
 
-export type GamePhase = "BEFORE" | "TRADING" | "CHICAGO" | "PLAYING" | "AFTER";
+export type ActionType = "NEW_GAME" | "JOIN_GAME" | "MOVE" | "CHICAGO" | "THROW" | "THROW_ONE_OPEN" | "RESPOND_ONE_OPEN" | "START_GAME" | "LEAVE_GAME" | "RESTART_GAME" | "PING" | "DEAL_CARDS" | "SEND_CHAT_MESSAGE" | "KICK_PLAYER" | "RECONNECT" | "CHECK_GAME" | "RESPOND_RESET_OTHERS_SCORE";
+
+export type MessageType = "FATAL_ERROR" | "KICKED" | "JSON_ERROR" | "NICKNAME_ERROR" | "KEY_ERROR" | "GAME_ERROR" | "GAME_WINNER" | "SNAPSHOT" | "PONG" | "CURRENTLY_IN_GAME";
 
 export type OneOpenMode = "ALL" | "FINAL";
+
+export type GamePhase = "BEFORE" | "TRADING" | "CHICAGO" | "PLAYING" | "AFTER";
 
 export type Suit = "HEARTS" | "SPADES" | "DIAMONDS" | "CLUBS";
 

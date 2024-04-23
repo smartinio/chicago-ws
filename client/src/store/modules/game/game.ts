@@ -3,7 +3,7 @@ import { HANDLE_SNAPSHOT, HANDLE_CURRENTLY_IN_GAME } from './action_types'
 import { SET_MY_TURN, SET_MY_HAND, SET_MY_PLAYER, SET_IM_DEALING } from './../me/mutation_types'
 import router from '@/router'
 import { DISCONNECTED } from '../socket/action_types'
-import { GameEvent, GamePhase, Player, Suit, Trick, Value } from '@/server-types'
+import { GameEvent, GamePhase, Player, Snapshot, Suit, Trick, Value } from '@/server-types'
 
 const state = {
   currentlyInGame: undefined as boolean | undefined,
@@ -110,14 +110,14 @@ const mutations = {
 }
 
 const actions = {
-  [HANDLE_CURRENTLY_IN_GAME] ({ commit }: any, json: any) {
+  [HANDLE_CURRENTLY_IN_GAME] ({ commit }: any, json: string) {
     commit(SET_CURRENTLY_IN_GAME, JSON.parse(json))
   },
   [DISCONNECTED] ({ commit }: any) {
     commit(SET_STALE, true)
   },
-  [HANDLE_SNAPSHOT] ({ commit }: any, json: any) {
-    const snapshot = JSON.parse(json)
+  [HANDLE_SNAPSHOT] ({ commit }: any, json: string) {
+    const snapshot = JSON.parse(json) as Snapshot
 
     requestAnimationFrame(() => {
       localStorage.setItem('invitationKey', snapshot.game.invitationKey)
