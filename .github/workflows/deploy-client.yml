@@ -23,9 +23,10 @@ jobs:
       - name: Install 📦
         uses: pnpm/action-setup@v3
         with:
+          package_json_file: client/package.json
           run_install: |
-            - cwd: client
-            - args: [--frozen-lockfile]
+            cwd: client
+            args: [--frozen-lockfile]
 
       - name: Build 🔧
         run: |
