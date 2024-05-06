@@ -35,16 +35,16 @@ importers:
         version: 3.5.2
       '@vitejs/plugin-vue':
         specifier: ^5.0.0
-        version: 5.0.4(vite@5.2.11(sass@1.75.0))(vue@3.4.26(typescript@5.4.5))
+        version: 5.0.4(vite@5.2.11(sass@1.76.0))(vue@3.4.26(typescript@5.4.5))
       sass:
         specifier: ^1.71.1
-        version: 1.75.0
+        version: 1.76.0
       typescript:
         specifier: ^5.2.2
         version: 5.4.5
       vite:
         specifier: ^5.0.0
-        version: 5.2.11(sass@1.75.0)
+        version: 5.2.11(sass@1.76.0)
       vue-tsc:
         specifier: ^2.0.0
         version: 2.0.16(typescript@5.4.5)
@@ -494,8 +494,8 @@ packages:
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
     hasBin: true
 
-  sass@1.75.0:
-    resolution: {integrity: sha512-ShMYi3WkrDWxExyxSZPst4/okE9ts46xZmJDSawJQrnte7M1V9fScVB+uNXOVKRBt0PggHOwoZcn8mYX4trnBw==}
+  sass@1.76.0:
+    resolution: {integrity: sha512-nc3LeqvF2FNW5xGF1zxZifdW3ffIz5aBb7I7tSvOoNu7z1RQ6pFt9MBuiPtjgaI62YWrM/txjWlOCFiGtf2xpw==}
     engines: {node: '>=14.0.0'}
     hasBin: true
 
@@ -720,9 +720,9 @@ snapshots:
 
   '@types/estree@1.0.5': {}
 
-  '@vitejs/plugin-vue@5.0.4(vite@5.2.11(sass@1.75.0))(vue@3.4.26(typescript@5.4.5))':
+  '@vitejs/plugin-vue@5.0.4(vite@5.2.11(sass@1.76.0))(vue@3.4.26(typescript@5.4.5))':
     dependencies:
-      vite: 5.2.11(sass@1.75.0)
+      vite: 5.2.11(sass@1.76.0)
       vue: 3.4.26(typescript@5.4.5)
 
   '@volar/language-core@2.2.0':
@@ -965,7 +965,7 @@ snapshots:
       '@rollup/rollup-win32-x64-msvc': 4.17.2
       fsevents: 2.3.3
 
-  sass@1.75.0:
+  sass@1.76.0:
     dependencies:
       chokidar: 3.6.0
       immutable: 4.3.5
@@ -985,14 +985,14 @@ snapshots:
 
   typescript@5.4.5: {}
 
-  vite@5.2.11(sass@1.75.0):
+  vite@5.2.11(sass@1.76.0):
     dependencies:
       esbuild: 0.20.2
       postcss: 8.4.38
       rollup: 4.17.2
     optionalDependencies:
       fsevents: 2.3.3
-      sass: 1.75.0
+      sass: 1.76.0
 
   vue-router@4.3.2(vue@3.4.26(typescript@5.4.5)):
     dependencies:
