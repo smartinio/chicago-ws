@@ -53,7 +53,7 @@ dependencies {
     implementation 'org.junit.jupiter:junit-jupiter:5.11.0'
     implementation 'org.mockito:mockito-core:5.13.0'
 
-    testImplementation 'org.apache.tomcat.embed:tomcat-embed-core:9.0.94'
+    testImplementation 'org.apache.tomcat.embed:tomcat-embed-core:9.0.95'
     testImplementation 'org.apache.tomcat.embed:tomcat-embed-websocket:9.0.93'
     testImplementation 'org.apache.tomcat.embed:tomcat-embed-jasper:9.0.93'
 
