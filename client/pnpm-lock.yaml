@@ -16,7 +16,7 @@ importers:
         version: 3.6.0
       emoji-js:
         specifier: ^3.8.0
-        version: 3.8.0
+        version: 3.8.1
       vue:
         specifier: ^3.3.4
         version: 3.5.13(typescript@5.7.2)
@@ -489,8 +489,8 @@ packages:
   emoji-datasource@15.0.1:
     resolution: {integrity: sha512-aF5Q6LCKXzJzpG4K0ETiItuzz0xLYxNexR9qWw45/shuuEDWZkOIbeGHA23uopOSYA/LmeZIXIFsySCx+YKg2g==}
 
-  emoji-js@3.8.0:
-    resolution: {integrity: sha512-A5FNHKlRPRo6RJWrrdGWnoolIBMkVXHy4qkO0V5ahekQPjfVECxvOOWADeAF/SbzRVA9Sxdj24FCoRYGt06skA==}
+  emoji-js@3.8.1:
+    resolution: {integrity: sha512-yyXMnZLXgqQHAhEm2DKK4Nrca+jbLQfNOP2mLcNTS6XxzzbQLDFHAguPQrtJS4Udot0Pvomwmh1ckQzhrePhKw==}
 
   entities@4.5.0:
     resolution: {integrity: sha512-V0hjH4dGPh9Ao5p0MoRY6BVqtwCjhz6vI5LT8AJ55H+4g9/4vbHx1I54fS0XuclLhDHArPQCiMjDxjaL8fPxhw==}
@@ -983,7 +983,7 @@ snapshots:
 
   emoji-datasource@15.0.1: {}
 
-  emoji-js@3.8.0:
+  emoji-js@3.8.1:
     dependencies:
       emoji-datasource: 15.0.1
 
