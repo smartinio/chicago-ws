@@ -55,7 +55,7 @@ dependencies {
 
     testImplementation 'org.apache.tomcat.embed:tomcat-embed-core:9.0.106'
     testImplementation 'org.apache.tomcat.embed:tomcat-embed-websocket:9.0.105'
-    testImplementation 'org.apache.tomcat.embed:tomcat-embed-jasper:9.0.105'
+    testImplementation 'org.apache.tomcat.embed:tomcat-embed-jasper:9.0.106'
 
     testImplementation 'com.typesafe.akka:akka-testkit_3:2.9.0-M2'
     testImplementation 'com.typesafe.akka:akka-actor_3:2.9.0-M2'
