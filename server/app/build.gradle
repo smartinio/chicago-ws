@@ -43,7 +43,7 @@ dependencies {
     implementation 'org.apache.tomcat.embed:tomcat-embed-websocket:9.0.107'
     testImplementation 'org.testng:testng:7.11.0'
     testImplementation 'junit:junit:4.13.2'
-    compileOnly 'com.heroku:webapp-runner:9.0.106.0'
+    compileOnly 'com.heroku:webapp-runner:9.0.108.0'
     implementation 'com.aventrix.jnanoid:jnanoid:2.0.0'
     implementation 'com.google.code.gson:gson:2.13.2'
     implementation 'com.google.guava:guava:33.4.8-jre'
