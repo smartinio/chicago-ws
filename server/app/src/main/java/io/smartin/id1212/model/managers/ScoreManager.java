@@ -133,6 +133,11 @@ public class ScoreManager {
         return winners.iterator().next();
     }
 
+    public boolean someoneHasBestHand() {
+        var finalCandidates = getFinalCandidates();
+        return !finalCandidates.isEmpty();
+    }
+
     public boolean hasBestHand(Player chicagoTaker) {
         var finalCandidates = getFinalCandidates();
         var winners = getWinners(finalCandidates);

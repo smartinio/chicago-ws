@@ -300,7 +300,8 @@ public class ChicagoGame {
     public void finishChicagoCalledRound(Move winningMove, Player player) {
         var wonAllTricks = player.equals(winningMove.getPlayer());
         var hasBestHand = scoreManager.hasBestHand(player);
-        var success = rules.chicagoBestHand() ? wonAllTricks && hasBestHand : wonAllTricks;
+        var needsBestHand = rules.chicagoBestHand() && scoreManager.someoneHasBestHand();
+        var success = needsBestHand ? wonAllTricks && hasBestHand : wonAllTricks;
 
         if (success) {
             logEvent(GameEvent.wonChicago(player));
