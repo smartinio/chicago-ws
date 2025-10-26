@@ -32,6 +32,10 @@ public class GameEndpoint {
         logger = LogManager.getLogger("sessionId:" + session.getId());
         logger.info("onOpen. creating playerController");
         playerController = new PlayerController(session.getId());
+        // Disable the container-level idle and async send timeouts so Tomcat keeps
+        // long-lived matches connected.
+        session.setMaxIdleTimeout(0);
+        session.getAsyncRemote().setSendTimeout(0);
         sessionHandler.register(session);
     }
 
