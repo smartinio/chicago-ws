@@ -10,7 +10,7 @@ importers:
     dependencies:
       canvas-confetti:
         specifier: ^1.9.2
-        version: 1.9.3
+        version: 1.9.4
       date-fns:
         specifier: ^3.0.0
         version: 3.6.0
@@ -503,8 +503,8 @@ packages:
   buffer@5.7.1:
     resolution: {integrity: sha512-EHcyIPBQ4BSGlvjB16k5KgAJ27CIsHY/2JBmCRReo48y9rQ3MaUzWX3KVlBa4U7MyX02HdVj0K7C3WaB3ju7FQ==}
 
-  canvas-confetti@1.9.3:
-    resolution: {integrity: sha512-rFfTURMvmVEX1gyXFgn5QMn81bYk70qa0HLzcIOSVEyl57n6o9ItHeBtUSWdvKAPY0xlvBHno4/v3QPrT83q9g==}
+  canvas-confetti@1.9.4:
+    resolution: {integrity: sha512-yxQbJkAVrFXWNbTUjPqjF7G+g6pDotOUHGbkZq2NELZUMDpiJ85rIEazVb8GTaAptNW2miJAXbs1BtioA251Pw==}
 
   chokidar@4.0.3:
     resolution: {integrity: sha512-Qgzu8kfBvo+cA4962jnP1KkS6Dop5NS6g7R5LFYJr4b8Ub94PPQXUksCw9PvXoeXPRRddRNC5C1JQUR2SMGtnA==}
@@ -1091,7 +1091,7 @@ snapshots:
       base64-js: 1.5.1
       ieee754: 1.2.1
 
-  canvas-confetti@1.9.3: {}
+  canvas-confetti@1.9.4: {}
 
   chokidar@4.0.3:
     dependencies:
