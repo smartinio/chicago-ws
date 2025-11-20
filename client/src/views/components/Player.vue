@@ -114,8 +114,11 @@ export default {
       }
     },
     kickPlayer(player: Player) {
-      const actionDTO = new Action('KICK_PLAYER', player.id)
-      this.$store.dispatch(SEND_ACTION, actionDTO)
+      const playerName = player.name || this.fallbackName
+      if (confirm(`Are you sure you want to kick ${playerName} from the game?`)) {
+        const actionDTO = new Action('KICK_PLAYER', player.id)
+        this.$store.dispatch(SEND_ACTION, actionDTO)
+      }
     },
     isOldNews(card: PlayingCard, idx: number) {
       if (!this.currentTrick?.moves.length) {
