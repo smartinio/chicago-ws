@@ -41,7 +41,7 @@ repositories {
 
 dependencies {
     implementation 'org.apache.tomcat.embed:tomcat-embed-websocket:9.0.120'
-    testImplementation 'org.testng:testng:7.11.0'
+    testImplementation 'org.testng:testng:7.12.0'
     testImplementation 'junit:junit:4.13.2'
     compileOnly 'com.heroku:webapp-runner:9.0.119.0'
     implementation 'com.aventrix.jnanoid:jnanoid:2.0.0'
